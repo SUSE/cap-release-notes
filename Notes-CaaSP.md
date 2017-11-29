@@ -1,5 +1,7 @@
 # Notes for installing CAP on CaaSP
 
+## General
+
 * The port 2793 has to be open on the workers, for terraform in the
 'secgroup_worker' resource :
 
@@ -52,6 +54,8 @@ kube:
         persistent: persistent
 ```
 
+## Connecting to CEPH cluster
+
 * For RBD StorageClass /etc/ceph/ceph.conf and
 /etc/ceph/ceph.client.admin.keyring
 must be present on the Kubernetes masters so the masters can dynamically
@@ -89,5 +93,13 @@ kubectl create secret generic ceph-secret-admin
 --from-file=ceph-client-key --type=kubernetes.io/rbd --namespace=stratos
 ```
 
-* Create the 2 clusterrolebindings we discussed before
-(UAA-ClusterRoleBinding and SCF-ClusterRoleBinding)
+## Running CaaSP on OpenStack
+
+There are OpenStack images of CaaSP which can be used to create a Kubernetes cluster running on top of OpenStack. There are a few things which need to be considered to make it suitable to run CAP:
+
+### Provide enough disk space for images
+
+The default is to provide 40 GB of disk space to the CaaSP nodes. This is not sufficient for CAP. So use a machine flavor with a bigger disk and let is use the additional free space for storing images.
+
+Use the free space, create a partition on it, format it with btrfs and mount it as
+`/var/lib/docker` before you start importing any containers. If you resize the root filesystem to the full disk, you have very big root filesystem and still no space to store the containers without a big performance penalty.
