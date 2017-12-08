@@ -6,6 +6,15 @@
 'secgroup_worker' resource :
 
 ```
+# diego-access-public (SCF)
+rule {
+  from_port   = 2222
+  to_port     = 2222
+  ip_protocol = "tcp"
+  cidr        = "0.0.0.0/0"
+}
+
+# uaa-pulic (UAA)
 rule {
   from_port   = 2793
   to_port     = 2793
@@ -13,26 +22,51 @@ rule {
   cidr        = "0.0.0.0/0"
 }
 
-
 rule {
   from_port   = 2793
   to_port     = 2793
   ip_protocol = "udp"
   cidr        = "0.0.0.0/0"
 }
+
+# router-public (SCF)
+rule {
+  from_port   = 4443
+  to_port     = 4443
+  ip_protocol = "tcp"
+  cidr        = "0.0.0.0/0"
+}
+
+# tcp-router-public (SCF)
+rule {
+  from_port   = 2341
+  to_port     = 2341
+  ip_protocol = "tcp"
+  cidr        = "0.0.0.0/0"
+}
+
+# tcp-router-public (SCF)
+rule {
+  from_port   = 20000
+  to_port     = 20008
+  ip_protocol = "tcp"
+  cidr        = "0.0.0.0/0"
+}
+
+# stultified-unicorn-ui-next (STRATOS)
+rule {
+  from_port   = 8443
+  to_port     = 30820
+  ip_protocol = "tcp"
+  cidr        = "0.0.0.0/0"
+}
 ```
 
-* Designate DNS is configured but it does not support wildcards, hence,
-I had to manually
-configure these records :
+* Designate DNS is configured and it supports wildcards, so for example:
 
 ```
-lc.qa.cloud.caasp.suse.net.                    A               10.84.72.127
-api.lc.qa.cloud.caasp.suse.net.             CNAME    
-lc.qa.cloud.caasp.suse.net.
-scf.uaa.lc.qa.cloud.caasp.suse.net.    CNAME     lc.qa.cloud.caasp.suse.net.
-uaa.lc.qa.cloud.caasp.suse.net.           CNAME    
-lc.qa.cloud.caasp.suse.net.
+lc.qa.cloud.caasp.suse.net.	  A 	      10.84.72.127
+*.lc.qa.cloud.caasp.suse.net.	CNAME 	  lc.qa.cloud.caasp.suse.net.
 ```
 
 --> 10.84.72.127 is the floating IP of the Kubernetes worker with the
@@ -56,10 +90,13 @@ kube:
 
 ## Connecting to CEPH cluster
 
-* For RBD StorageClass /etc/ceph/ceph.conf and
-/etc/ceph/ceph.client.admin.keyring
-must be present on the Kubernetes masters so the masters can dynamically
-create the PVC.
+* For RBD StorageClass 
+
+Only **if you don't have or don't want** your secrets stored in Kubernetes, 
+/etc/ceph/ceph.conf and /etc/ceph/ceph.client.admin.keyring must be present on 
+the Kubernetes masters so the masters can dynamically create the PVC.
+
+For testing purposes only, I used the admin for both admin/user.
 
 ```
 ---
