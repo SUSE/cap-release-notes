@@ -132,11 +132,177 @@ kubectl create secret generic ceph-secret-admin
 
 ## Running CaaSP on OpenStack
 
-There are OpenStack images of CaaSP which can be used to create a Kubernetes cluster running on top of OpenStack. There are a few things which need to be considered to make it suitable to run CAP:
+There are OpenStack images of CaaSP which can be used to create a Kubernetes cluster running on top of OpenStack.
 
-### Provide enough disk space for images
 
-The default is to provide 40 GB of disk space to the CaaSP nodes. This is not sufficient for CAP. So use a machine flavor with a bigger disk and let is use the additional free space for storing images.
+### Considerations prior to deploying
 
-Use the free space, create a partition on it, format it with btrfs and mount it as
-`/var/lib/docker` before you start importing any containers. If you resize the root filesystem to the full disk, you have very big root filesystem and still no space to store the containers without a big performance penalty.
+* Provide enough disk space for images
+
+  The default is to provide 40 GB of disk space to the CaaSP nodes. This is not sufficient for CAP. So use a machine flavor with a bigger disk and let it use the additional free space for storing images (Commands on how to resize the CaaSP node root fs are provided in the instructions below).
+
+
+### Initial preparations
+
+The following steps only have to be done once before the initial CaaSP deployment. For following deplyments of CaaSP this has no to be redone but already created elements can be reused. The deployment of CaaSP on OpenStack is done using existing terraform rules with some additional steps required for running CAP on the CaaSP deployment.
+
+
+* Start with downloading and sourcing the openrc.sh file for OpenStack API access
+
+  ```
+  firefox https://$OPENSTACK/project/access_and_security/api_access/openrc/
+  . openrc.sh
+  ```
+
+  *Note* You will have to login to download the file. The filename might have a prefix named after the OpenStack project the file is for.
+
+
+**Optional steps**
+
+These step can be performed but are not mandatory. You can also use already existing OpenStack objects instead (e.g. if you do not have the permission to create projects or networks).
+
+* Create a openstack project to run CaaSP in (e.g. caasp), add a user as admin and export the project to be used by terraform
+
+  ```
+  openstack project create --domain default --description "CaaSP Project" caasp
+  openstack role add --project caasp --user admin admin
+  export OS_PROJECT_NAME='caasp'
+  ```
+
+* Create a Openstack network plus a subnet for caasp (e.g. caasp-net) and add a router to the extrenal (e.g. floating) network
+
+  ```
+  openstack network create caasp-net
+  openstack subnet create caasp_subnet --network caasp-net --subnet-range 10.0.2.0/24
+  openstack router create caasp-net-router
+  openstack router set caasp-net-router --external-gateway floating
+  openstack router add subnet caasp-net-router caasp_subnet
+  ```
+
+**Mandatory Steps**
+
+The following steps have to be done at least once in order to be able to deploy CaaSP and CAP on top of OpenStack
+
+
+* Clone the terraform script
+
+  ```
+  git clone git@github.com:kubic-project/automation.git
+  cd automation/caasp-openstack-terraform
+  ```
+
+* Upload the [CaaSPv2 image](http://dist.suse.de/install/SUSE-CaaSP-2.0-GM/SUSE-CaaS-Platform-2.0-for-OpenStack-Cloud.x86_64-2.0.0-GM.qcow2)
+
+  ```
+  wget http://dist.suse.de/install/SUSE-CaaSP-2.0-GM/SUSE-CaaS-Platform-2.0-for-OpenStack-Cloud.x86_64-2.0.0-GM.qcow2
+  openstack image create --file SUSE-CaaS-Platform-2.0-for-OpenStack-Cloud.x86_64-2.0.0-GM.qcow2 SUSE-CaaS-Platform-2.0-GM
+  ```
+
+* Create a additional security group with rules needed for CAP
+
+  ```
+  openstack security group create cap --description "Allow CAP traffic"
+  openstack security group rule create cap --protocol any --dst-port any --ethertype IPv4 --egress
+  openstack security group rule create cap --protocol any --dst-port any --ethertype IPv6 --egress
+  openstack security group rule create cap --protocol tcp --dst-port 20000:20008 --remote-ip 0.0.0.0/0
+  openstack security group rule create cap --protocol tcp --dst-port 443:443 --remote-ip 0.0.0.0/0
+  openstack security group rule create cap --protocol tcp --dst-port 2793:2793 --remote-ip 0.0.0.0/0
+  openstack security group rule create cap --protocol tcp --dst-port 4443:4443 --remote-ip 0.0.0.0/0
+  openstack security group rule create cap --protocol tcp --dst-port 80:80 --remote-ip 0.0.0.0/0
+  openstack security group rule create cap --protocol tcp --dst-port 2222:2222 --remote-ip 0.0.0.0/0
+  ```
+
+* Edit `openstack.tfvars`. Use the names of the just created OpenStack objects
+
+  Example:
+  ```
+  image_name = "SUSE-CaaS-Platform-2.0-GM"
+  internal_net = "caasp-net"
+  external_net = "floating"
+  admin_size = "m1.large"
+  master_size = "m1.large"
+  masters = 1
+  worker_size = "m1.xlarge"
+  workers = 2
+  ```
+
+* Initialize terraform
+
+  ```
+  terraform init
+  ```
+
+
+### Deploy CaaSP
+
+* Source the openrc.sh file, set the project and deploy
+
+  ```
+  . openrc.sh
+  export OS_PROJECT_NAME='caasp'
+  ./caasp-openstack apply
+  ```
+
+* Wait for 5 - 10 minutes until all systems are up and running
+* Get an overview of your CaaSP installation
+
+  ```
+  openstack server list
+  ```
+
+* Add the initial created `cap` security group to all CAP workers
+
+  ```
+  openstack server add security group caasp-worker0 cap
+  openstack server add security group caasp-worker1 cap
+  ```
+
+* Access to CaaSP nodes
+
+  For CAP you might have to log into the CaaSP master and nodes. To do so,
+  use ssh with the ssh key in the `automation/caasp-openstack-terraform/ssh`
+  dir to login as root.
+
+
+### Bootstrap CaaSP
+
+* Point your browser at the IP of the CaaSP admin node
+* Create a new admin user
+* On `Initial CaaS Platform Configuration`
+  * _Admin node_ - the prefilled value (public/floating ip) needs to be replaced by the internal openstack caasp subnet ip of the CaaSP admin node
+  * Enable the "Install Tiller" checkbox
+* On `Bootstrap your CaaS Platform`
+  * Click [Next]
+* On `Select nodes and roles`
+  * Click [Accept All nodes] and wait until they appear in the upper part of the page
+  * Define master and nodes
+  * Click [Next]
+* On `Confirm bootstrap`
+  * _External Kubernetes API FQDN_ - Enter the public(floating) IP from the CaaSP master with added .xip.io domain suffix
+  * _External Dashboard FQDN_ - Enter the public(floating) IP from the CaaSP admin with added .xip.io omain suffix
+
+### Prepare CaaSP for CAP
+
+* Commands to run on the CaaSP master
+
+  This is only necessary if you use hostpath as storage class
+  ```
+  perl -p -i -e 's@^(KUBE_CONTROLLER_MANAGER_ARGS=)"(.*)"@\1"\2 --enable-hostpath-provisioner"@' /etc/kubernetes/controller-manager
+  mkdir -p /tmp/hostpath_pv
+  chmod a+rwx /tmp/hostpath_pv
+  systemctl restart kube-controller-manager.service
+  ```
+
+* Commands to run on the CaaSP nodes
+
+  This is only necessary if you use hostpath as storage class
+  ```
+  mkdir -p /tmp/hostpath_pv
+  chmod a+rwx /tmp/hostpath_pv
+  ```
+
+  Resize your root filesystem of the worker to match the disk provided by OpenStack (https://bugzilla.suse.com/show_bug.cgi?id=1069471#c12)
+  ```
+  growpart /dev/vda 3
+  btrfs filesystem resize max /.snapshots
+  ```
