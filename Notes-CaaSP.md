@@ -144,7 +144,7 @@ There are OpenStack images of CaaSP which can be used to create a Kubernetes clu
 
 ### Initial preparations
 
-The following steps only have to be done once before the initial CaaSP deployment. For following deplyments of CaaSP this has no to be redone but already created elements can be reused. The deployment of CaaSP on OpenStack is done using existing terraform rules with some additional steps required for running CAP on the CaaSP deployment.
+The following steps only have to be done once before the initial CaaSP deployment. For following deployments of CaaSP this has no to be redone but already created elements can be reused. The deployment of CaaSP on OpenStack is done using existing terraform rules with some additional steps required for running CAP on the CaaSP deployment.
 
 
 * Start with downloading and sourcing the openrc.sh file for OpenStack API access
@@ -184,18 +184,13 @@ These step can be performed but are not mandatory. You can also use already exis
 The following steps have to be done at least once in order to be able to deploy CaaSP and CAP on top of OpenStack
 
 
-* Clone the terraform script
+* Upload the CaaSPv2 image to OpenStack
+
+  You can get the SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 image (here)[https://download.suse.com/Download?buildid=tW8sXCIHrWE~] (SUSE customer account required).
+
 
   ```
-  git clone git@github.com:kubic-project/automation.git
-  cd automation/caasp-openstack-terraform
-  ```
-
-* Upload the [CaaSPv2 image](http://dist.suse.de/install/SUSE-CaaSP-2.0-GM/SUSE-CaaS-Platform-2.0-for-OpenStack-Cloud.x86_64-2.0.0-GM.qcow2)
-
-  ```
-  wget http://dist.suse.de/install/SUSE-CaaSP-2.0-GM/SUSE-CaaS-Platform-2.0-for-OpenStack-Cloud.x86_64-2.0.0-GM.qcow2
-  openstack image create --file SUSE-CaaS-Platform-2.0-for-OpenStack-Cloud.x86_64-2.0.0-GM.qcow2 SUSE-CaaS-Platform-2.0-GM
+  openstack image create --file SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 SUSE-CaaS-Platform-2.0-GM
   ```
 
 * Create a additional security group with rules needed for CAP
@@ -210,6 +205,13 @@ The following steps have to be done at least once in order to be able to deploy 
   openstack security group rule create cap --protocol tcp --dst-port 4443:4443 --remote-ip 0.0.0.0/0
   openstack security group rule create cap --protocol tcp --dst-port 80:80 --remote-ip 0.0.0.0/0
   openstack security group rule create cap --protocol tcp --dst-port 2222:2222 --remote-ip 0.0.0.0/0
+  ```
+
+* Clone the terraform script
+
+  ```
+  git clone git@github.com:kubic-project/automation.git
+  cd automation/caasp-openstack-terraform
   ```
 
 * Edit `openstack.tfvars`. Use the names of the just created OpenStack objects
@@ -301,7 +303,7 @@ The following steps have to be done at least once in order to be able to deploy 
   chmod a+rwx /tmp/hostpath_pv
   ```
 
-  Resize your root filesystem of the worker to match the disk provided by OpenStack (https://bugzilla.suse.com/show_bug.cgi?id=1069471#c12)
+  Resize your root filesystem of the worker to match the disk provided by OpenStack
   ```
   growpart /dev/vda 3
   btrfs filesystem resize max /.snapshots
