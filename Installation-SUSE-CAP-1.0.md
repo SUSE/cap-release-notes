@@ -104,7 +104,7 @@ helm repo add suse https://kubernetes-charts.suse.com/
 ## Deploy Stratos, the Console UI
 
 ```
-helm install suse/console --namespace=stratos-cap --values scf-config-values.yaml
+helm install suse/console --namespace=stratos --values scf-config-values.yaml
 ```
 > NOTE: This will automatically configure the UI with the SCF and UAA configuration from your `scf-config-values.yaml` file. You may omit `--values scf-config-values.yaml` and configure the UI via the web-based setup flow.
 
