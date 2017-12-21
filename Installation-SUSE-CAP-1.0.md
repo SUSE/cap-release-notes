@@ -1,4 +1,4 @@
-# Installing SUSE Cloud Application Platform 1.0 Beta 3
+# Installing SUSE Cloud Application Platform 1.0 RC 1
 
 *These are instructions for installing the latest SUSE Cloud Application Platform 1.0 milestone release. The product is sill in pre-release stage. The final product release will be documented in the official documentation.*
 
@@ -52,8 +52,8 @@ kubectl create namespace uaa
 kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "uaa"/' | kubectl create -f -
 kubectl create namespace scf
 kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "scf"/' | kubectl create -f -
-kubectl create namespace stratos-cap
-kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "stratos-cap"/' | kubectl create -f -
+kubectl create namespace stratos
+kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "stratos"/' | kubectl create -f -
 ```
 
 ## Deploy using Helm
@@ -72,12 +72,18 @@ helm repo add suse https://kubernetes-charts.suse.com/
 
     ```
     helm install suse/uaa \
-        --version 2.4.1-beta3 \
+        --version 2.6.1-rc1 \
         --namespace uaa \
         --values scf-config-values.yaml
     ```
 
-1. Copy the UAA CA Cert to later give to SCF
+1. Wait until the `uaa:secret-generator` pod was run and disappeared:
+
+    ```
+    watch -c 'kubectl get pods --all-namespaces'
+    ```
+
+    Then copy the UAA CA Cert to later give to SCF
 
     ```
     CA_CERT="$(kubectl get secret secret --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
@@ -87,10 +93,10 @@ helm repo add suse https://kubernetes-charts.suse.com/
 
     ```
     helm install suse/cf \
-        --version 2.4.1-beta3 \
+        --version 2.6.1-rc1 \
         --namespace scf \
         --values scf-config-values.yaml \
-        --set "env.HCP_CA_CERT=${CA_CERT}"
+        --set "env.UAA_CA_CERT=${CA_CERT}"
     ```
 
 1. Wait for everything to be ready:
@@ -104,7 +110,7 @@ helm repo add suse https://kubernetes-charts.suse.com/
 ## Deploy Stratos, the Console UI
 
 ```
-helm install suse/console --namespace=stratos-cap --values scf-config-values.yaml
+helm install suse/console --namespace=stratos --values scf-config-values.yaml
 ```
 > NOTE: This will automatically configure the UI with the SCF and UAA configuration from your `scf-config-values.yaml` file. You may omit `--values scf-config-values.yaml` and configure the UI via the web-based setup flow.
 
@@ -116,4 +122,4 @@ helm install suse/console --namespace=stratos-cap --values scf-config-values.yam
 
 ## Additional resources
 
-This document describes the basic installation instructions for Beta 3. In future versions this information will be in the [official SUSE CAP documentation](http://docserv.suse.de/documents/#CAP_1). Some more details about special use cases can currently be found in the instructions for the open source projects:[SUSE Cloud Foundry](https://github.com/SUSE/scf/wiki/How-to-Install-SCF) and [Stratos UI](https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes). Generic Cloud Foundry documentation is in the [upstream docs](https://docs.cloudfoundry.org).
+This document describes the basic installation instructions for RC 1. In future versions this information will be in the [official SUSE CAP documentation](http://docserv.suse.de/documents/#CAP_1). Some more details about special use cases can currently be found in the instructions for the open source projects:[SUSE Cloud Foundry](https://github.com/SUSE/scf/wiki/How-to-Install-SCF) and [Stratos UI](https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes). Generic Cloud Foundry documentation is in the [upstream docs](https://docs.cloudfoundry.org).
