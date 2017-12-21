@@ -77,7 +77,13 @@ helm repo add suse https://kubernetes-charts.suse.com/
         --values scf-config-values.yaml
     ```
 
-1. Copy the UAA CA Cert to later give to SCF
+1. Wait until the `uaa:secret-generator` pod was run and disappeared:
+
+    ```
+    watch -c 'kubectl get pods --all-namespaces'
+    ```
+
+    Then copy the UAA CA Cert to later give to SCF
 
     ```
     CA_CERT="$(kubectl get secret secret --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
