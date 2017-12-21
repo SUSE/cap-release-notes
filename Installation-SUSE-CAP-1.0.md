@@ -52,8 +52,8 @@ kubectl create namespace uaa
 kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "uaa"/' | kubectl create -f -
 kubectl create namespace scf
 kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "scf"/' | kubectl create -f -
-kubectl create namespace stratos-cap
-kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "stratos-cap"/' | kubectl create -f -
+kubectl create namespace stratos
+kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "stratos"/' | kubectl create -f -
 ```
 
 ## Deploy using Helm
