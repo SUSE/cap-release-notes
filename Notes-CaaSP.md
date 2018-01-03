@@ -1,4 +1,4 @@
-# Notes for installing CAP on CaaSP
+# Notes for installing SUSE Cloud Application Platform on SUSE CaaS Platform
 
 ## General
 
@@ -130,21 +130,21 @@ kubectl create secret generic ceph-secret-admin
 --from-file=ceph-client-key --type=kubernetes.io/rbd --namespace=stratos
 ```
 
-## Running CaaSP on OpenStack
+## Running CaaS Platform on OpenStack
 
-There are OpenStack images of CaaSP which can be used to create a Kubernetes cluster running on top of OpenStack.
+There are OpenStack images of CaaS Platform which can be used to create a Kubernetes cluster running on top of OpenStack.
 
 
 ### Considerations prior to deploying
 
 * Provide enough disk space for images
 
-  The default is to provide 40 GB of disk space to the CaaSP nodes. This is not sufficient for CAP. So use a machine flavor with a bigger disk and let it use the additional free space for storing images (Commands on how to resize the CaaSP node root fs are provided in the instructions below).
+  The default is to provide 40 GB of disk space to the CaaS Platform nodes. This is not sufficient for CAP. So use a machine flavor with a bigger disk and let it use the additional free space for storing images (Commands on how to resize the CaaS Platform node root fs are provided in the instructions below).
 
 
 ### Initial preparations
 
-The following steps only have to be done once before the initial CaaSP deployment. For following deployments of CaaSP this has no to be redone but already created elements can be reused. The deployment of CaaSP on OpenStack is done using existing terraform rules with some additional steps required for running CAP on the CaaSP deployment.
+The following steps only have to be done once before the initial CaaS Platform deployment. For following deployments of CaaS Platform this has no to be redone but already created elements can be reused. The deployment of CaaS Platform on OpenStack is done using existing Terraform rules with some additional steps required for running CAP on the CaaS Platform deployment.
 
 
 * Start with downloading and sourcing the openrc.sh file for OpenStack API access
@@ -161,15 +161,15 @@ The following steps only have to be done once before the initial CaaSP deploymen
 
 These step can be performed but are not mandatory. You can also use already existing OpenStack objects instead (e.g. if you do not have the permission to create projects or networks).
 
-* Create a openstack project to run CaaSP in (e.g. caasp), add a user as admin and export the project to be used by terraform
+* Create an OpenStack project to run CaaS Platform in (e.g. caasp), add a user as admin and export the project to be used by Terraform
 
   ```
-  openstack project create --domain default --description "CaaSP Project" caasp
+  openstack project create --domain default --description "CaaS Platform Project" caasp
   openstack role add --project caasp --user admin admin
   export OS_PROJECT_NAME='caasp'
   ```
 
-* Create a Openstack network plus a subnet for caasp (e.g. caasp-net) and add a router to the extrenal (e.g. floating) network
+* Create a OpenStack network plus a subnet for caasp (e.g. caasp-net) and add a router to the external (e.g. floating) network
 
   ```
   openstack network create caasp-net
@@ -181,10 +181,10 @@ These step can be performed but are not mandatory. You can also use already exis
 
 **Mandatory Steps**
 
-The following steps have to be done at least once in order to be able to deploy CaaSP and CAP on top of OpenStack
+The following steps have to be done at least once in order to be able to deploy CaaS Platform and CAP on top of OpenStack
 
 
-* Upload the CaaSPv2 image to OpenStack
+* Upload the CaaS Platform v2 image to OpenStack
 
   You can get the SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 image (here)[https://download.suse.com/Download?buildid=tW8sXCIHrWE~] (SUSE customer account required).
 
@@ -207,7 +207,7 @@ The following steps have to be done at least once in order to be able to deploy 
   openstack security group rule create cap --protocol tcp --dst-port 2222:2222 --remote-ip 0.0.0.0/0
   ```
 
-* Clone the terraform script
+* Clone the Terraform script
 
   ```
   git clone git@github.com:kubic-project/automation.git
@@ -235,7 +235,7 @@ The following steps have to be done at least once in order to be able to deploy 
   ```
 
 
-### Deploy CaaSP
+### Deploy CaaS Platform
 
 * Source the openrc.sh file, set the project and deploy
 
@@ -246,7 +246,7 @@ The following steps have to be done at least once in order to be able to deploy 
   ```
 
 * Wait for 5 - 10 minutes until all systems are up and running
-* Get an overview of your CaaSP installation
+* Get an overview of your CaaS Platform installation
 
   ```
   openstack server list
@@ -259,19 +259,19 @@ The following steps have to be done at least once in order to be able to deploy 
   openstack server add security group caasp-worker1 cap
   ```
 
-* Access to CaaSP nodes
+* Access to CaaS Platform nodes
 
-  For CAP you might have to log into the CaaSP master and nodes. To do so,
+  For CAP you might have to log into the CaaS Platform master and nodes. To do so,
   use ssh with the ssh key in the `automation/caasp-openstack-terraform/ssh`
   dir to login as root.
 
 
-### Bootstrap CaaSP
+### Bootstrap CaaS Platform
 
-* Point your browser at the IP of the CaaSP admin node
+* Point your browser at the IP of the CaaS Platform admin node
 * Create a new admin user
 * On `Initial CaaS Platform Configuration`
-  * _Admin node_ - the prefilled value (public/floating ip) needs to be replaced by the internal openstack caasp subnet ip of the CaaSP admin node
+  * _Admin node_ - the prefilled value (public/floating ip) needs to be replaced by the internal OpenStack caasp subnet ip of the CaaS Platform admin node
   * Enable the "Install Tiller" checkbox
 * On `Bootstrap your CaaS Platform`
   * Click [Next]
@@ -280,12 +280,12 @@ The following steps have to be done at least once in order to be able to deploy 
   * Define master and nodes
   * Click [Next]
 * On `Confirm bootstrap`
-  * _External Kubernetes API FQDN_ - Enter the public(floating) IP from the CaaSP master with added .xip.io domain suffix
-  * _External Dashboard FQDN_ - Enter the public(floating) IP from the CaaSP admin with added .xip.io omain suffix
+  * _External Kubernetes API FQDN_ - Enter the public(floating) IP from the CaaS Platform master with added .xip.io domain suffix
+  * _External Dashboard FQDN_ - Enter the public(floating) IP from the CaaS Platform admin with added .xip.io omain suffix
 
-### Prepare CaaSP for CAP
+### Prepare CaaS Platform for CAP
 
-* Commands to run on the CaaSP master
+* Commands to run on the CaaS Platform master
 
   This is only necessary if you use hostpath as storage class
   ```
@@ -295,7 +295,7 @@ The following steps have to be done at least once in order to be able to deploy 
   systemctl restart kube-controller-manager.service
   ```
 
-* Commands to run on the CaaSP nodes
+* Commands to run on the CaaS Platform nodes
 
   This is only necessary if you use hostpath as storage class
   ```

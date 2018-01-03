@@ -2,7 +2,7 @@
 
 *These are instructions for installing the latest SUSE Cloud Application Platform 1.0 milestone release. The product is sill in pre-release stage. The final product release will be documented in the official documentation.*
 
-These instructions are assuming that you have a suitable Kubernetes setup such as SUSE CaaSP with active Kube DNS and a storage class for persistant data. Details how to check that can be found in the [SUSE Cloud Foundry Wiki](https://github.com/SUSE/scf/wiki/How-to-Install-SCF#requirements-for-kubernetes).
+These instructions are assuming that you have a suitable Kubernetes setup such as SUSE CaaS Platform with active Kube DNS and a storage class for persistant data. Details how to check that can be found in the [SUSE Cloud Foundry Wiki](https://github.com/SUSE/scf/wiki/How-to-Install-SCF#requirements-for-kubernetes).
 
 ## Configuring the deployment
 
@@ -41,11 +41,11 @@ kube:
        password: ""
     organization: "cap-beta"
 
-    # The next line is needed for CaaSP 2, but should _not_ be there for CaaSP 1
+    # The next line is needed for CaaS Platform 2, but should _not_ be there for CaaS Platform 1
     auth: rbac
 ```
 
-If you are deploying to a CaasP with SES you need to prepare the environment using these commands:
+If you are deploying to a Caas Platform with SES you need to prepare the environment using these commands:
 
 ```
 kubectl create namespace uaa
