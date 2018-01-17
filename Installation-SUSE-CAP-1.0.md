@@ -1,4 +1,4 @@
-# Installing SUSE Cloud Application Platform 1.0 RC 1
+# Installing SUSE Cloud Application Platform 1.0
 
 *These are instructions for installing the latest SUSE Cloud Application Platform 1.0 milestone release. The product is sill in pre-release stage. The final product release will be documented in the official documentation.*
 
@@ -14,7 +14,7 @@ env:
     CLUSTER_ADMIN_PASSWORD: changeme
 
     # Domain for SCF. DNS for *.DOMAIN must point to a kube node's (not master)
-    # external ip.
+    # external ip address.
     DOMAIN: cf-dev.io
 
     # Password for SCF to authenticate with UAA
@@ -39,7 +39,7 @@ kube:
        hostname: "registry.suse.com"
        username: ""
        password: ""
-    organization: "cap-beta"
+    organization: "cap"
 
     # The next line is needed for CaaS Platform 2, but should _not_ be there for CaaS Platform 1
     auth: rbac
@@ -72,7 +72,6 @@ helm repo add suse https://kubernetes-charts.suse.com/
 
     ```
     helm install suse/uaa \
-        --version 2.6.1-rc1 \
         --namespace uaa \
         --values scf-config-values.yaml
     ```
@@ -93,7 +92,6 @@ helm repo add suse https://kubernetes-charts.suse.com/
 
     ```
     helm install suse/cf \
-        --version 2.6.1-rc1 \
         --namespace scf \
         --values scf-config-values.yaml \
         --set "env.UAA_CA_CERT=${CA_CERT}"
@@ -122,4 +120,4 @@ helm install suse/console --namespace=stratos --values scf-config-values.yaml
 
 ## Additional resources
 
-This document describes the basic installation instructions for RC 1. In future versions this information will be in the [official SUSE CAP documentation](http://docserv.suse.de/documents/#CAP_1). Some more details about special use cases can currently be found in the instructions for the open source projects:[SUSE Cloud Foundry](https://github.com/SUSE/scf/wiki/How-to-Install-SCF) and [Stratos UI](https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes). Generic Cloud Foundry documentation is in the [upstream docs](https://docs.cloudfoundry.org).
+This document describes the basic installation instructions for SUSE Cloud Application Platform. This information will be in the [official SUSE CAP documentation](http://docserv.suse.de/documents/#CAP_1). Some more details about special use cases can currently be found in the instructions for the open source projects:[SUSE Cloud Foundry](https://github.com/SUSE/scf/wiki/How-to-Install-SCF) and [Stratos UI](https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes). Generic Cloud Foundry documentation is in the [upstream docs](https://docs.cloudfoundry.org).
