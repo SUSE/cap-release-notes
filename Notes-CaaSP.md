@@ -137,6 +137,10 @@ There are OpenStack images of CaaS Platform which can be used to create a Kubern
 
 ### Considerations prior to deploying
 
+* This Guide is for setting up development/test installations with one master and two workers. It is intended as a installation example and won't give you a production system.
+
+* This guide is valid for SUSE-CaaS-Platform-2.0 Version 1.0.0-GM. It will not work for older releases and might work for newer ones.
+
 * Provide enough disk space for images
 
   The default is to provide 40 GB of disk space to the CaaS Platform nodes. This is not sufficient for CAP. So use a machine flavor with a bigger disk and let it use the additional free space for storing images (Commands on how to resize the CaaS Platform node root fs are provided in the instructions below).
