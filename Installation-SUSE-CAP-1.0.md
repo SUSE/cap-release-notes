@@ -45,7 +45,7 @@ kube:
     auth: rbac
 ```
 
-If you are deploying to a Caas Platform with SES you need to prepare the environment using these commands:
+If you are deploying to a CaaS Platform with SES you need to prepare the environment using these commands:
 
 ```
 kubectl create namespace uaa
