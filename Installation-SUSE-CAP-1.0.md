@@ -1,6 +1,6 @@
 # Installing SUSE Cloud Application Platform 1.0
 
-*These are instructions for installing the latest SUSE Cloud Application Platform 1.0 milestone release. The product is sill in pre-release stage. The final product release will be documented in the official documentation.*
+*These are instructions for installing the latest SUSE Cloud Application Platform 1.0 release. For full deployment documentation please refer to the [official documentation](https://www.suse.com/documentation/cloud-application-platform-1/index.html).*
 
 These instructions are assuming that you have a suitable Kubernetes setup such as SUSE CaaS Platform with active Kube DNS and a storage class for persistant data. Details how to check that can be found in the [SUSE Cloud Foundry Wiki](https://github.com/SUSE/scf/wiki/How-to-Install-SCF#requirements-for-kubernetes).
 
