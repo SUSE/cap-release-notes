@@ -4,4 +4,4 @@ These are the release notes for SUSE Cloud Application Platform 1.0. It contains
 
 ## Known issues
 
-* There is a known problem with HA. So we've reverted to being just elastic, meaning no roles should be scaled except the Diego cell and the Router. Scaling the other roles will be possible with a future maintenance update.
+* Do not set the `mysql` or `diego_access` roles to more than one instance each in HA configurations. Doing so can cause problems with subsequent upgrades which could lead to loss of data. Scalability of these roles will be enabled in an upcoming maintenance release.
