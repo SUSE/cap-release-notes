@@ -5,4 +5,4 @@ This repository contains additional notes for the releases of SUSE Cloud Applica
 
 Some hints for special environments:
 
-* [SUSE Container as a Service Platform](Notes-CaaSP.md)
+* [SUSE CaaS (Container as a Service) Platform](Notes-CaaSP.md)
