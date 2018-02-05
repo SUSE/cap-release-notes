@@ -289,26 +289,45 @@ The following steps have to be done at least once in order to be able to deploy 
 
 ### Prepare CaaS Platform for CAP
 
-* Commands to run on the CaaS Platform master
+Note: You can run commands on multiple nodes using salt on the admin node. Access it by logging in to the admin node and than enter the salt master container:
 
-  This is only necessary if you use hostpath as storage class
-  ```
-  perl -p -i -e 's@^(KUBE_CONTROLLER_MANAGER_ARGS=)"(.*)"@\1"\2 --enable-hostpath-provisioner"@' /etc/kubernetes/controller-manager
-  mkdir -p /tmp/hostpath_pv
-  chmod a+rwx /tmp/hostpath_pv
-  systemctl restart kube-controller-manager.service
-  ```
+  docker exec -ti `docker ps -q --filter name=salt-master` /bin/bash
 
-* Commands to run on the CaaS Platform nodes
+There you can execute commands using salt. For executing the same command on all worker nodes use a command like:
 
-  This is only necessary if you use hostpath as storage class
-  ```
-  mkdir -p /tmp/hostpath_pv
-  chmod a+rwx /tmp/hostpath_pv
-  ```
+  salt -P "roles:(kube-minion)" cmd.run 'echo "hello"'
+
+This gets you full access to all aspects of the nodes so be careful with what commands you run.
+
+#### Growing root filesystem
+
+* Commands to run on the CaaS Platform worker nodes
 
   Resize your root filesystem of the worker to match the disk provided by OpenStack
   ```
   growpart /dev/vda 3
   btrfs filesystem resize max /.snapshots
+  ```
+
+#### Set up hostpath to be used as storage class
+
+*Warning: Using hostpath as storage class is not going to work for a production setup. It might be enough for a simple test setup, though. Features like updating CAP will not work with a hostpath setup.*
+
+* Commands to run on the CaaS Platform master
+
+First edit `/etc/kubernetes/controller-manager` and add the `--enable-hostpath-provisioner` option there.
+
+Then run the following commands:
+
+  ```
+  mkdir -p /tmp/hostpath_pv
+  chmod a+rwx /tmp/hostpath_pv
+  systemctl restart kube-controller-manager.service
+  ```
+
+* Commands to run on the CaaS Platform worker nodes
+
+  ```
+  mkdir -p /tmp/hostpath_pv
+  chmod a+rwx /tmp/hostpath_pv
   ```
