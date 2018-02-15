@@ -46,6 +46,10 @@ It is assumed that
 
   Example: `cf-dev.io`
 
+* The user knows docker repository and organization in that repository
+  for the docker images needed by the chart and stored them in the
+  environment variables `DOCKER_ORGANIZATION` and `DOCKER_REPOSITORY`.
+
 # Case 1: Automatic database setup and configuration
 
 Please review the previous section and ensure that all the assumptions
@@ -65,7 +69,9 @@ helm install /path/to/mysql \
     --set "env.CF_ADMIN_USER=admin" \
     --set "env.CF_CA_CERT=${CF_CA_CERT}" \
     --set "env.CF_DOMAIN=${DOMAIN}" \
-    --set "env.UAA_CA_CERT=${UAA_CA_CERT}"
+    --set "env.UAA_CA_CERT=${UAA_CA_CERT}" \
+    --set "kube.organization=${DOCKER_ORGANIZATION}" \
+    --set "kube.registry.hostname=${DOCKER_REPOSITORY}"
 ```
 
 The first `--set` tells the new broker where itself will be visible on
@@ -77,7 +83,8 @@ The next definition tells the broker to create and configure its own
 database. Everything is automatic, no user intervention is needed.
 
 The remaining definitions provide the broker with the credentials and
-certificates needed to talk to the CAP cluster (USB, UAA, ...)
+certificates needed to talk to the CAP cluster (USB, UAA, ...), and
+where to find its docker images.
 
 # Case 2: Talking to an external database
 
@@ -106,6 +113,8 @@ helm install /path/to/mysql \
     --set "env.CF_CA_CERT=${CF_CA_CERT}" \
     --set "env.CF_DOMAIN=${DOMAIN}" \
     --set "env.UAA_CA_CERT=${UAA_CA_CERT}"
+    --set "kube.organization=${DOCKER_ORGANIZATION}" \
+    --set "kube.registry.hostname=${DOCKER_REPOSITORY}"
 ```
 
 Note that the `DBHOST` has to be reachable from inside of the cluster.
