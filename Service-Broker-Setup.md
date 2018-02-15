@@ -1,105 +1,124 @@
 # Setting up and using a service broke sidecar
 
-We currently provide helm charts for two service brokers, the
-databases `MySQL` and `Postgres`.
+We currently provide helm charts for two service brokers managing
+access to `MySQL` and `Postgres` databases.
 
 This document describes how to use these charts in the context of
-`CAP`.
+a CAP cluster.
 
-Two cases are presented. First a simple configuration where the chart
-activates and uses its own database pod, independent of any other
-databases which may in the system. This is followed by a more complex
-configuration, where the chart is configured to talk to a pre-existing
-database of the user's choice. Both examples will use the service
-broker for `mysql`. For `postgres` the overall actions are the
-same. The small differences between `mysql` and `postgres` are handled
-in a separate section.
+While the document's examples focus on deploying a `MySQL` database
+the steps are virtually identical for `Postgres`. The
+[Postgres](#appendix-i-postgres) appendix describes the
+differences.
+
+The second appendix lists all relevant chart variables and their
+meanings.
 
 # Assumptions of this document
 
-It is assumed that
+## About the chart to be deployed
 
 * The user knows how to get the service broker charts, or has them
-  already.
+  already. This also implies that the user knows the location of the
+  charts in the filesystem.
 
-* The user has a functional CAP cluster, running all the necessary CF
-  and UAA roles/pods.
+* The user has stored the path to the chart in the environment
+  variable `CHART`.
 
-* The user has retrieved key `internal-ca-cert` of the UAA secret
-  `secret` and stored the base64-decoded result in the environment
-  variable `UAA_CA_CERT`.
-
-* The user has retrieved key `internal-ca-cert` of the CF secret
-  `secret` and stored the base64-decoded result in the environment
-  variable `CF_CA_CERT`.
+  ```
+  CHART=/path/to/mysql-chart
+  ```
 
 * The user has chosen the kube namespace for the broker to run in and
   stored it in the environment variable `NAMESPACE`.
 
-  Example: `mysql`
-
-* The user knows the administrative password for the CAP cluster and
-  stored it in the environment variable `CLUSTER_ADMIN_PASSWORD`.
-
-* The user knows the publicly visible domain for the CAP cluster and
-  stored it in the environment variable `DOMAIN`.
-
-  Example: `cf-dev.io`
+  ```
+  NAMESPACE=mysql
+  ```
 
 * The user knows docker repository and organization in that repository
-  for the docker images needed by the chart and stored them in the
+  for the docker images needed by the chart(s) and stored them in the
   environment variables `DOCKER_ORGANIZATION` and `DOCKER_REPOSITORY`.
 
-# Case 1: Automatic database setup and configuration
+  ```
+  DOCKER_REPOSITORY=docker.io
+  DOCKER_ORGANIZATION=splatform
+  ```
+
+  If the repository requires authentication the user has logged into it.
+
+  ```
+  docker login ...
+  ```
+
+## About the cluster to deploy the chart on.
+
+* The user has a functional CAP cluster, running all the necessary CF
+  and UAA roles/pods.
+
+## About the database to talk to
+
+The users knows the publicly reachable name of the host the database
+to talk to lives on. The user further knows the port on that host the
+database listens on, and the credentials (user and password) needed
+for the database to accept connections on the port. All this
+information is stored in the environment variables `DBHOST`, `DBPORT`,
+`DBUSER`, and `DBPASSWORD`.
+
+```
+DBHOST=mysql-host.in.some.domain
+DBPORT=3306
+DBUSER=root
+DBPASS=the-mysql-password
+```
+
+# Deploying the chart in three steps
 
 Please review the previous section and ensure that all the assumptions
 are satisfied.
 
-Further assuming that the helm chart for the service broker is found
-at `path/to/mysql` we can deploy the broker via
+## CAP location and namespaces
+
+Determine the namespaces used for the CF and UAA roles in his CAP
+cluster and store them in the environment variables `CF_NAMESPACE` and
+`UAA_NAMESPACE`. Further determine the publicly visible domain for the
+CAP cluster and store it in the environment variable `DOMAIN`.
 
 ```
-helm install /path/to/mysql \
-    --namespace ${NAMESPACE} \
-    --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${NAMESPACE}.svc.cluster.local:8081" \
-    \
-    --set "env.SERVICE_MYSQL_HOST=AUTO" \
-    \
-    --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
-    --set "env.CF_ADMIN_USER=admin" \
-    --set "env.CF_CA_CERT=${CF_CA_CERT}" \
-    --set "env.CF_DOMAIN=${DOMAIN}" \
-    --set "env.UAA_CA_CERT=${UAA_CA_CERT}" \
-    --set "kube.organization=${DOCKER_ORGANIZATION}" \
-    --set "kube.registry.hostname=${DOCKER_REPOSITORY}"
+CF_NAMESPACE=cf
+UAA_NAMESPACE=uaa
+DOMAIN=cf-dev.io
 ```
 
-The first `--set` tells the new broker where itself will be visible on
-the internal network of the CAP cluster. During setup this information
-will be provided to the USB component of the CAP cluster, so that it
-can talk to the new broker.
+## CAP certs and credentials
 
-The next definition tells the broker to create and configure its own
-database. Everything is automatic, no user intervention is needed.
-
-The remaining definitions provide the broker with the credentials and
-certificates needed to talk to the CAP cluster (USB, UAA, ...), and
-where to find its docker images.
-
-# Case 2: Talking to an external database
-
-Starting from the helm command of the previous section the definition
-of `--set "env.SERVICE_MYSQL_HOST=AUTO"` has to be replaced with a
-block of definitions which tell the broker where to find the database
-(host and port), and the credentials needed for the database to accept
-a connection from the broker (user and password).
-
-With this information stored in the environment variables `DBHOST`,
-`DBPORT`, `DBUSER`, and `DBPASSWORD` the command to deploy the broker
-becomes
+Retrieve key `internal-ca-cert` of the UAA secret `secret` and store
+the base64-decoded result in the environment variable `UAA_CA_CERT`.
 
 ```
-helm install /path/to/mysql \
+UAA_CA_CERT="$(kubectl get secret secret --namespace ${UAA_NAMESPACE} -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+```
+
+Retrieve key `internal-ca-cert` of the CF secret `secret` and store
+the base64-decoded result in the environment variable `CF_CA_CERT`.
+
+```
+CF_CA_CERT="$(kubectl get secret secret --namespace ${CF_NAMESPACE} -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+```
+
+Retrieve the administrative password for the CAP cluster and store it
+in the environment variable `CLUSTER_ADMIN_PASSWORD`.
+
+```
+CLUSTER_ADMIN_PASSWORD="$(kubectl get secret secret --namespace ${CF_NAMESPACE} -o jsonpath="{.data['cluster-admin-password']}" | base64 --decode -)"
+```
+
+## Deployment
+
+We can now deploy the broker's chart via
+
+```
+helm install ${CHART} \
     --namespace ${NAMESPACE} \
     --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${NAMESPACE}.svc.cluster.local:8081" \
     \
@@ -108,60 +127,60 @@ helm install /path/to/mysql \
     --set "env.SERVICE_MYSQL_USER=${DBUSER}" \
     --set "env.SERVICE_MYSQL_PASS=${DBPASS}" \
     \
-    --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
     --set "env.CF_ADMIN_USER=admin" \
-    --set "env.CF_CA_CERT=${CF_CA_CERT}" \
+    --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
     --set "env.CF_DOMAIN=${DOMAIN}" \
-    --set "env.UAA_CA_CERT=${UAA_CA_CERT}"
+    --set "env.CF_CA_CERT=${CF_CA_CERT}" \
+    --set "env.UAA_CA_CERT=${UAA_CA_CERT}" \
+    \
     --set "kube.organization=${DOCKER_ORGANIZATION}" \
     --set "kube.registry.hostname=${DOCKER_REPOSITORY}"
 ```
 
-Note that the `DBHOST` has to be reachable from inside of the cluster.
+Notes: 
 
-# Postgres
+* The first `--set` tells the new broker where itself will be visible
+  on the internal network of the CAP cluster. Its setup errand
+  provides this information to the USB component of the CAP cluster,
+  so that it can talk to the new broker.
 
-For Postgres the overall commands are mainly the same, with
-`POSTGRESQL` and `postgres` taking the place of `MYSQL` and `mysql` in
-the examples.
+* The remaining assignments provide the connection information for the
+  database and CAP to the broker, as well as the origin information
+  for the docker images referenced by the chart.
 
-Beyond that we have to add the definition
-`--set "env.SERVICE_POSTGRESQL_SSLMODE=disable"`
-to both examples.
 
-More explicitly:
+# Appendix I: Postgres
 
-```
-helm install /path/to/postgres \
-    --namespace ${NAMESPACE} \
-    --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-postgres.${NAMESPACE}.svc.cluster.local:8081" \
-    \
-    --set "env.SERVICE_POSTGRESQL_SSLMODE=disable" \
-    --set "env.SERVICE_POSTGRESQL_HOST=AUTO" \
-    \
-    --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
-    --set "env.CF_ADMIN_USER=admin" \
-    --set "env.CF_CA_CERT=${CF_CA_CERT}" \
-    --set "env.CF_DOMAIN=${DOMAIN}" \
-    --set "env.UAA_CA_CERT=${UAA_CA_CERT}"
-```
+Deploying the postgres broker and chart is virtually identical to
+deploying mysql. The only differences are:
 
-and
+* The chart variables have prefix `SERVICE_POSTGRESQL_` instead of
+  `SERVICE_MYSQL_`.
 
-```
-helm install /path/to/postgres \
-    --namespace ${NAMESPACE} \
-    --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-postgres.${NAMESPACE}.svc.cluster.local:8081" \
-    \
-    --set "env.SERVICE_POSTGRESQL_SSLMODE=disable" \
-    --set "env.SERVICE_POSTGRESQL_HOST=${DBHOST}" \
-    --set "env.SERVICE_POSTGRESQL_PORT=${DBPORT}" \
-    --set "env.SERVICE_POSTGRESQL_USER=${DBUSER}" \
-    --set "env.SERVICE_POSTGRESQL_PASS=${DBPASS}" \
-    \
-    --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
-    --set "env.CF_ADMIN_USER=admin" \
-    --set "env.CF_CA_CERT=${CF_CA_CERT}" \
-    --set "env.CF_DOMAIN=${DOMAIN}" \
-    --set "env.UAA_CA_CERT=${UAA_CA_CERT}"
-```
+* The `SERVICE_LOCATION uses `cf-usb-sidecar-postgres`.
+
+* An additional assignment of the form
+  `--set "env.SERVICE_POSTGRESQL_SSLMODE=disable"` may be required,
+  depending on the setup of the database. See also
+  [Appendix II: Chart variables](#appendix-ii-chart-variables) for
+  more information on the available values.
+
+# Appendix II: Chart variables
+
+|Variable			|Meaning|
+|---				|---|
+|env.SERVICE_LOCATION		|Broker location as seen by CAP cluster|
+|env.SERVICE_<db>_HOST		|Host the database lives on|
+|env.SERVICE_<db>_PORT		|Port the database listens on|
+|env.SERVICE_<db>_USER		|User name for database connections|
+|env.SERVICE_<db>_PASS		|Password for database connections|
+|env.SERVICE_POSTGRESQL_SSLMODE	|Connection to postgres server, one of `disable`, `require`, `verify-ca`, `verify-full`|
+|env.CF_ADMIN_USER		|User name of the CAP cluster admin|
+|env.CF_ADMIN_PASSWORD		|Admin password for the CAP cluster|
+|env.CF_DOMAIN			|Public domain of the CAP cluster|
+|env.CF_CA_CERT			|CA cert for talking to the CF components of the cluster|
+|env.UAA_CA_CERT		|CA cert for talking to the UAA components of the cluster|
+|kube.organization		|Docker organization to the repository below|
+|kube.registry.hostname		|Docker repository holding the chart's docker images|
+
+where `<db>` is either `MYSQL` or `POSTGRESQL`.
