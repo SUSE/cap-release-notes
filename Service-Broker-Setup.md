@@ -174,7 +174,7 @@ deploying mysql. The only differences are:
 |env.SERVICE_(db)_PORT		|Port the database listens on|
 |env.SERVICE_(db)_USER		|User name for database connections|
 |env.SERVICE_(db)_PASS		|Password for database connections|
-|env.SERVICE_POSTGRESQL_SSLMODE	|Connection to postgres server, one of `disable`, `require`, `verify-ca`, `verify-full`|
+|env.SERVICE_POSTGRESQL_SSLMODE	|Connection mode to postgres server. See [Package PQ](https://godoc.org/github.com/lib/pq) for details|
 |env.CF_ADMIN_USER		|User name of the CAP cluster admin|
 |env.CF_ADMIN_PASSWORD		|Admin password for the CAP cluster|
 |env.CF_DOMAIN			|Public domain of the CAP cluster|
