@@ -79,7 +79,7 @@ are satisfied.
 
 ## CAP location and namespaces
 
-Determine the namespaces used for the CF and UAA roles in his CAP
+Determine the namespaces used for the CF and UAA roles in the CAP
 cluster and store them in the environment variables `CF_NAMESPACE` and
 `UAA_NAMESPACE`. Further determine the publicly visible domain for the
 CAP cluster and store it in the environment variable `DOMAIN`.
@@ -170,10 +170,10 @@ deploying mysql. The only differences are:
 |Variable			|Meaning|
 |---				|---|
 |env.SERVICE_LOCATION		|Broker location as seen by CAP cluster|
-|env.SERVICE_<db>_HOST		|Host the database lives on|
-|env.SERVICE_<db>_PORT		|Port the database listens on|
-|env.SERVICE_<db>_USER		|User name for database connections|
-|env.SERVICE_<db>_PASS		|Password for database connections|
+|env.SERVICE_(db)_HOST		|Host the database lives on|
+|env.SERVICE_(db)_PORT		|Port the database listens on|
+|env.SERVICE_(db)_USER		|User name for database connections|
+|env.SERVICE_(db)_PASS		|Password for database connections|
 |env.SERVICE_POSTGRESQL_SSLMODE	|Connection to postgres server, one of `disable`, `require`, `verify-ca`, `verify-full`|
 |env.CF_ADMIN_USER		|User name of the CAP cluster admin|
 |env.CF_ADMIN_PASSWORD		|Admin password for the CAP cluster|
@@ -183,4 +183,4 @@ deploying mysql. The only differences are:
 |kube.organization		|Docker organization to the repository below|
 |kube.registry.hostname		|Docker repository holding the chart's docker images|
 
-where `<db>` is either `MYSQL` or `POSTGRESQL`.
+where `(db)` is either `MYSQL` or `POSTGRESQL`.
