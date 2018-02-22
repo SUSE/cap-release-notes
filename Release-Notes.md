@@ -1,7 +1,26 @@
-# Release Notes SUSE Cloud Application Platform 1.0
+# Release Notes SUSE Cloud Application Platform 1.0.1
 
 These are the release notes for SUSE Cloud Application Platform 1.0. It contains additional information specific to the current release. See the [Deployment Guide](https://www.suse.com/documentation/cloud-application-platform-1/) for details information how to deploy the product.
 
 ## Known issues
 
 * Do not set the `mysql` or `diego_access` roles to more than one instance each in HA configurations. Doing so can cause problems with subsequent upgrades which could lead to loss of data. Scalability of these roles will be enabled in an upcoming maintenance release.
+* A `helm upgrade` command from 1.0 to 1.0.1 (scf 2.6.11 to 2.7.0) requires the use of `--force` to drop an unnecessary persistent volume. Note that `helm upgrade` only works for multi-node clusters when running with a proper HA storage class (e.g. `hostpath` will not work as required stateful data can be lost).
+
+## 1.0.1 Release February, 2018
+
+* Bump to CF Deployment (1.9.0), using CF Deployment not CF Release from now on
+* Bump UAA to v53.3
+* Add ability to rename immutable secrets
+* Update CATS to be closer to what upstream is using
+* Make RBAC the default in the values.yaml (no need to specify anymore)
+* Increase test brain timeouts to stop randomly failing tests
+* Remove unused SANs from the generated TLS certificates
+* Remove the dependency on jq from stemcells
+* Fix duplicate buildpack ids when starting Cloud Foundry
+* Fix an issue in the vagrant box where compilation would fail due to old versions of docker.
+* Fix an issue where diego cell could not be mounted on nfs-backed Kubernetes storage class
+* Fix an issue where diego cell could not mount nfs in persi
+* Fix several problems reported with the syslog forwarding implementation
+
+## 1.0 Release January, 2018
