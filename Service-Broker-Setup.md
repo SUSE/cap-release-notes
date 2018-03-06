@@ -50,12 +50,12 @@ a CAP cluster.
 
     | Name | Description | Sample command
     | --- | --- | ---
-    | `NAMESPACE` | Namespace CAP was deployed in | `NAMESPACE="$(helm list --date --reverse | awk '/cf/ { print $NF }' | head -n1)"`
-    | `REVISION` | The revision of the CAP deployment | `REVISION="$(helm list --date --reverse | awk '/cf/ { print $2 }' | head -n1)"`
-    | `CLUSTER_ADMIN_PASSWORD` | The administrator password for the CAP deployment | `CLUSTER_ADMIN_PASSWORD="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.cluster-admin-password}' | base64 -d)"`
+    | `NAMESPACE` | Namespace CAP was deployed in | `NAMESPACE="$(helm list --date --reverse \| awk '/cf/ { print $NF }' \| head -n1)"`
+    | `REVISION` | The revision of the CAP deployment | `REVISION="$(helm list --date --reverse \| awk '/cf/ { print $2 }' \| head -n1)"`
+    | `CLUSTER_ADMIN_PASSWORD` | The administrator password for the CAP deployment | `CLUSTER_ADMIN_PASSWORD="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.cluster-admin-password}' \| base64 -d)"`
     | `DOMAIN` | The domain that CAP is using for deployed applications | `DOMAIN="$(kubectl get pod --namespace $NAMESPACE api-0 -o jsonpath='{.spec.containers[0].env[?(@.name == "DOMAIN")].value}')"`
-    | `CF_CA_CERT` | The certificate for the internal certificate authority for the CAP deployment | `CF_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d)"`
-    | `UAA_CA_CERT` | The certificate for the internal certificate authority for the UAA deployment | `UAA_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d)"`
+    | `CF_CA_CERT` | The certificate for the internal certificate authority for the CAP deployment | `CF_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' \| base64 -d)"`
+    | `UAA_CA_CERT` | The certificate for the internal certificate authority for the UAA deployment | `UAA_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' \| base64 -d)"`
     | `SIDECAR_NAMESPACE` | The Kubernetes to install the sidecar to; may be the same as the CAP namespace | `SIDECAR_NAMESPACE=${NAMESPACE}`
 
 1. Ensure that you have the SUSE helm chart repository available:
