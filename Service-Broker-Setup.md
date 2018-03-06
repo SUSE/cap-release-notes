@@ -1,186 +1,198 @@
-# Setting up and using a service broke sidecar
+# Setting up and using a service broker sidecar
 
 We currently provide helm charts for two service brokers managing
-access to `MySQL` and `Postgres` databases.
+access to [`MySQL`] and [`Postgres`] databases.
 
 This document describes how to use these charts in the context of
 a CAP cluster.
 
-While the document's examples focus on deploying a `MySQL` database
-the steps are virtually identical for `Postgres`. The
-[Postgres](#appendix-i-postgres) appendix describes the
-differences.
+[`MySQL`]: #deploying-the-mysql-chart
+[`Postgres`]: #deploying-the-postgresql-chart
 
-The second appendix lists all relevant chart variables and their
-meanings.
+# Prerequisites
 
-# Assumptions of this document
+- Helm must be configured; see [helm docs] if you need assistance.
+- A working CAP deployment.
 
-## About the chart to be deployed
+[helm docs]: https://docs.helm.sh/using_helm/#quickstart
 
-* The user knows how to get the service broker charts, or has them
-  already. This also implies that the user knows the location of the
-  charts in the filesystem.
+# Deploying the MySQL chart
 
-* The user has stored the path to the chart in the environment
-  variable `CHART`.
+1. You need an external MySQL installation, with account credentials that allow
+    creating and deleting both databases and users.
 
-  ```
-  CHART=/path/to/mysql-chart
-  ```
+1. Configure the database access credentials.
+    ```bash
+    export DBHOST=…
+    export DBPORT=…
+    export DBUSER=…
+    export DBPASS=…
+    ```
+    The necessary credentials are:
 
-* The user has chosen the kube namespace for the broker to run in and
-  stored it in the environment variable `NAMESPACE`.
+    | Name     | Description                      | Default
+    | -------- | -------------------------------- | --
+    | `DBHOST` | Host name of the database server |
+    | `DBPORT` | Port of the database server      | 3306
+    | `DBUSER` | Database user name               | `root`
+    | `DBPASS` | Database user password           |
 
-  ```
-  NAMESPACE=mysql
-  ```
+1. Configure the CAP access credentials:
+    ```bash
+    export NAMESPACE=…
+    export CLUSTER_ADMIN_PASSWORD=…
+    export DOMAIN=…
+    export CF_CA_CERT=…
+    export UAA_CA_CERT=…
+    export SIDECAR_NAMESPACE=…
+    ```
+    The credentials are:
 
-* The user knows docker repository and organization in that repository
-  for the docker images needed by the chart(s) and stored them in the
-  environment variables `DOCKER_ORGANIZATION` and `DOCKER_REPOSITORY`.
+    | Name | Description | Sample command
+    | --- | --- | ---
+    | `NAMESPACE` | Namespace CAP was deployed in | `NAMESPACE="$(helm list --date --reverse | awk '/cf/ { print $NF }' | head -n1)"`
+    | `REVISION` | The revision of the CAP deployment | `REVISION="$(helm list --date --reverse | awk '/cf/ { print $2 }' | head -n1)"`
+    | `CLUSTER_ADMIN_PASSWORD` | The administrator password for the CAP deployment | `CLUSTER_ADMIN_PASSWORD="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.cluster-admin-password}' | base64 -d)"`
+    | `DOMAIN` | The domain that CAP is using for deployed applications | `DOMAIN="$(kubectl get pod --namespace $NAMESPACE api-0 -o jsonpath='{.spec.containers[0].env[?(@.name == "DOMAIN")].value}')"`
+    | `CF_CA_CERT` | The certificate for the internal certificate authority for the CAP deployment | `CF_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d)"`
+    | `UAA_CA_CERT` | The certificate for the internal certificate authority for the UAA deployment | `UAA_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d)"`
+    | `SIDECAR_NAMESPACE` | The Kubernetes to install the sidecar to; may be the same as the CAP namespace | `SIDECAR_NAMESPACE=${NAMESPACE}`
 
-  ```
-  DOCKER_REPOSITORY=docker.io
-  DOCKER_ORGANIZATION=splatform
-  ```
+1. Ensure that you have the SUSE helm chart repository available:
+    ```bash
+    helm repo add suse https://kubernetes-charts.suse.com/
+    ```
 
-  If the repository requires authentication the user has logged into it.
+1. Install the helm chart:
+    ```bash
+    helm install suse/cf-usb-sidecar-mysql \
+        --namespace ${SIDECAR_NAMESPACE} \
+        --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081" \
+        --set "env.SERVICE_MYSQL_HOST=${DBHOST}" \
+        --set "env.SERVICE_MYSQL_PORT=${DBPORT}" \
+        --set "env.SERVICE_MYSQL_USER=${DBUSER}" \
+        --set "env.SERVICE_MYSQL_PASS=${DBPASS}" \
+        --set "env.CF_ADMIN_USER=admin" \
+        --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
+        --set "env.CF_DOMAIN=${DOMAIN}" \
+        --set "env.CF_CA_CERT=${CF_CA_CERT}" \
+        --set "env.UAA_CA_CERT=${UAA_CA_CERT}" \
+        --wait
+    ```
 
-  ```
-  docker login ...
-  ```
+1. Wait for all the pods to be ready:
+    ```bash
+    watch kubectl get pods --namespace=${SIDECAR_NAMESPACE}
+    ```
+    (Press `Ctrl+C` once all the pods are shown as fully ready)
 
-## About the cluster to deploy the chart on.
+1. Confirm that the service has been added to your CAP installation
+    ```bash
+    cf marketplace
+    ```
 
-* The user has a functional CAP cluster, running all the necessary CF
-  and UAA roles/pods.
+## Additional optional configuration
 
-## About the database to talk to
+There are additional configuration options that may be used when deploying the MySQL sidecar:
 
-The users knows the publicly reachable name of the host the database
-to talk to lives on. The user further knows the port on that host the
-database listens on, and the credentials (user and password) needed
-for the database to accept connections on the port. All this
-information is stored in the environment variables `DBHOST`, `DBPORT`,
-`DBUSER`, and `DBPASSWORD`.
+  | Name | Description | Example
+  | --- | --- | ---
+  | `env.CF_ADMIN_USER` | User name of the CAP administrator account | `admin`
+  | `env.SERVICE_TYPE` | The service name (as listed in `cf marketplace`) | `mysql`
+  | `kube.registry.hostname` | Docker registry where the MySQL sidecar images are available | `registry.example.com`
+  | `kube.organization` | Docker organization where the MySQL sidecar images are available | `library`
+  | `kube.registry.username` | Docker registry login information | `AzureDiamond`
+  | `kube.registry.password` | Docker registry login information | `hunter2`
 
+
+## Using the service
+
+To create a new service instance, use the Cloud Foundry command line client as normal:
+
+```bash
+cf create-service mysql default my_service_instance_name
 ```
-DBHOST=mysql-host.in.some.domain
-DBPORT=3306
-DBUSER=root
-DBPASS=the-mysql-password
+Where the last argument is the desired name of the service instance.
+
+To bind the service instance to an application, use the `bind-service` subcommand:
+
+```bash
+cf bind-service my_application my_service_instance_name
 ```
 
-# Deploying the chart in three steps
+# Deploying the PostgreSQL chart
 
-Please review the previous section and ensure that all the assumptions
-are satisfied.
+All of the configuration required in the MySQL chart is also required for the PostgreSQL chart; however, the deployment command line is slightly different:
 
-## CAP location and namespaces
-
-Determine the namespaces used for the CF and UAA roles in the CAP
-cluster and store them in the environment variables `CF_NAMESPACE` and
-`UAA_NAMESPACE`. Further determine the publicly visible domain for the
-CAP cluster and store it in the environment variable `DOMAIN`.
-
-```
-CF_NAMESPACE=cf
-UAA_NAMESPACE=uaa
-DOMAIN=cf-dev.io
-```
-
-## CAP certs and credentials
-
-Retrieve key `internal-ca-cert` of the UAA secret `secret` and store
-the base64-decoded result in the environment variable `UAA_CA_CERT`.
-
-```
-UAA_CA_CERT="$(kubectl get secret secret --namespace ${UAA_NAMESPACE} -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
-```
-
-Retrieve key `internal-ca-cert` of the CF secret `secret` and store
-the base64-decoded result in the environment variable `CF_CA_CERT`.
-
-```
-CF_CA_CERT="$(kubectl get secret secret --namespace ${CF_NAMESPACE} -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
-```
-
-Retrieve the administrative password for the CAP cluster and store it
-in the environment variable `CLUSTER_ADMIN_PASSWORD`.
-
-```
-CLUSTER_ADMIN_PASSWORD="$(kubectl get secret secret --namespace ${CF_NAMESPACE} -o jsonpath="{.data['cluster-admin-password']}" | base64 --decode -)"
-```
-
-## Deployment
-
-We can now deploy the broker's chart via
-
-```
-helm install ${CHART} \
-    --namespace ${NAMESPACE} \
-    --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${NAMESPACE}.svc.cluster.local:8081" \
-    \
-    --set "env.SERVICE_MYSQL_HOST=${DBHOST}" \
-    --set "env.SERVICE_MYSQL_PORT=${DBPORT}" \
-    --set "env.SERVICE_MYSQL_USER=${DBUSER}" \
-    --set "env.SERVICE_MYSQL_PASS=${DBPASS}" \
-    \
+```bash
+helm install suse/cf-usb-sidecar-postgres \
+    --namespace ${SIDECAR_NAMESPACE} \
+    --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-postgres.${SIDECAR_NAMESPACE}:8081" \
+    --set "env.SERVICE_POSTGRESQL_HOST=${DBHOST}" \
+    --set "env.SERVICE_POSTGRESQL_PORT=${DBPORT}" \
+    --set "env.SERVICE_POSTGRESQL_USER=${DBUSER}" \
+    --set "env.SERVICE_POSTGRESQL_PASS=${DBPASS}" \
     --set "env.CF_ADMIN_USER=admin" \
     --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
     --set "env.CF_DOMAIN=${DOMAIN}" \
     --set "env.CF_CA_CERT=${CF_CA_CERT}" \
     --set "env.UAA_CA_CERT=${UAA_CA_CERT}" \
-    \
-    --set "kube.organization=${DOCKER_ORGANIZATION}" \
-    --set "kube.registry.hostname=${DOCKER_REPOSITORY}"
+    --set "env.SERVICE_POSTGRESQL_SSLMODE=disable" \
+    --wait
 ```
 
-Notes: 
+The various database access parameters must point to an existing, externally-managed PostgreSQL instance.  The default port for PostgreSQL is 5432.
 
-* The first `--set` tells the new broker where itself will be visible
-  on the internal network of the CAP cluster. Its setup errand
-  provides this information to the USB component of the CAP cluster,
-  so that it can talk to the new broker.
+Note the additional `env.SERVICE_POSTGRESQL_SSLMODE` configuration; that is used to determine the security when connecting to the PostgreSQL database.  Please see [package pq] for the valid values.
 
-* The remaining assignments provide the connection information for the
-  database and CAP to the broker, as well as the origin information
-  for the docker images referenced by the chart.
+[package pq]: https://godoc.org/github.com/lib/pq
 
+## Additional optional configuration
 
-# Appendix I: Postgres
+There are additional configuration options that may be used when deploying the PostgreSQL sidecar:
 
-Deploying the postgres broker and chart is virtually identical to
-deploying mysql. The only differences are:
+  | Name | Description | Example
+  | --- | --- | ---
+  | `env.CF_ADMIN_USER` | User name of the CAP administrator account | `admin`
+  | `env.SERVICE_TYPE` | The service name (as listed in `cf marketplace`) | `postgres`
+  | `env.SERVICE_POSTGRESQL_SSLMODE` | [SSL configuration] when connecting to the PostgreSQL database | `verify-full`
+  | `kube.registry.hostname` | Docker registry where the MySQL sidecar images are available | `registry.example.com`
+  | `kube.organization` | Docker organization where the MySQL sidecar images are available | `library`
+  | `kube.registry.username` | Docker registry login information | `AzureDiamond`
+  | `kube.registry.password` | Docker registry login information | `hunter2`
 
-* The chart variables have prefix `SERVICE_POSTGRESQL_` instead of
-  `SERVICE_MYSQL_`.
+[SSL configuration]: https://godoc.org/github.com/lib/pq
 
-* The `SERVICE_LOCATION uses `cf-usb-sidecar-postgres`.
+# Removing service broker sidecar deployments
 
-* An additional assignment of the form
-  `--set "env.SERVICE_POSTGRESQL_SSLMODE=disable"` may be required,
-  depending on the setup of the database. See also
-  [Appendix II: Chart variables](#appendix-ii-chart-variables) for
-  more information on the available values.
+To correctly remove sidecar deployments, please take the following actions in order:
 
-# Appendix II: Chart variables
+1. Unbind any applications using instances of the service, and delete those instances
+    ```bash
+    cf unbind-service my_app my_service_instance
+    cf delete-service my_service_instance
+    ```
 
-|Variable			|Meaning|
-|---				|---|
-|env.SERVICE_LOCATION		|Broker location as seen by CAP cluster|
-|env.SERVICE_(db)_HOST		|Host the database lives on|
-|env.SERVICE_(db)_PORT		|Port the database listens on|
-|env.SERVICE_(db)_USER		|User name for database connections|
-|env.SERVICE_(db)_PASS		|Password for database connections|
-|env.SERVICE_POSTGRESQL_SSLMODE	|Connection mode to postgres server. See [Package PQ](https://godoc.org/github.com/lib/pq) for details|
-|env.CF_ADMIN_USER		|User name of the CAP cluster admin|
-|env.CF_ADMIN_PASSWORD		|Admin password for the CAP cluster|
-|env.CF_DOMAIN			|Public domain of the CAP cluster|
-|env.CF_CA_CERT			|CA cert for talking to the CF components of the cluster|
-|env.UAA_CA_CERT		|CA cert for talking to the UAA components of the cluster|
-|kube.organization		|Docker organization to the repository below|
-|kube.registry.hostname		|Docker repository holding the chart's docker images|
+1. Install the [CF-USB CLI plugin] for the [Cloud Foundry CLI]
+    ```bash
+    cf install-plugin https://github.com/SUSE/cf-usb-plugin/releases/download/1.0.0/cf-plugin-usb-linux-amd64
+    ```
+    [CF-USB CLI plugin]: https://github.com/SUSE/cf-usb-plugin/
+    [Cloud Foundry CLI]: https://github.com/cloudfoundry/cli/
 
-where `(db)` is either `MYSQL` or `POSTGRESQL`.
+1. Configure the CF-USB CLI plugin
+    ```bash
+    cf usb target https://usb.${DOMAIN}
+    ```
+
+1. Remove the services
+    ```bash
+    cf usb delete-driver-endpoint "http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081"
+    ```
+    See `env.SERVICE_LOCATION` configuration value when deploying the helm chart.
+
+1. Delete helm release from Kubernetes
+    ```bash
+    helm list # Find the name of the helm deployment
+    helm delete --purge …
+    ```
