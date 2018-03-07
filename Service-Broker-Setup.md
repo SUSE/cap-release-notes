@@ -1,3 +1,6 @@
+# NOTE: This documentation assumes some future changes are in place
+We currently have not published the helm charts and CF USB plugin yet.
+
 # Setting up and using a service broker sidecar
 
 We currently provide helm charts for two service brokers managing
@@ -21,16 +24,19 @@ a CAP cluster.
 
 # Deploying the MySQL chart
 
-You need an external MySQL installation, with account credentials that allow creating and deleting both databases and users.
+You need an external MySQL installation, with account credentials that allow
+creating and deleting both databases and users.
 
 ## Configuring the deployment
 
-Create a values.yaml file (the rest of the document assumes it is called `usb-config-values.yaml`) with the settings required for the install.  Use the file below as a template, and modify the values to suit your installation.
+Create a values.yaml file (the rest of the document assumes it is called
+`usb-config-values.yaml`) with the settings required for the install.  Use the
+file below as a template, and modify the values to suit your installation.
 
 ```yaml
 env:
   # Database access credentials; the given user must have privileges to create
-  # delete both databases and users
+  # and delete both databases and users
   SERVICE_MYSQL_HOST: mysql.example.com
   SERVICE_MYSQL_PORT: 3306
   SERVICE_MYSQL_USER: AzureDiamond
