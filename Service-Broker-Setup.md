@@ -1,3 +1,6 @@
+# NOTE: This documentation assumes some future changes are in place
+We currently have not published the helm charts and CF USB plugin yet.
+
 # Setting up and using a service broker sidecar
 
 We currently provide helm charts for two service brokers managing
@@ -13,50 +16,69 @@ a CAP cluster.
 
 - Helm must be configured; see [helm docs] if you need assistance.
 - A working CAP deployment.
+- External databases must be reachable from the running applications; please
+  refer to [application security groups] for details.
 
 [helm docs]: https://docs.helm.sh/using_helm/#quickstart
+[application security groups]: http://docs.cloudfoundry.org/concepts/asg.html
 
 # Deploying the MySQL chart
 
-1. You need an external MySQL installation, with account credentials that allow
-    creating and deleting both databases and users.
+You need an external MySQL installation, with account credentials that allow
+creating and deleting both databases and users.
 
-1. Configure the database access credentials.
-    ```bash
-    export DBHOST=…
-    export DBPORT=…
-    export DBUSER=…
-    export DBPASS=…
-    ```
-    The necessary credentials are:
+## Configuring the deployment
 
-    | Name     | Description                      | Default
-    | -------- | -------------------------------- | --
-    | `DBHOST` | Host name of the database server |
-    | `DBPORT` | Port of the database server      | 3306
-    | `DBUSER` | Database user name               | `root`
-    | `DBPASS` | Database user password           |
+Create a values.yaml file (the rest of the document assumes it is called
+`usb-config-values.yaml`) with the settings required for the install.  Use the
+file below as a template, and modify the values to suit your installation.
 
-1. Configure the CAP access credentials:
-    ```bash
-    export NAMESPACE=…
-    export CLUSTER_ADMIN_PASSWORD=…
-    export DOMAIN=…
-    export CF_CA_CERT=…
-    export UAA_CA_CERT=…
-    export SIDECAR_NAMESPACE=…
-    ```
-    The credentials are:
+```yaml
+env:
+  # Database access credentials; the given user must have privileges to create
+  # and delete both databases and users
+  SERVICE_MYSQL_HOST: mysql.example.com
+  SERVICE_MYSQL_PORT: 3306
+  SERVICE_MYSQL_USER: AzureDiamond
+  SERVICE_MYSQL_PASS: hunter2
 
-    | Name | Description | Sample command
-    | --- | --- | ---
-    | `NAMESPACE` | Namespace CAP was deployed in | `NAMESPACE="$(helm list --date --reverse \| awk '/cf/ { print $NF }' \| head -n1)"`
-    | `REVISION` | The revision of the CAP deployment | `REVISION="$(helm list --date --reverse \| awk '/cf/ { print $2 }' \| head -n1)"`
-    | `CLUSTER_ADMIN_PASSWORD` | The administrator password for the CAP deployment | `CLUSTER_ADMIN_PASSWORD="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.cluster-admin-password}' \| base64 -d)"`
-    | `DOMAIN` | The domain that CAP is using for deployed applications | `DOMAIN="$(kubectl get pod --namespace $NAMESPACE api-0 -o jsonpath='{.spec.containers[0].env[?(@.name == "DOMAIN")].value}')"`
-    | `CF_CA_CERT` | The certificate for the internal certificate authority for the CAP deployment | `CF_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' \| base64 -d)"`
-    | `UAA_CA_CERT` | The certificate for the internal certificate authority for the UAA deployment | `UAA_CA_CERT="$(kubectl get secret --namespace $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' \| base64 -d)"`
-    | `SIDECAR_NAMESPACE` | The Kubernetes to install the sidecar to; may be the same as the CAP namespace | `SIDECAR_NAMESPACE=${NAMESPACE}`
+  # CAP access credentials
+  CF_ADMIN_USER: admin
+  CF_ADMIN_PASSWORD: changeme
+  CF_DOMAIN: example.com
+
+  # CAP internal certificate authorities
+  # CF_CA_CERT can be obtained via the command line:
+  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is the helm revision number
+  CF_CA_CERT: |
+    -----BEGIN CERTIFICATE-----
+    MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
+    -----END CERTIFICATE-----
+
+  # UAA_CA_CERT can be obtained with the command line:
+  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d
+  UAA_CA_CERT:|
+    -----BEGIN CERTIFICATE-----
+    MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
+    -----END CERTIFICATE-----
+
+  SERVICE_TYPE: mysql # Optional
+
+# The whole "kube" section is optional
+kube:
+  organization: library # Docker registry organization
+  registry:             # Docker registry access configuration
+    hostname: registry.example.com
+    username: AzureDiamond
+    password: hunter2
+```
+
+## Deploy the chart
+
+When deploying the chart, a Kubernetes namespace to install the sidecar to is
+required.  It may optionally be the same namespace as CAP is installed to,
+though only one MySQL service may be deployed into a namespace at a time.
 
 1. Ensure that you have the SUSE helm chart repository available:
     ```bash
@@ -65,18 +87,11 @@ a CAP cluster.
 
 1. Install the helm chart:
     ```bash
+    SIDECAR_NAMESPACE=my_sidecar
     helm install suse/cf-usb-sidecar-mysql \
         --namespace ${SIDECAR_NAMESPACE} \
         --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081" \
-        --set "env.SERVICE_MYSQL_HOST=${DBHOST}" \
-        --set "env.SERVICE_MYSQL_PORT=${DBPORT}" \
-        --set "env.SERVICE_MYSQL_USER=${DBUSER}" \
-        --set "env.SERVICE_MYSQL_PASS=${DBPASS}" \
-        --set "env.CF_ADMIN_USER=admin" \
-        --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
-        --set "env.CF_DOMAIN=${DOMAIN}" \
-        --set "env.CF_CA_CERT=${CF_CA_CERT}" \
-        --set "env.UAA_CA_CERT=${UAA_CA_CERT}" \
+        --values usb-config-values.yaml \
         --wait
     ```
 
@@ -90,20 +105,6 @@ a CAP cluster.
     ```bash
     cf marketplace
     ```
-
-## Additional optional configuration
-
-There are additional configuration options that may be used when deploying the MySQL sidecar:
-
-  | Name | Description | Example
-  | --- | --- | ---
-  | `env.CF_ADMIN_USER` | User name of the CAP administrator account | `admin`
-  | `env.SERVICE_TYPE` | The service name (as listed in `cf marketplace`) | `mysql`
-  | `kube.registry.hostname` | Docker registry where the MySQL sidecar images are available | `registry.example.com`
-  | `kube.organization` | Docker organization where the MySQL sidecar images are available | `library`
-  | `kube.registry.username` | Docker registry login information | `AzureDiamond`
-  | `kube.registry.password` | Docker registry login information | `hunter2`
-
 
 ## Using the service
 
@@ -122,46 +123,65 @@ cf bind-service my_application my_service_instance_name
 
 # Deploying the PostgreSQL chart
 
-All of the configuration required in the MySQL chart is also required for the PostgreSQL chart; however, the deployment command line is slightly different:
+The PostgreSQL configuration is slightly different from the MySQL configuration;
+the database-specific keys are named differently, and an additional key is
+introduced:
+
+```yaml
+env:
+  # Database access credentials; the given user must have privileges to create
+  # delete both databases and users
+  SERVICE_POSTGRESQL_HOST: postgres.example.com
+  SERVICE_POSTGRESQL_PORT: 5432
+  SERVICE_POSTGRESQL_USER: AzureDiamond
+  SERVICE_POSTGRESQL_PASS: hunter2
+  # The SSL connection mode when connecting to the database.  For a list of
+  # valid values, please see https://godoc.org/github.com/lib/pq
+  SERVICE_POSTGRESQL_SSLMODE: disable
+
+  # CAP access credentials
+  CF_ADMIN_USER: admin
+  CF_ADMIN_PASSWORD: changeme
+  CF_DOMAIN: example.com
+
+  # CAP internal certificate authorities
+  # CF_CA_CERT can be obtained via the command line:
+  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is the helm revision number
+  CF_CA_CERT: |
+    -----BEGIN CERTIFICATE-----
+    MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
+    -----END CERTIFICATE-----
+
+  # UAA_CA_CERT can be obtained with the command line:
+  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d
+  UAA_CA_CERT:|
+    -----BEGIN CERTIFICATE-----
+    MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
+    -----END CERTIFICATE-----
+
+  SERVICE_TYPE: postgres # Optional
+
+# The whole "kube" section is optional
+kube:
+  organization: library # Docker registry organization
+  registry:             # Docker registry access configuration
+    hostname: registry.example.com
+    username: AzureDiamond
+    password: hunter2
+```
+
+The command to install the helm chart is also different in having a different
+host name for the service location:
 
 ```bash
+SIDECAR_NAMESPACE=psql_sidecar
 helm install suse/cf-usb-sidecar-postgres \
     --namespace ${SIDECAR_NAMESPACE} \
     --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-postgres.${SIDECAR_NAMESPACE}:8081" \
-    --set "env.SERVICE_POSTGRESQL_HOST=${DBHOST}" \
-    --set "env.SERVICE_POSTGRESQL_PORT=${DBPORT}" \
-    --set "env.SERVICE_POSTGRESQL_USER=${DBUSER}" \
-    --set "env.SERVICE_POSTGRESQL_PASS=${DBPASS}" \
-    --set "env.CF_ADMIN_USER=admin" \
-    --set "env.CF_ADMIN_PASSWORD=${CLUSTER_ADMIN_PASSWORD}" \
-    --set "env.CF_DOMAIN=${DOMAIN}" \
-    --set "env.CF_CA_CERT=${CF_CA_CERT}" \
-    --set "env.UAA_CA_CERT=${UAA_CA_CERT}" \
-    --set "env.SERVICE_POSTGRESQL_SSLMODE=disable" \
+    --values usb-config-values.yaml \
     --wait
 ```
-
-The various database access parameters must point to an existing, externally-managed PostgreSQL instance.  The default port for PostgreSQL is 5432.
-
-Note the additional `env.SERVICE_POSTGRESQL_SSLMODE` configuration; that is used to determine the security when connecting to the PostgreSQL database.  Please see [package pq] for the valid values.
-
-[package pq]: https://godoc.org/github.com/lib/pq
-
-## Additional optional configuration
-
-There are additional configuration options that may be used when deploying the PostgreSQL sidecar:
-
-  | Name | Description | Example
-  | --- | --- | ---
-  | `env.CF_ADMIN_USER` | User name of the CAP administrator account | `admin`
-  | `env.SERVICE_TYPE` | The service name (as listed in `cf marketplace`) | `postgres`
-  | `env.SERVICE_POSTGRESQL_SSLMODE` | [SSL configuration] when connecting to the PostgreSQL database | `verify-full`
-  | `kube.registry.hostname` | Docker registry where the MySQL sidecar images are available | `registry.example.com`
-  | `kube.organization` | Docker organization where the MySQL sidecar images are available | `library`
-  | `kube.registry.username` | Docker registry login information | `AzureDiamond`
-  | `kube.registry.password` | Docker registry login information | `hunter2`
-
-[SSL configuration]: https://godoc.org/github.com/lib/pq
 
 # Removing service broker sidecar deployments
 
