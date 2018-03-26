@@ -1,0 +1,11 @@
+== README
+
+This repository contains additional notes for the releases of SUSE Cloud Application Platform which is currently in closed beta.
+
+* link:/Release-Notes.adoc[Release Notes] for specific releases
+* link:/Installation-SUSE-CAP-1.0.adoc[Installation Instructions]
+* link:/Service-Broker-Setup.adoc[Service Broker Setup]
+
+Some hints for special environments:
+
+* link:/Notes-CaaSP.adoc[SUSE CaaS (Container as a Service) Platform]
