@@ -80,7 +80,10 @@ $ helm install suse/uaa \
 . Wait until the `uaa:secret-generator` pod was run and disappeared:
 [source,bash]
 $ watch -c 'kubectl get pods --all-namespaces'
-# Then copy the UAA CA Cert to later give to SCF
++
+Then copy the UAA CA Cert to later give to SCF
++
+[source,bash]
 $ CA_CERT="$(kubectl get secret secret --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
 
 . With UAA deployed, use Helm to deploy SCF.
@@ -93,7 +96,7 @@ $ helm install suse/cf \
 . Wait for everything to be ready:
 [source,bash]
 $ watch -c 'kubectl get pods --all-namespaces'
-
++
 Stop watching when all pods show state `Running` and Ready is `n/n` (instead of `k/n`, `k < n`).
 
 === Deploy Stratos, the Console UI

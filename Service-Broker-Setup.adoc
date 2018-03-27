@@ -1,6 +1,6 @@
 == Service Broker Setup
 
-NOTE: This documentation assumes some future changes are in place
+NOTE: This documentation assumes some future changes are in place.
 We currently have not published the helm charts and CF USB plugin yet.
 
 === Setting up and using a service broker sidecar

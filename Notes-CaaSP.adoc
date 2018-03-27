@@ -193,16 +193,16 @@ The following steps have to be done at least once in order to be able to deploy 
 
 
 * Upload the CaaS Platform v2 image to OpenStack
-
++
 You can get the SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 image link:https://download.suse.com/Download?buildid=tW8sXCIHrWE~[here] (SUSE customer account required).
-
++
 [source,bash]
 ----
 $ openstack image create --file SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 SUSE-CaaS-Platform-2.0-GM
 ----
 
 * Create a additional security group with rules needed for CAP
-
++
 [source,bash]
 ----
 $ openstack security group create cap --description "Allow CAP traffic"
