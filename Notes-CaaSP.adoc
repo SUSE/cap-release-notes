@@ -4,7 +4,7 @@
 
 * The port 2793 has to be open on the workers, for terraform in the
 'secgroup_worker' resource :
-
++
 [source,yaml]
 ----
 # diego-access-public (SCF)
@@ -64,17 +64,17 @@ rule {
 ----
 
 * Designate DNS is configured and it supports wildcards, so for example:
-
++
 ----
 lc.qa.cloud.caasp.suse.net.	  A 	      10.84.72.127
 *.lc.qa.cloud.caasp.suse.net.	CNAME 	  lc.qa.cloud.caasp.suse.net.
 ----
-
++
 -> 10.84.72.127 is the floating IP of the Kubernetes worker with the
 private IP 10.0.6.18
-
++
 -> The content of scf-config-values.yaml :
-
++
 [source,yaml]
 ----
 env:
@@ -92,13 +92,13 @@ kube:
 === Connecting to CEPH cluster
 
 * For RBD StorageClass
-
++
 Only **if you don't have or don't want** your secrets stored in Kubernetes,
 /etc/ceph/ceph.conf and /etc/ceph/ceph.client.admin.keyring must be present on
 the Kubernetes masters so the masters can dynamically create the PVC.
-
++
 For testing purposes only, I used the admin for both admin/user.
-
++
 [source,yaml]
 ----
 kind: StorageClass
@@ -118,7 +118,7 @@ parameters:
 
 * In Kubernetes, ceph secret must exist in all namespaces, so I created
 them before installing the charts:
-
++
 [source,yaml]
 ----
 $ kubectl create namespace uaa
@@ -154,6 +154,7 @@ The following steps only have to be done once before the initial CaaS Platform d
 
 
 * Start with downloading and sourcing the openrc.sh file for OpenStack API access
++
 [source,bash]
 ----
 $ firefox https://$OPENSTACK/project/access_and_security/api_access/openrc/
@@ -168,7 +169,7 @@ NOTE: You will have to login to download the file. The filename might have a pre
 These step can be performed but are not mandatory. You can also use already existing OpenStack objects instead (e.g. if you do not have the permission to create projects or networks).
 
 * Create an OpenStack project to run CaaS Platform in (e.g. caasp), add a user as admin and export the project to be used by Terraform
-
++
 [source,bash]
 ----
 $ openstack project create --domain default --description "CaaS Platform Project" caasp
@@ -177,7 +178,7 @@ $ export OS_PROJECT_NAME='caasp'
 ----
 
 * Create a OpenStack network plus a subnet for caasp (e.g. caasp-net) and add a router to the external (e.g. floating) network
-
++
 [source,bash]
 ----
 $ openstack network create caasp-net
@@ -200,7 +201,7 @@ You can get the SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 ima
 ----
 $ openstack image create --file SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 SUSE-CaaS-Platform-2.0-GM
 ----
-
++
 * Create a additional security group with rules needed for CAP
 +
 [source,bash]
@@ -215,9 +216,9 @@ $ openstack security group rule create cap --protocol tcp --dst-port 4443:4443 -
 $ openstack security group rule create cap --protocol tcp --dst-port 80:80 --remote-ip 0.0.0.0/0
 $ openstack security group rule create cap --protocol tcp --dst-port 2222:2222 --remote-ip 0.0.0.0/0
 ----
-
++
 * Clone the Terraform script
-
++
 [source,bash]
 ----
 $ git clone git@github.com:kubic-project/automation.git
@@ -225,9 +226,9 @@ $ cd automation/caasp-openstack-terraform
 ----
 
 * Edit `openstack.tfvars`. Use the names of the just created OpenStack objects
-
++
 .Example:
-
++
 [source,bash]
 ----
 image_name = "SUSE-CaaS-Platform-2.0-GM"
@@ -239,9 +240,9 @@ masters = 1
 worker_size = "m1.xlarge"
 workers = 2
 ----
-
++
 * Initialize terraform
-
++
 [source,bash]
 ----
 $ terraform init
@@ -251,24 +252,24 @@ $ terraform init
 ==== Deploy CaaS Platform
 
 * Source the openrc.sh file, set the project and deploy
-
++
 [source,bash]
 ----
 $ . openrc.sh
 $ export OS_PROJECT_NAME='caasp'
 $ ./caasp-openstack apply
 ----
-
++
 * Wait for 5 - 10 minutes until all systems are up and running
 * Get an overview of your CaaS Platform installation
-
++
 [source,bash]
 ----
 $ openstack server list
 ----
-
++
 * Add the initial created `cap` security group to all CAP workers
-
++
 [sourve,bash]
 ----
 $ openstack server add security group caasp-worker0 cap
@@ -276,7 +277,7 @@ $ openstack server add security group caasp-worker1 cap
 ----
 
 * Access to CaaS Platform nodes
-
++
 For CAP you might have to log into the CaaS Platform master and nodes. To do so,
 use ssh with the ssh key in the `automation/caasp-openstack-terraform/ssh`
 dir to login as root.
@@ -320,9 +321,9 @@ This gets you full access to all aspects of the nodes so be careful with what co
 ===== Growing root filesystem
 
 * Commands to run on the CaaS Platform worker nodes
-
++
 Resize your root filesystem of the worker to match the disk provided by OpenStack
-
++
 [source,bash]
 ----
 $ growpart /dev/vda 3
@@ -331,14 +332,14 @@ $ btrfs filesystem resize max /.snapshots
 
 ===== Set up hostpath to be used as storage class
 
-*Warning: Using hostpath as storage class is not going to work for a production setup. It might be enough for a simple test setup, though. Features like updating CAP will not work with a hostpath setup.*
+WARNING: Using hostpath as storage class is not going to work for a production setup. It might be enough for a simple test setup, though. Features like updating CAP will not work with a hostpath setup.*
 
 * Commands to run on the CaaS Platform master
-
++
 First edit `/etc/kubernetes/controller-manager` and add the `--enable-hostpath-provisioner` option there.
-
++
 Then run the following commands:
-
++
 [source,bash]
 ----
 $ mkdir -p /tmp/hostpath_pv
@@ -347,7 +348,7 @@ $ systemctl restart kube-controller-manager.service
 ----
 
 * Commands to run on the CaaS Platform worker nodes
-
++
 [source,bash]
 ----
 $ mkdir -p /tmp/hostpath_pv
