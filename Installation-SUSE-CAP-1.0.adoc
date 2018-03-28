@@ -1,0 +1,119 @@
+== Installing SUSE Cloud Application Platform 1.0
+
+*These are instructions for installing the latest SUSE Cloud Application Platform 1.0 release. For full deployment documentation please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation].*
+
+These instructions are assuming that you have a suitable Kubernetes setup such as SUSE CaaS Platform with active Kube DNS and a storage class for persistant data. Details how to check that can be found in the link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF#requirements-for-kubernetes[SUSE Cloud Foundry Wiki].
+
+=== Configuring the deployment
+
+Create a `scf-config-values.yaml` file with the settings required for the install. Copy the below as a template for this file and modify the values to suit your installation.
+
+[source,yaml]
+----
+env:
+    # Password for user 'admin' in the cluster
+    CLUSTER_ADMIN_PASSWORD: changeme
+
+    # Domain for SCF. DNS for *.DOMAIN must point to a kube node's (not master)
+    # external ip address.
+    DOMAIN: cf-dev.io
+
+    # Password for SCF to authenticate with UAA
+    UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
+
+    # UAA host/port that SCF will talk to. If you have a custom UAA
+    # provide its host and port here. If you are using the UAA that comes
+    # with the SCF distribution, simply use the two values below and
+    # substitute the cf-dev.io for your DOMAIN used above.
+    UAA_HOST: uaa.cf-dev.io
+    UAA_PORT: 2793
+kube:
+    # The IP address assigned to the kube node pointed to by the domain.
+    external_ip: 192.168.77.77
+    storage_class:
+        # Make sure to change the value in here to whatever storage class you use
+        persistent: "persistent"
+        shared: "shared"
+    # The registry the images will be fetched from. The values below should work for
+    # a default installation from the suse registry.
+    registry:
+       hostname: "registry.suse.com"
+       username: ""
+       password: ""
+    organization: "cap"
+
+    # The next line is needed for CaaS Platform 2, but should _not_ be there for CaaS Platform 1
+    auth: rbac
+----
+
+If you are deploying to a CaaS Platform with SES you need to prepare the environment using these commands:
+
+[source,bash]
+----
+$ kubectl create namespace uaa
+$ kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "uaa"/' | kubectl create -f -
+$ kubectl create namespace scf
+$ kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "scf"/' | kubectl create -f -
+$ kubectl create namespace stratos
+$ kubectl get secret ceph-secret-admin -o json --namespace default | sed 's/"namespace": "default"/"namespace": "stratos"/' | kubectl create -f -
+----
+
+=== Deploy using Helm
+
+*If you haven't installed the helm client follow the instructions at https://docs.helm.sh/using_helm/#quickstart*
+
+==== Add the CAP Helm Chart repository:
+
+[source,bash]
+----
+$ helm repo add suse https://kubernetes-charts.suse.com/
+----
+
+==== Deploy Cloud Foundry
+
+. Deploy UAA
+[source,bash]
+$ helm install suse/uaa \
+       --namespace uaa \
+       --values scf-config-values.yaml
+
+. Wait until the `uaa:secret-generator` pod was run and disappeared:
+[source,bash]
+$ watch -c 'kubectl get pods --all-namespaces'
++
+Then copy the UAA CA Cert to later give to SCF
++
+[source,bash]
+$ CA_CERT="$(kubectl get secret secret --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+
+. With UAA deployed, use Helm to deploy SCF.
+[source,bash]
+$ helm install suse/cf \
+       --namespace scf \
+       --values scf-config-values.yaml \
+       --set "env.UAA_CA_CERT=${CA_CERT}"
+
+. Wait for everything to be ready:
+[source,bash]
+$ watch -c 'kubectl get pods --all-namespaces'
++
+Stop watching when all pods show state `Running` and Ready is `n/n` (instead of `k/n`, `k < n`).
+
+=== Deploy Stratos, the Console UI
+
+[source,bash]
+----
+$ helm install suse/console --namespace=stratos --values scf-config-values.yaml
+----
+NOTE: This will automatically configure the UI with the SCF and UAA configuration from your `scf-config-values.yaml` file. You may omit `--values scf-config-values.yaml` and configure the UI via the web-based setup flow.
+
+NOTE: If you don't have a default storage class, you will also need to add to this command line:
+
+[source,bash]
+----
+--set storageClass=<STORAGE_CLASS_NAME>
+----
+
+=== Additional resources
+
+This document describes the basic installation instructions for SUSE Cloud Application Platform. For full deployment documentation please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation]. Some more details about special use cases can currently be found in the instructions for the open source projects:link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF[SUSE Cloud Foundry] and link:https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes[Stratos UI]. Generic Cloud Foundry documentation is in the link:https://docs.cloudfoundry.org[upstream docs].
