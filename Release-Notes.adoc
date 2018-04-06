@@ -12,7 +12,7 @@ These are the release notes for SUSE Cloud Application Platform 1.0. It contains
 * Changes to working with upgrades:
 ** All the secrets have been moved from `env.FOO` to `secrets.FOO`, it is necessary to modify the `scf-values.yaml` file to match.
 ** Secrets won't be carried forward automatically anymore, it is necessary to keep specifying *all* the secrets on each upgrade (e.g. the CLUSTER_ADMIN_PASSWORD`).
-** `kube.external_ip` has become `kube.external_ips` and is a list instead of a single value.
+** `kube.external_ip` has become `kube.external_ips` and is a list instead of a single value. This *also* means that the `helm` command line client has to be version 2.6.0 or newer.
 ** To rotate secrets it is necessary to increment the `kube.secret_generation_counter` (Note, immutable generated secrets will not be reset).
 
 === 1.0.1 Release February, 2018
