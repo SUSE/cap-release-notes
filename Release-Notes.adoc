@@ -15,7 +15,7 @@ These are the release notes for SUSE Cloud Application Platform 1.1. It contains
 
 > kube.external_ips=[“1.1.1.1”, “2.2.2.2”] 
 
-** Also as a result of this change, the `helm` command line cilent must be version 2.6.0 or higher. 
+** Also as a result of this change, the `helm` command line client must be version 2.6.0 or higher. 
 ** All the secrets have been renamed from `env.FOO` to `secrets.FOO`, so all the appropriate entries in `scf-values.yaml` need to be modified to align with that change. 
 ** You need to keep specifying *all* your secrets on each upgrade (e.g. the `CLUSTER_ADMIN_PASSWORD`) as it won't be carried forward automatically. 
 ** To rotate secrets, increment the `kube.secret_generation_counter` (Please note: immutable generated secrets will not be reset.)
