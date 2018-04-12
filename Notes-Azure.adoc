@@ -1,5 +1,7 @@
 == Notes for installing SUSE Cloud Application Platform on Microsoft Azure
 
+SUSE Cloud Application Platform supports running on https://azure.microsoft.com/en-us/services/container-service[Microsoft Azure Container Service (AKS)] stating with version 1.1. This document describes how to prepare the AKS environment for deployment of CAP. See the https://www.suse.com/documentation/cloud-application-platform-1/index.html[SUSE CAP Application Platform Documentation] for more detailed product information and instructions.
+
 === Requirements
 
 To setup the Microsoft Azure environment the command line client *az* is required.
@@ -139,3 +141,7 @@ $ az network nsg rule create --resource-group scf-resource-group --priority 202 
 $ az network nsg rule create --resource-group scf-resource-group --priority 203 --nsg-name $NSG_NAME --name scf-2222 --direction Inbound --destination-port-ranges 2222 --access Allow
 $ az network nsg rule create --resource-group scf-resource-group --priority 204 --nsg-name $NSG_NAME --name scf-2793 --direction Inbound --destination-port-ranges 2793 --access Allow
 ----
+
+=== Deploying SUSE Cloud Application Platform
+
+Once the Kubernetes environment is prepared proceed with deployment of SUSE Cloud Application Platform as described in the https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html[Deployment Guide].
