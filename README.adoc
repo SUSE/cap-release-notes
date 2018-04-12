@@ -3,9 +3,12 @@
 This repository contains additional notes for the releases of SUSE Cloud Application Platform which is currently in closed beta.
 
 * link:/Release-Notes.adoc[Release Notes] for specific releases
-* link:/Installation-SUSE-CAP-1.0.adoc[Installation Instructions]
 * link:/Service-Broker-Setup.adoc[Service Broker Setup]
 
 Some hints for special environments:
 
 * link:/Notes-CaaSP.adoc[SUSE CaaS (Container as a Service) Platform]
+
+=== Additional resources
+
+For full documentation of SUSE Cloud Application platform please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation]. Some more details about special use cases can currently be found in the instructions for the open source projects:link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF[SUSE Cloud Foundry] and link:https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes[Stratos UI]. Generic Cloud Foundry documentation is in the link:https://docs.cloudfoundry.org[upstream docs].
