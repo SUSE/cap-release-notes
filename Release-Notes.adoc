@@ -4,15 +4,19 @@ These are the release notes for SUSE Cloud Application Platform 1.1. It contains
 
 === Known issues
 
+IMPORTANT: You will need Stratos UI 1.1 when running SUSE Cloud Application Platform 1.1 and you share the `scf-values.yaml` configuration file between them. Prior versions of the Stratos UI will not work.
+
+IMPORTANT: When you have used a configuration file from a version prior to 1.1 you will need to make some adations. See details below. 
+
 * Changes to working with upgrades: 
 ** The variable `kube.external_ip` has now been changed to `kube.external_ips`, meaning upgrades from older versions will fail unless the latter variable exists in the `scf-values.yaml` file used to deploy Cloud Application Platform. Both variables can exist at the same time and be set to the same value for those in mixed version environments: 
-
++
 > kube.external_ip=1.1.1.1 
-
++
 > kube.external_ips=[1.1.1.1] 
 
 ** Going forward, `kube.external_ips` is an array, so usage would be like so: 
-
++
 > kube.external_ips=[“1.1.1.1”, “2.2.2.2”] 
 
 ** Also as a result of this change, the `helm` command line client must be version 2.6.0 or higher. 
@@ -63,7 +67,7 @@ These are the release notes for SUSE Cloud Application Platform 1.1. It contains
 ** dotnet-core-buildpack-release: 1.0.26-14-gf951834 
 ** java-buildpack-release: 3.16-18-gfeab2b6 
 
-=== 1.0.1 Release February, 2018
+== 1.0.1 Release February, 2018
 
 * Bump to CF Deployment (1.9.0), using CF Deployment not CF Release from now on
 * Bump UAA to v53.3
@@ -79,4 +83,6 @@ These are the release notes for SUSE Cloud Application Platform 1.1. It contains
 * Fix an issue where diego cell could not mount nfs in persi
 * Fix several problems reported with the syslog forwarding implementation
 
-=== 1.0 Release January, 2018
+== 1.0 Release January, 2018
+
+* Initial product release
