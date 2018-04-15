@@ -5,7 +5,7 @@
 === What's new 
 
 * Now supported on Microsoft Azure Container Services (AKS)
-* Cloud Foundry component and buildpack updates (see <<_features_and_fixes,Features and Fixes>>)
+* Cloud Foundry component and buildpack updates (see <<features-and-fixes,Features and Fixes>>)
 * PostgreSQL and MySQL service broker sidecars, configured and deployed via Helm
 * +cf backup+ CLI plugin for saving, restoring, or migrating CF data and applications 
 
