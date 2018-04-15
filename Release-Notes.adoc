@@ -13,7 +13,7 @@ See the link:https://www.suse.com/documentation/cloud-application-platform-1/[De
 
 === Configuration Changes
 
-IMPORTANT: Changes to the format of `values.yaml` for SCF and UAA require special handling when upgrading from 1.0 and 1.1 if you are reusing configuration files (e.g. `scf-config-values.yaml`):
+IMPORTANT: Changes to the format of `values.yaml` for SCF and UAA require special handling when upgrading from 1.0 to 1.1 if you are reusing configuration files (e.g. `scf-config-values.yaml`):
 
 ** Several values formerly set under `env:` are now set under `secrets:`. Any `_PASSWORD`, `_SECRET`, `_CERT`, or `_KEY` value explicitly set in `values.yaml` for CAP 1.0 should be moved into the `secrets:` section before running `helm upgrade` with the revised `values.yaml` 
 
