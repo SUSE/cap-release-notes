@@ -8,6 +8,7 @@ This repository contains additional notes for the releases of SUSE Cloud Applica
 Some hints for special environments:
 
 * link:/Notes-CaaSP.adoc[SUSE CaaS (Container as a Service) Platform]
+* link:/Notes-Azure.adoc[Microsoft Azure Platform]
 
 === Additional resources
 
