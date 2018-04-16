@@ -23,6 +23,14 @@ IMPORTANT: When you have used a configuration file from a version prior to 1.1 y
 ** All the secrets have been renamed from `env.FOO` to `secrets.FOO`, so all the appropriate entries in `scf-values.yaml` need to be modified to align with that change. 
 ** You need to keep specifying *all* your secrets on each upgrade (e.g. the `CLUSTER_ADMIN_PASSWORD`) as it won't be carried forward automatically. 
 ** To rotate secrets, increment the `kube.secret_generation_counter` (Please note: immutable generated secrets will not be reset.)
+* For upgrading SUSE Cloud Application Platform 1.0.1 to 1.1 run the following commands, e.g.:
+[source,bash]
+$ helm repo update
+$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
+$ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
+$ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
+$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml
 * Upgrades on HA environment have run into an issue whereby the api pods don’t all come up post-migration. The workaround is prior to running the upgrade, scale down the api role to 1. Then upon completing the upgrade, scale api up again to 2 or more. 
 ** Some roles (like diego-api, diego-brain and routing-api) are configured as active/passive, so passive pods can appear as `Not Ready`.
 ** Other roles (tcp-router and blobstore) cannot be scaled. 
