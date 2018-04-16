@@ -15,11 +15,20 @@ See the link:https://www.suse.com/documentation/cloud-application-platform-1/[De
 
 IMPORTANT: Changes to the format of `values.yaml` for SCF and UAA require special handling when upgrading from 1.0 to 1.1 if you are reusing configuration files (e.g. `scf-config-values.yaml`):
 
-** Several values formerly set under `env:` are now set under `secrets:`. Any `_PASSWORD`, `_SECRET`, `_CERT`, or `_KEY` value explicitly set in `values.yaml` for CAP 1.0 should be moved into the `secrets:` section before running `helm upgrade` with the revised `values.yaml` 
+** All secrets formerly set under `env:` are now set under `secrets:`. Any `_PASSWORD`, `_SECRET`, `_CERT`, or `_KEY` value explicitly set in `values.yaml` for CAP 1.0 should be moved into the `secrets:` section before running `helm upgrade` with the revised `values.yaml`. You can find [a sample here](values-sample.yaml).
 
-** **These secrets must be resupplied on each upgrade** (e.g. the `CLUSTER_ADMIN_PASSWORD`, `UAA_ADMIN_CLIENT_SECRET`) as they will not be carried forward automatically.
+** **These secrets must be resupplied on each upgrade** (e.g. the `CLUSTER_ADMIN_PASSWORD`, `UAA_ADMIN_CLIENT_SECRET`) as they will not be carried forward automatically. We recommend always using a values file.
 
 ** To rotate secrets, increment the `kube.secret_generation_counter` (immutable generated secrets will not be reset).
+
+* For upgrading SUSE Cloud Application Platform 1.0.1 to 1.1 run the following commands, e.g.:
+[source,bash]
+$ helm repo update
+$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
+$ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
+$ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
+$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml
 
 ** The `kube.external_ip` variable has been changed to `kube.external_ips`, allowing for services to be exposed on multiple Kubernetes worker nodes (e.g. behind a TCP load balancer). Before upgrading, change the setting or add a new setting specified as an array. For example:
 
@@ -33,10 +42,9 @@ IMPORTANT: Changes to the format of `values.yaml` for SCF and UAA require specia
 
 === Known Issues
 
-* Do not set the `mysql` or `diego_access` roles to more than one instance each. Doing so can cause problems with subsequent upgrades which could lead to loss of data. Scalability of these roles will be enabled in an upcoming maintenance release.
-* To upgrades high availability (HA) configurations, scale down the `api` role count to 1. Then upon completing the upgrade, scale `api` up again to 2 or more.
-** The `diego-api`, `diego-brain` and `routing-api` roles are configured as active/passive, and passive pods can appear as `Not Ready`.
-** The `tcp-router` and `blobstore` roles cannot be scaled up to more than one instance each.
+* Do not set the `mysql-proxy`, `routing-api`, `tcp-router`, `blobstore` or `diego_access` roles to more than one instance each. Doing so can cause problems with subsequent upgrades which could lead to loss of data. Scalability of these roles will be enabled in an upcoming maintenance release.
+* To upgrade high availability (HA) configurations, scale down the `api` role count to 1. Then upon completing the upgrade, scale `api` up again to 2 or more.
+** The `diego-api`, `diego-brain` and `routing-api` roles are configured as active/passive, and passive pods can appear as `Not Ready`. This is expected behavior.
 * Azure operators may not be able to connect to Azure Database for MySQL|Postgresql databases with the current brokers.
 * `cf backup-restore` may leave Docker apps in a stopped state. These can be started manually. 
 * `cf backup-restore` produces an unhelpful error if the file is not valid JSON.
