@@ -35,7 +35,7 @@ $ az account show --query "{ subscription_id: id }"
 
 
 * Create a service principal and write down the _password_ and _appId_.
-The term _<subscription-id>_ needs to be replaced by the _subscription_id_ noted in the in the previous step. If the Microsoft Azure service is supposed to be located in another data center then in the Western USA _westus_ needs to be replaced. 
+The term _<subscription-id>_ needs to be replaced by the _subscription_id_ noted in the in the previous step. If the Microsoft Azure service is supposed to be located in another data center then in the Western USA _westus_ needs to be replaced.
 +
 [source,bash]
 ----
@@ -45,7 +45,7 @@ $ az group create --name scf-resource-group --location westus
 $ az ad sp create-for-rbac --role Contributor --scopes "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/scf-resource-group"
 ----
 
-* Create a container service in Azure and replace the terms _<password>_ and _<application-id>_ by the one noted from the previous step. Additionally the phrase _<your-publi- ssh-key>_ should be replaced by the public ssh key to be used:
+* Create a container service in Azure and replace the terms _<password>_ and _<application-id>_ by the one noted from the previous step. Additionally the phrase _<your-public-ssh-key>_ should be replaced by the public ssh key to be used:
 +
 [source,bash]
 ----
@@ -58,7 +58,7 @@ $ az acs create \
        --admin-username scf-admin \
        --agent-count 3 \
        --client-secret <password> \
-       --ssh-key-value "<your-publi- ssh-key>" \
+       --ssh-key-value "<your-public-ssh-key>" \
        --service-principal <application-id> \
        --master-vm-size Standard_D2_v2
 ----
@@ -69,19 +69,28 @@ $ az acs create \
 ----
 $ az acs kubernetes get-credentials --resource-group="scf-resource-group" --name="scf-container-service"
 ----
++
+The previous command can fail if the ssh key is password protected. Adding the  _<private_key_file_name>_ to the ssh-agent will fix the issue:
++
+[source,bash]
+----
+$ ssh-add ~/.ssh/<private_key_file_name>
+----
 
-* The Kubernetes config can be verified by listing all the current pods.
+
+* The Kubernetes config can be verified by listing all the current pods. The minimal required Kubernetes version is 1.6.
 +
 [source,bash]
 ----
 $ kubectl get pods --all-namespaces
 ----
 
-* Enable cgroup swap accounting by running the following commands. This will reboot some of the machines which takes some time.
+* Enable cgroup swap accounting by running the following commands. This will reboot some of the machines which takes some time. This also does require the commands *sed* and *jq*.
 +
 [source,bash]
 ----
-$ az vm list --g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
+$ sudo zypper in -y jq sed
+$ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
   xargs -i{} az vm run-command invoke \
     --resource-group "scf-resource-group" \
     --command-id RunShellScript \
@@ -99,7 +108,7 @@ $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contai
     --name {}
 ----
 
-* Create a new public ip address and write it down.
+* Create a new public ip address and write it down. It is needed for the later deployment.
 +
 [source,bash]
 ----
@@ -114,7 +123,7 @@ $ az network public-ip create --resource-group scf-resource-group --name scf-pub
 $ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep 0
 ----
 
-* Attach the public ip to the master kubes node by replacing the term _<nic-name>_ by the one noted down before and write down the value of _privateIpAddress_.
+* Attach the public ip to the master kubes node by replacing the term _<nic-name>_ by the one noted down before and write down the value of _privateIpAddress_. This private ip address is needed for the later deployment.
 +
 [source,bash]
 ----
@@ -143,5 +152,7 @@ $ az network nsg rule create --resource-group scf-resource-group --priority 204 
 ----
 
 === Deploying SUSE Cloud Application Platform
+
+For the next steps the public and private ip addresses written down before are required.
 
 Once the Kubernetes environment is prepared proceed with deployment of SUSE Cloud Application Platform as described in the https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html[Deployment Guide].
