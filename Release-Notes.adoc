@@ -25,6 +25,7 @@ IMPORTANT: When you have used a configuration file from a version prior to 1.1 y
 ** To rotate secrets, increment the `kube.secret_generation_counter` (Please note: immutable generated secrets will not be reset.)
 * For upgrading SUSE Cloud Application Platform 1.0.1 to 1.1 run the following commands, e.g.:
 [source,bash]
+$ helm repo update
 $ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
 $ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
 $ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
