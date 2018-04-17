@@ -21,15 +21,6 @@ IMPORTANT: Changes to the format of `values.yaml` for SCF and UAA require specia
 
 ** To rotate secrets, increment the `kube.secret_generation_counter` (immutable generated secrets will not be reset).
 
-* For upgrading SUSE Cloud Application Platform 1.0.1 to 1.1 run the following commands, e.g.:
-[source,bash]
-$ helm repo update
-$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
-$ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
-$ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
-$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
-$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml
-
 ** The `kube.external_ip` variable has been changed to `kube.external_ips`, allowing for services to be exposed on multiple Kubernetes worker nodes (e.g. behind a TCP load balancer). Before upgrading, change the setting or add a new setting specified as an array. For example:
 
   kube.external_ip=10.1.1.1
@@ -39,6 +30,54 @@ $ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values
 
   kube.external_ips=["1.1.1.1", "2.2.2.2"]
 
+** Upgrading SUSE Cloud Application Platform 1.0.1 to 1.1
++
+An example scf-config-values.yaml for 1.1 would look like this:
++
+[source,yaml]
+----
+env:
+    # Domain for SCF. DNS for *.DOMAIN must point to a kube node's (not master)
+    # external ip address.
+    DOMAIN: cf-dev.io
+
+kube:
+    # The IP address assigned to the kube node pointed to by the domain.
+    #### the external_ip setting changed to accept a list of IPs, and was
+    #### renamed to external_ips
+    external_ips: ["192.168.77.77"]
+    storage_class:
+        # Make sure to change the value in here to whatever storage class you use
+        persistent: "persistent"
+        shared: "shared"
+
+    # The registry the images will be fetched from. The values below should work for
+    # a default installation from the suse registry.
+    registry:
+       hostname: "registry.suse.com"
+       username: ""
+       password: ""
+    organization: "cap"
+
+    auth: rbac
+
+secrets:
+    # Password for user 'admin' in the cluster
+    CLUSTER_ADMIN_PASSWORD: changeme
+
+    # Password for SCF to authenticate with UAA
+    UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
+----
++
+For upgrading SUSE Cloud Application Platform from 1.0.1 to 1.1 run the following commands, e.g.:
++
+[source,bash]
+$ helm repo update
+$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
+$ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
+$ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
+$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml
 
 === Known Issues
 
