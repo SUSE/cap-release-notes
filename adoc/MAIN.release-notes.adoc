@@ -1,0 +1,47 @@
+Release Notes
+=============
+
+:product: SUSE Cloud Applications Platform
+:version: 1.1
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
+:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
+:suse: SUSE
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+
+:docinfo:
+
+This document provides guidance and an overview to high-level general
+features and updates for {product} {version}. It also describes capabilities
+and limitations of {product} {version}.
+For detailed information about deploying this product, see the
+_Deployment Guide_ at {deployment-url}.
+
+These release notes are updated periodically. The latest version of
+these release notes is always available at {rn-url}. General documentation
+can be found at {doc-url}.
+
+include::Release-Notes.adoc[]
+
+include::known-issues.adoc[]
+
+include::Notes-CaaSP.adoc[]
+
+include::Notes-Azure.adoc[]
+
+include::Service-Broker-Setup.adoc[]
+
+[id='app.secret-sample']
+== Appendix: Configuration with `secrets:` Section
+
+
+[source,yaml]
+----
+include::values-sample.yaml[]
+----
+

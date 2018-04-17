@@ -1,9 +1,11 @@
-== Notes for installing SUSE Cloud Application Platform on SUSE CaaS Platform
+[id='sec.caasp']
+== Installing {product} on {caasp}
 
+[id='sec.general']
 === General
 
 * The port 2793 has to be open on the workers, for terraform in the
-'secgroup_worker' resource :
+'secgroup_worker' resource:
 +
 [source,yaml]
 ----
@@ -89,12 +91,13 @@ kube:
         persistent: persistent
 ----
 
-=== Connecting to CEPH cluster
+[id='sec.caasp.ceph']
+=== Connecting to a Ceph cluster
 
 * For RBD StorageClass
 +
-Only **if you don't have or don't want** your secrets stored in Kubernetes,
-/etc/ceph/ceph.conf and /etc/ceph/ceph.client.admin.keyring must be present on
+Only **if you do not have or do not want** your secrets stored in Kubernetes,
+`/etc/ceph/ceph.conf` and `/etc/ceph/ceph.client.admin.keyring` must be present on
 the Kubernetes masters so the masters can dynamically create the PVC.
 +
 For testing purposes only, I used the admin for both admin/user.
@@ -132,28 +135,44 @@ $ kubectl create secret generic ceph-secret-admin
 --from-file=ceph-client-key --type=kubernetes.io/rbd --namespace=stratos
 ----
 
-=== Running CaaS Platform on OpenStack
 
-There are OpenStack images of CaaS Platform which can be used to create a Kubernetes cluster running on top of OpenStack.
+[id='sec.caasp.openstack']
+=== Running {caaspa} on {ostack}
+
+There are {ostack} images of {caaspa} which can be used to create a
+Kubernetes cluster running on top of {ostack}.
 
 
-==== Considerations prior to deploying
+[id='sec.caasp.consider-deploy']
+==== Considerations Before Deploying
 
-* This Guide is for setting up development/test installations with one master and two workers. It is intended as a installation example and won't give you a production system.
+* This Guide is for setting up development/test installations with one master
+  and two workers. It is intended as a installation example and will not
+  result in a production system.
 
-* This guide is valid for SUSE-CaaS-Platform-2.0 Version 1.0.0-GM. It will not work for older releases and might work for newer ones.
+* This guide is valid for SUSE-CaaS-Platform-2.0 Version 1.0.0-GM. It will
+  not work for older releases and might work for newer ones.
 
 * Provide enough disk space for images
 
-NOTE: The default is to provide 40 GB of disk space to the CaaS Platform nodes. This is not sufficient for CAP. So use a machine flavor with a bigger disk and let it use the additional free space for storing images (Commands on how to resize the CaaS Platform node root fs are provided in the instructions below).
+NOTE: The default is to provide 40 GB of disk space to the {caaspa} nodes.
+This is not sufficient for {product}. So use a machine flavor with a bigger disk
+and let it use the additional free space for storing images.
+For information about resizing the root file system of the {caaspa} node, see
+<<sec.caasp.root-file-system>>.
 
 
+[id='sec.caasp.prepare']
 ==== Initial preparations
 
-The following steps only have to be done once before the initial CaaS Platform deployment. For following deployments of CaaS Platform this has no to be redone but already created elements can be reused. The deployment of CaaS Platform on OpenStack is done using existing Terraform rules with some additional steps required for running CAP on the CaaS Platform deployment.
+The following steps only have to be done once before the initial {caaspa}
+deployment. For following deployments of {caaspa} this has no to be redone
+but already created elements can be reused. The deployment of {caaspa} on
+{ostack} is done using existing Terraform rules with some additional steps
+required for running {product} on the {caaspa} deployment.
 
 
-* Start with downloading and sourcing the openrc.sh file for OpenStack API access
+* Start with downloading and sourcing the openrc.sh file for {ostack} API access
 +
 [source,bash]
 ----
@@ -161,14 +180,19 @@ $ firefox https://$OPENSTACK/project/access_and_security/api_access/openrc/
 . openrc.sh
 ----
 
-NOTE: You will have to login to download the file. The filename might have a prefix named after the OpenStack project the file is for.
+NOTE: You need to log in to download the file. The file name might have a
+prefix named after the {ostack} project the file is for.
 
 
-===== Optional steps
+[id='sec.caasp.prepare-optional']
+===== Optional Steps
 
-These step can be performed but are not mandatory. You can also use already existing OpenStack objects instead (e.g. if you do not have the permission to create projects or networks).
+These steps can be performed but are not mandatory. You can also use already
+existing {ostack} objects instead. For example, if you do not have the
+permission to create projects or networks).
 
-* Create an OpenStack project to run CaaS Platform in (e.g. caasp), add a user as admin and export the project to be used by Terraform
+. Create an {ostack} project to run {caaspa} in (for example, `caasp`), add a
+user as admin and export the project to be used by Terraform:
 +
 [source,bash]
 ----
@@ -177,7 +201,8 @@ $ openstack role add --project caasp --user admin admin
 $ export OS_PROJECT_NAME='caasp'
 ----
 
-* Create a OpenStack network plus a subnet for caasp (e.g. caasp-net) and add a router to the external (e.g. floating) network
+. Create a {ostack} network plus a subnet for caasp (for example,
+`caasp-net`) and add a router to the external (for example, floating) network:
 +
 [source,bash]
 ----
@@ -188,21 +213,26 @@ $ openstack router set caasp-net-router --external-gateway floating
 $ openstack router add subnet caasp-net-router caasp_subnet
 ----
 
+[id='sec.caasp.prepare-mandatory']
 ===== Mandatory Steps
 
-The following steps have to be done at least once in order to be able to deploy CaaS Platform and CAP on top of OpenStack
+The following steps have to be performed at least once to be able to deploy
+{caaspa} and {product} on top of {ostack}.
 
+. Download the `SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2`
+image from link:https://download.suse.com/Download?buildid=tW8sXCIHrWE~
+({scc} account required).
 
-* Upload the CaaS Platform v2 image to OpenStack
-+
-You can get the SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 image link:https://download.suse.com/Download?buildid=tW8sXCIHrWE~[here] (SUSE customer account required).
+. Upload the {caaspa} 2 image to {ostack}:
 +
 [source,bash]
 ----
-$ openstack image create --file SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 SUSE-CaaS-Platform-2.0-GM
+$ openstack image create \
+  --file SUSE-CaaS-Platform-2.0-OpenStack-Cloud.x86_64-1.0.0-GM.qcow2 \
+  SUSE-CaaS-Platform-2.0-GM
 ----
-+
-* Create a additional security group with rules needed for CAP
+
+. Create a additional security group with rules needed for {product}
 +
 [source,bash]
 ----
@@ -216,8 +246,8 @@ $ openstack security group rule create cap --protocol tcp --dst-port 4443:4443 -
 $ openstack security group rule create cap --protocol tcp --dst-port 80:80 --remote-ip 0.0.0.0/0
 $ openstack security group rule create cap --protocol tcp --dst-port 2222:2222 --remote-ip 0.0.0.0/0
 ----
-+
-* Clone the Terraform script
+
+. Clone the Terraform script
 +
 [source,bash]
 ----
@@ -225,9 +255,8 @@ $ git clone git@github.com:kubic-project/automation.git
 $ cd automation/caasp-openstack-terraform
 ----
 
-* Edit `openstack.tfvars`. Use the names of the just created OpenStack objects
-+
-.Example:
+. Edit `openstack.tfvars`. Use the names of the just created {ostack} objects,
+for example:
 +
 [source,bash]
 ----
@@ -240,15 +269,15 @@ masters = 1
 worker_size = "m1.xlarge"
 workers = 2
 ----
-+
-* Initialize terraform
+
+. Initialize Terraform:
 +
 [source,bash]
 ----
 $ terraform init
 ----
 
-
+[id='sec.caasp.deploy']
 ==== Deploy CaaS Platform
 
 * Source the openrc.sh file, set the project and deploy
@@ -268,9 +297,9 @@ $ ./caasp-openstack apply
 $ openstack server list
 ----
 +
-* Add the initial created `cap` security group to all CAP workers
+* Add the initial created `cap` security group to all {product} workers
 +
-[sourve,bash]
+[source,bash]
 ----
 $ openstack server add security group caasp-worker0 cap
 $ openstack server add security group caasp-worker1 cap
@@ -278,65 +307,84 @@ $ openstack server add security group caasp-worker1 cap
 
 * Access to CaaS Platform nodes
 +
-For CAP you might have to log into the CaaS Platform master and nodes. To do so,
+For {product} you might have to log into the CaaS Platform master and nodes. To do so,
 use ssh with the ssh key in the `automation/caasp-openstack-terraform/ssh`
 dir to login as root.
 
 
+[id='sec.caasp.bootstrap']
 ==== Bootstrap CaaS Platform
 
-* Point your browser at the IP of the CaaS Platform admin node
-* Create a new admin user
-* On `Initial CaaS Platform Configuration`
-  * _Admin node_ - the prefilled value (public/floating ip) needs to be replaced by the internal OpenStack caasp subnet ip of the CaaS Platform admin node
-  * Enable the "Install Tiller" checkbox
-* On `Bootstrap your CaaS Platform`
-  * Click `[Next]`
-* On `Select nodes and roles`
-  * Click `[Accept All nodes]` and wait until they appear in the upper part of the page
-  * Define master and nodes
-  * Click `[Next]`
-* On `Confirm bootstrap`
-  * _External Kubernetes API FQDN_ - Enter the public(floating) IP from the CaaS Platform master with added .xip.io domain suffix
-  * _External Dashboard FQDN_ - Enter the public(floating) IP from the CaaS Platform admin with added .xip.io omain suffix
+. Point your browser at the IP of the {caaspa} admin node
+. Create a new admin user
+. On _Initial CaaS Platform Configuration_
+  . _Admin node_: Replace the initial value (_public/floating IP_) with
+  internal {ostack} {caaspa} subnet IP of the {caaspa} admin node
+  . Enable the _Install Tiller_ checkbox.
+. On `Bootstrap your CaaS Platform`
+  . Click _Next_
+. On _Select nodes and roles_
+  . Click _Accept All nodes_ and wait until they appear in the upper part of the page
+  . Define master and nodes
+  . Click _Next_
+. On _Confirm bootstrap_
+  . _External Kubernetes API FQDN_: Specify the public (floating) IP from
+  the {caaspa} master and add the `.xip.io` domain suffix
+  . _External Dashboard FQDN_: Specify the public (floating) IP from the
+  {caaspa} admin and add the `.xip.io` domain suffix
 
-==== Prepare CaaS Platform for CAP
 
-Note: You can run commands on multiple nodes using salt on the admin node. Access it by logging in to the admin node and than enter the salt master container:
+[id='sec.caasp.prepare-combine']
+==== Prepare {caaspa} for {product}
+
+NOTE: You can run commands on multiple nodes using Salt on the admin node.
+
+Access it by logging in to the admin node and than enter the Salt master
+container:
 
 [source,bash]
 ----
 $ docker exec -ti `docker ps -q --filter name=salt-master` /bin/bash
 ----
 
-There you can execute commands using salt. For executing the same command on all worker nodes use a command like:
+There you can execute commands using Salt. For executing the same command on
+all worker nodes use a command like:
 
 [source,bash]
 ----
 $ salt -P "roles:(kube-minion)" cmd.run 'echo "hello"'
 ----
 
-This gets you full access to all aspects of the nodes so be careful with what commands you run.
+This gets you full access to all aspects of the nodes so be careful with what
+commands you run.
 
-===== Growing root filesystem
 
-* Commands to run on the CaaS Platform worker nodes
-+
-Resize your root filesystem of the worker to match the disk provided by OpenStack
-+
+[id='sec.caasp.root-file-system']
+===== Growing the Root File System
+
+Commands to run on the {caaspa} worker nodes
+
+Resize your root file system of the worker to match the disk provided by
+{ostack}:
+
 [source,bash]
 ----
 $ growpart /dev/vda 3
 $ btrfs filesystem resize max /.snapshots
 ----
 
-===== Set up hostpath to be used as storage class
 
-WARNING: Using hostpath as storage class is not going to work for a production setup. It might be enough for a simple test setup, though. Features like updating CAP will not work with a hostpath setup.*
+[id='sec.caasp.hostpath']
+===== Setting Up Hostpath As the Storage Class
 
-* Commands to run on the CaaS Platform master
+WARNING: Setting Hostpath as the storage class is useful in demonstration
+environments only. It is not usable in a production environment.
+For example, {product} cannot be updated with a Hostpath setup.
+
+* Commands to run on the {caaspa} master:
 +
-First edit `/etc/kubernetes/controller-manager` and add the `--enable-hostpath-provisioner` option there.
+First edit `/etc/kubernetes/controller-manager` and add the
+`--enable-hostpath-provisioner` option there.
 +
 Then run the following commands:
 +
@@ -347,7 +395,7 @@ $ chmod a+rwx /tmp/hostpath_pv
 $ systemctl restart kube-controller-manager.service
 ----
 
-* Commands to run on the CaaS Platform worker nodes
+* Commands to run on the {caaspa} worker nodes
 +
 [source,bash]
 ----
