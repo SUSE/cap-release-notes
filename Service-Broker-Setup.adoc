@@ -1,8 +1,5 @@
 == Service Broker Setup
 
-NOTE: This documentation assumes some future changes are in place.
-We currently have not published the helm charts and CF USB plugin yet.
-
 === Setting up and using a service broker sidecar
 
 We currently provide helm charts for two service brokers managing
@@ -85,6 +82,7 @@ $ helm repo add suse https://kubernetes-charts.suse.com/
 [source,bash]
 $ SIDECAR_NAMESPACE=my_sidecar
 $ helm install suse/cf-usb-sidecar-mysql \
+       --devel \
        --namespace ${SIDECAR_NAMESPACE} \
        --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081" \
        --values usb-config-values.yaml \
@@ -175,6 +173,7 @@ host name for the service location:
 ----
 SIDECAR_NAMESPACE=psql_sidecar
 $ helm install suse/cf-usb-sidecar-postgres \
+       --devel \
        --namespace ${SIDECAR_NAMESPACE} \
        --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-postgres.${SIDECAR_NAMESPACE}:8081" \
        --values usb-config-values.yaml \
