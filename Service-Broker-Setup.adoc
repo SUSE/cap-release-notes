@@ -194,16 +194,16 @@ $ cf delete-service my_service_instance
 
 . Install the link:https://github.com/SUSE/cf-usb-plugin/[CF-USB CLI plugin] for the link:https://github.com/cloudfoundry/cli/[Cloud Foundry CLI]
 [source,bash]
-$ cf install-plugin https://github.com/SUSE/cf-usb-plugin/releases/download/1.0.0/cf-plugin-usb-linux-amd64
+$ cf install-plugin https://github.com/SUSE/cf-usb-plugin/releases/download/1.0.0/cf-usb-plugin-1.0.0.0.g47b49cd-linux-amd64
 
 . Configure the CF-USB CLI plugin
 [source,bash]
-$ cf usb target https://usb.${DOMAIN}
+$ cf usb-target https://usb.${DOMAIN}
 
 . Remove the services
 [source,bash]
 # See `env.SERVICE_LOCATION` configuration value when deploying the helm chart.
-$ cf usb delete-driver-endpoint "http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081"
+$ cf usb-delete-driver-endpoint "http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081"
 
 . Delete helm release from Kubernetes
 [source,bash]
