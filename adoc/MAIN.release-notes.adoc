@@ -1,5 +1,5 @@
-Release Notes
-=============
+Release Notes: SUSE Cloud Application Platform 1.1
+==================================================
 
 :product: SUSE Cloud Applications Platform
 :version: 1.1
