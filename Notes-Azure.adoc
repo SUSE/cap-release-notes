@@ -156,3 +156,10 @@ $ az network nsg rule create --resource-group scf-resource-group --priority 204 
 For the next steps the public and private ip addresses written down before are required.
 
 Once the Kubernetes environment is prepared proceed with deployment of SUSE Cloud Application Platform as described in the https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html[Deployment Guide].
+
+*NOTE:* When deploying to Azure, you will need to set the Garden rootfs driver to `overlay-xfs` (the default would be `btrfs`). You can do that by setting the following key in the `scf-config-values.yaml`:
+
+```
+env:
+  GARDEN_ROOTFS_DRIVER: "overlay-xfs"
+```
