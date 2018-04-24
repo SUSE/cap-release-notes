@@ -51,7 +51,7 @@ env:
     -----END CERTIFICATE-----
 
   # UAA_CA_CERT can be obtained with the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d
+  #   kubectl get secret -n $NAMESPACE secrets-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d
   UAA_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
