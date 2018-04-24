@@ -43,7 +43,7 @@ env:
 
   # CAP internal certificate authorities
   # CF_CA_CERT can be obtained via the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  #   kubectl get secret -n $NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is the helm revision number
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
@@ -52,7 +52,7 @@ env:
 
   # UAA_CA_CERT can be obtained with the command line:
   #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d
-  UAA_CA_CERT:|
+  UAA_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
     -----END CERTIFICATE-----
@@ -80,7 +80,7 @@ $ helm repo add suse https://kubernetes-charts.suse.com/
 
 1. Install the helm chart:
 [source,bash]
-$ SIDECAR_NAMESPACE=my_sidecar
+$ SIDECAR_NAMESPACE=my-sidecar
 $ helm install suse/cf-usb-sidecar-mysql \
        --devel \
        --namespace ${SIDECAR_NAMESPACE} \
