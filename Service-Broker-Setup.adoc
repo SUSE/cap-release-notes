@@ -141,15 +141,15 @@ env:
 
   # CAP internal certificate authorities
   # CF_CA_CERT can be obtained via the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is the helm revision number
+  #   kubectl get secret -n $CF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # Where $CF_NAMESPACE is the namespace CAP was deployed in, and $REVISION is the helm revision number
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
     -----END CERTIFICATE-----
 
   # UAA_CA_CERT can be obtained with the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d
+  #   kubectl get secret -n $UAA_NAMESPACE secrets-$REVISION -o jsonpath='{.data.uaa-ca-cert}' | base64 -d
   UAA_CA_CERT:|
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
@@ -171,7 +171,7 @@ host name for the service location:
 
 [source,bash]
 ----
-SIDECAR_NAMESPACE=psql_sidecar
+SIDECAR_NAMESPACE=psql-sidecar
 $ helm install suse/cf-usb-sidecar-postgres \
        --devel \
        --namespace ${SIDECAR_NAMESPACE} \
