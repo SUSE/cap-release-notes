@@ -15,10 +15,8 @@ ifdef::env-github[]
 endif::[]
 // End attribute entry list
 
-
 [id='sec.service-broker']
 == Service Broker Setup
-
 
 [id='sec.service-broker.sidecar']
 === Setting up and Using a Service Broker Sidecar
@@ -30,24 +28,32 @@ PostgreSQL (<<sec.service-broker.postgresql>>) databases.
 This document describes how to use these charts in the context of
 a {product} cluster.
 
-
 [id='sec.service-broker.sidecar-pre']
 === Prerequisites
 
 - Helm must be configured. For more information, see the
   link:https://docs.helm.sh/using_helm/#quickstart[Helm documentation].
 - A working {product} deployment.
-- External databases must be reachable from the running applications. For
-  more information, see the
+- An Application Security Group (ASG) for applications to reach external databases. For more information, see the 
   link:http://docs.cloudfoundry.org/concepts/asg.html[CloudFoundry Documentation regarding application security groups].
-
++
+For testing purposes use the following (insecure) workaround:
++
+[source,bash]
+----
+$ echo > "internal-services.json" '[{ "destination": "0.0.0.0/0", "protocol": "all" }]'
+$ cf create-security-group internal-services-workaround internal-services.json
+$ cf bind-running-security-group internal-services-workaround
+$ cf bind-staging-security-group internal-services-workaround
+----
++
+If the ASG is applied later, running applications must be restarted to make use of the security group.
 
 [id='sec.service-broker.mysql']
 === Deploying the MySQL chart
 
 You need an external MySQL installation, with account credentials that allow
 creating and deleting both databases and users.
-
 
 [id='sec.service-broker.configure']
 === Configuring the Deployment
@@ -63,8 +69,8 @@ env:
   # and delete both databases and users
   SERVICE_MYSQL_HOST: mysql.example.com
   SERVICE_MYSQL_PORT: 3306
-  SERVICE_MYSQL_USER: AzureDiamond
-  SERVICE_MYSQL_PASS: hunter2
+  SERVICE_MYSQL_USER: mysql-user
+  SERVICE_MYSQL_PASS: mysql-password
 
   # CAP access credentials
   CF_ADMIN_USER: admin
@@ -73,16 +79,16 @@ env:
 
   # CAP internal certificate authorities
   # CF_CA_CERT can be obtained via the command line:
-  #   kubectl get secret -n $NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is the helm revision number
+  #   kubectl get secret -n $CF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # Where $*_NAMESPACE is the relevant kubernetes namespace of the deployment, and $REVISION is the helm revision number
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
     -----END CERTIFICATE-----
 
   # UAA_CA_CERT can be obtained with the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  UAA_CA_CERT:|
+  #   kubectl get secret -n $UAA_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  UAA_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
     -----END CERTIFICATE-----
@@ -91,13 +97,12 @@ env:
 
 # The whole "kube" section is optional
 kube:
-  organization: library # Docker registry organization
-  registry:             # Docker registry access configuration
-    hostname: registry.example.com
-    username: AzureDiamond
-    password: hunter2
+  organization: cap # Docker registry organization
+  registry:         # Docker registry access configuration
+    hostname: "registry.suse.com"
+    username: ""
+    password: ""
 ----
-
 
 [id='sec.service-broker.chart']
 === Deploy the Chart
@@ -112,7 +117,7 @@ $ helm repo add suse https://kubernetes-charts.suse.com/
 
 . Install the helm chart:
 [source,bash]
-$ SIDECAR_NAMESPACE=my_sidecar
+$ SIDECAR_NAMESPACE=mysql-sidecar
 $ helm install suse/cf-usb-sidecar-mysql \
   --devel \
   --namespace ${SIDECAR_NAMESPACE} \
@@ -129,7 +134,6 @@ $ watch kubectl get pods --namespace=${SIDECAR_NAMESPACE}
 +
 [source,bash]
 $ cf marketplace
-
 
 [id='sec.service-broker.use']
 ==== Using the Service
@@ -151,7 +155,6 @@ To bind the service instance to an application, use the `bind-service` subcomman
 $ cf bind-service my_application my_service_instance_name
 ----
 
-
 [id='sec.service-broker.postgresql']
 === Deploying the PostgreSQL chart
 
@@ -166,8 +169,8 @@ env:
   # delete both databases and users
   SERVICE_POSTGRESQL_HOST: postgres.example.com
   SERVICE_POSTGRESQL_PORT: 5432
-  SERVICE_POSTGRESQL_USER: AzureDiamond
-  SERVICE_POSTGRESQL_PASS: hunter2
+  SERVICE_POSTGRESQL_USER: pgsql-user
+  SERVICE_POSTGRESQL_PASS: pgsql-password
   # The SSL connection mode when connecting to the database.  For a list of
   # valid values, please see https://godoc.org/github.com/lib/pq
   SERVICE_POSTGRESQL_SSLMODE: disable
@@ -179,19 +182,16 @@ env:
 
   # CAP internal certificate authorities
   # CF_CA_CERT can be obtained via the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION \
-  #      -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is
-  # the helm revision number
+  #   kubectl get secret -n $CF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # Where $*_NAMESPACE is the relevant kubernetes namespace of the deployment, and $REVISION is the helm revision number
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
     -----END CERTIFICATE-----
 
   # UAA_CA_CERT can be obtained with the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION \
-  #     -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  UAA_CA_CERT:|
+  #   kubectl get secret -n $UAA_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  UAA_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
     -----END CERTIFICATE-----
@@ -200,11 +200,11 @@ env:
 
 # The whole "kube" section is optional
 kube:
-  organization: library # Docker registry organization
-  registry:             # Docker registry access configuration
-    hostname: registry.example.com
-    username: AzureDiamond
-    password: hunter2
+  organization: cap # Docker registry organization
+  registry:         # Docker registry access configuration
+    hostname: "registry.suse.com"
+    username: ""
+    password: ""
 ----
 
 The command to install the Helm chart is also different in that it needs a
@@ -212,7 +212,7 @@ different host name for the service location:
 
 [source,bash]
 ----
-SIDECAR_NAMESPACE=psql_sidecar
+SIDECAR_NAMESPACE=pgsql-sidecar
 $ helm install suse/cf-usb-sidecar-postgres \
   --devel \
   --namespace ${SIDECAR_NAMESPACE} \
@@ -237,7 +237,7 @@ $ cf delete-service my_service_instance
 . Install the link:https://github.com/SUSE/cf-usb-plugin/[CF-USB CLI plugin] for
 the link:https://github.com/cloudfoundry/cli/[Cloud Foundry CLI]:
 [source,bash]
-$cf install-plugin \
+$ cf install-plugin \
   https://github.com/SUSE/cf-usb-plugin/releases/download/1.0.0/cf-usb-plugin-1.0.0.0.g47b49cd-linux-amd64
 
 . Configure the {cf} USB CLI plugin:
