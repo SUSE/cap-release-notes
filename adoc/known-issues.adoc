@@ -1,3 +1,21 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:product: {suse} Cloud Applications Platform
+:version: 1.1
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
+:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+endif::[]
+// End attribute entry list
+
+
 [id='sec.issue']
 == Known Issues
 
