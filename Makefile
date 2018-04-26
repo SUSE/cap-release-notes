@@ -18,7 +18,8 @@ XSLTPROC_COMMAND = xsltproc \
 --stringparam profile.os "$(PROFOS)" \
 --xinclude --nonet
 
-prereqs = DC-release-notes adoc/MAIN.release-notes.adoc
+mainfile = adoc/MAIN.release-notes.adoc
+prereqs = DC-release-notes ${mainfile}
 daps_xslt_rn_dir = /usr/share/daps/daps-xslt/relnotes
 
 text_params =
@@ -27,7 +28,8 @@ webaccessparams = --stringparam="homepage=https://www.suse.com" \
   --stringparam="overview-page=https://www.suse.com/releasenotes" \
   --stringparam="overview-page-title=Back\ to\ Release\ Notes\ for\ SUSE\ products"
 
-.PHONY: clean pdf text single-html validate
+
+.PHONY: clean pdf text single-html validate update-entities
 
 all: single-html pdf text
 
@@ -50,6 +52,22 @@ build/release-notes/release-notes.txt: $(prereqs)
 	$(DAPS_COMMAND) -d $< text $(text_params)
 	iconv -f UTF-8 -t ASCII//TRANSLIT -o /dev/stdout $@ > $@.tmp
 	mv $@.tmp $@
+
+# We write "attribute entries" (in XML parlance, ~ entities) into each file
+# for proper GitHub preview, as GitHub preview currently does not follow
+# include:: directives
+# (https://github.com/github/markup/issues/1095#issuecomment-383348182).
+update-entries: adoc/entities.adoc
+	for file in adoc/*.adoc; do \
+	  if [[ "$$file" != "$<" ]] && [[ "$$file" != "${mainfile}" ]]; then \
+	    sed -i -n '/^\/\/ Start attribute entry list.*/,/^\/\/ End attribute entry list/ !p' $$file; \
+	    echo -e '// Start attribute entry list (Do not edit here! Edit in entities.adoc)\nifdef::env-github[]' > $$file.0; \
+	    cat $< >> $$file.0; \
+	    echo -e 'endif::[]\n// End attribute entry list' >> $$file.0; \
+	    cat $$file >> $$file.0; \
+	    mv $$file.0 $$file; \
+	  fi; \
+	done
 
 clean:
 	rm -rf build/
