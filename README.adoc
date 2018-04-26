@@ -2,13 +2,13 @@
 
 This repository contains additional notes for the releases of SUSE Cloud Application Platform which is currently in closed beta.
 
-* link:/Release-Notes.adoc[Release Notes] for specific releases
-* link:/Service-Broker-Setup.adoc[Service Broker Setup]
+* link:/adoc/Release-Notes.adoc[Release Notes] for specific releases
+* link:/adoc/Service-Broker-Setup.adoc[Service Broker Setup]
 
 Some hints for special environments:
 
-* link:/Notes-CaaSP.adoc[SUSE CaaS (Container as a Service) Platform]
-* link:/Notes-Azure.adoc[Microsoft Azure Platform]
+* link:/adoc/Notes-CaaSP.adoc[SUSE CaaS (Container as a Service) Platform]
+* link:/adoc/Notes-Azure.adoc[Microsoft Azure Platform]
 
 === Additional resources
 

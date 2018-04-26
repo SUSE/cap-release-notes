@@ -1,0 +1,227 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:product: {suse} Cloud Applications Platform
+:version: 1.1
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
+:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+endif::[]
+// End attribute entry list
+
+
+[id='sec.major-change']
+== Major Changes
+
+[id='sec.1_1']
+== 1.1 Release, April 2018
+
+
+[id='sec.1_1.new']
+=== What Is New?
+
+* Now supported on Microsoft Azure Container Services (AKS)
+* Cloud Foundry component and buildpack updates (see <<sec.1_1.feature>>)
+* PostgreSQL and MySQL service broker sidecars, configured and deployed via Helm
+* cf backup+ CLI plugin for saving, restoring, or migrating CF data and
+applications
+
+For more information about deploying {product}, see the _Deployment Guide_ at
+{deployment-url}.
+
+
+[id='sec.1_1.configuration']
+=== Configuration Changes
+
+Changes to the format of `values.yaml` for SCF and UAA require
+special handling when upgrading from {product} 1.0 to 1.1 if you are reusing
+configuration files (e.g. `scf-config-values.yaml`):
+
+* All secrets formerly set under `env:` are now set under `secrets:`.
+Any `_PASSWORD`, `_SECRET`, `_CERT`, or `_KEY` value explicitly set in
+`values.yaml` for {product} 1.0 should be moved into the `secrets:` section
+before running `helm upgrade` with the revised `values.yaml`. Find a sample
+configuration in <<app.secret-sample>>.
+
+* **These secrets must be resupplied on each upgrade** (for example, the
+`CLUSTER_ADMIN_PASSWORD`, `UAA_ADMIN_CLIENT_SECRET`) as they will not be carried
+forward automatically. We recommend always using a values file.
+
+* To rotate secrets, increment the `kube.secret_generation_counter`
+(immutable generated secrets will not be reset).
+
+* To upgrade {product} 1.0.1 to 1.1, run the following commands:
++
+[source,bash]
+----
+$ helm repo update
+$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
+$ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
+$ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
+$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml
+----
+
+** The `kube.external_ip` variable has been changed to `kube.external_ips`,
+allowing for services to be exposed on multiple Kubernetes worker nodes (for
+example, behind a TCP load balancer). Before upgrading, change the setting or
+add a new setting specified as an array. For example:
++
+----
+kube.external_ip=10.1.1.1
+kube.external_ips=["10.1.1.1"]
+----
+
+* Both variables can exist at the same time and be set to the same value for
+those in mixed version environments. To specify multiple addresses, use:
++
+[source]
+----
+kube.external_ips=["1.1.1.1", "2.2.2.2"]
+----
+
+** Upgrading from {product} 1.0.1 to 1.1
++
+An example `scf-config-values.yaml` for {product} 1.1 would look like this:
++
+[source,yaml]
+----
+env:
+    # Domain for SCF. DNS for *.DOMAIN must point to a kube node's (not master)
+    # external ip address.
+    DOMAIN: cf-dev.io
+
+kube:
+    # The IP address assigned to the kube node pointed to by the domain.
+    #### the external_ip setting changed to accept a list of IPs, and was
+    #### renamed to external_ips
+    external_ips: ["192.168.77.77"]
+    storage_class:
+        # Make sure to change the value in here to whatever storage class you use
+        persistent: "persistent"
+        shared: "shared"
+
+    # The registry the images will be fetched from. The values below should work for
+    # a default installation from the suse registry.
+    registry:
+       hostname: "registry.suse.com"
+       username: ""
+       password: ""
+    organization: "cap"
+
+    auth: rbac
+
+secrets:
+    # Password for user 'admin' in the cluster
+    CLUSTER_ADMIN_PASSWORD: changeme
+
+    # Password for SCF to authenticate with UAA
+    UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
+----
++
+To upgrade from {product} 1.0.1 to 1.1, run the following commands:
++
+[source,bash]
+----
+$ helm repo update
+$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
+$ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
+$ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
+$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
+$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml
+----
+
+[id='sec.1_1.issue']
+=== Known Issues
+
+* Do not set the `mysql-proxy`, `routing-api`, `tcp-router`, `blobstore` or
+`diego_access` roles to more than one instance each. Doing so can cause problems
+with subsequent upgrades which could lead to loss of data. Scalability of these
+roles will be enabled in an upcoming maintenance release.
+* To upgrade high availability (HA) configurations, scale down the `api`
+role count to 1. Then upon completing the upgrade, scale `api` up again to
+2 or more.
+** The `diego-api`, `diego-brain` and `routing-api` roles are configured as
+active/passive, and passive pods can appear as _Not Ready_. This is expected
+behavior.
+* Azure operators may not be able to connect to Azure Database for
+{mysql}/{postgre} databases with the current brokers.
+* `cf backup-restore` may leave Docker apps in a stopped state. These can be
+started manually.
+* `cf backup-restore` produces an unhelpful error if the file is not valid JSON.
+
+
+[id='sec.1_1.feature']
+=== Features and Fixes
+
+* Ability to specify multiple external IP addresses (please see <sec.issue>>
+  below on impact to upgrades)
+* MySQL now a clustered role
+* MySQL-proxy enabled for UAA
+* UAA has more logging enabled, so `SCF_LOG_HOST`, `SCF_LOG_PORT` and
+  `SCF_LOG_PROTOCOL` have been exposed
+* TCP routing ports are configurable and can be templatized
+* CPU limits can be set for pods.
+* Memory limits for pods now properly enforced.
+* Kubernetes annotations enabled so operators can specify what nodes
+  particular roles can be run on
+* Fixed cloud controller clock so that it will wait until API is ready
+* Overhauled secret rotation for upgrades
+
+* Includes these CF component versions:
+** diego-release 1.35
+** cf-mysql-release 36.10.0
+** cflinuxfs2-release 1.187.0
+** routing-release 0.172.0
+** garden-runc-release 1.11.1
+** nats-release 22
+** capi-release 1.49.0
+
+* Includes these {cf} buildpack versions:
+** go-buildpack-release 1.7.19-16-g37cc6b4
+** binary-buildpack-release 1.0.17
+** nodejs-buildpack-release 1.5.30-13-g584d686
+** ruby-buildpack-release 9adff61
+** php-buildpack-release ea8acd0
+** python-buildpack-release 1.5.16-14-ga2bbb4c
+** staticfile-buildpack-release 1.4.0-12-gdfc6c09
+** dotnet-core-buildpack-release 1.0.26-14-gf951834
+** java-buildpack-release 3.16-18-gfeab2b6
+
+
+[id='sec.1_0_1']
+== 1.0.1 Release, February 2018
+
+* Using the `helm upgrade` command in {product} 1.0 to 1.0.1 (scf 2.6.11 to
+  2.7.0) requires the use of `--force` to drop an unnecessary persistent
+  volume. Note that `helm upgrade` only works for multi-node clusters when
+  running with a proper HA storage class. For example, `hostpath` will not
+  work, as required stateful data can be lost.
+* Bump to {cf} Deployment (1.9.0), using {cf} Deployment not {cf} Release
+  from now on
+* Bump UAA to v53.3
+* Add ability to rename immutable secrets
+* Update CATS to be closer to what upstream is using
+* Make RBAC the default in the values.yaml (no need to specify anymore)
+* Increase test brain timeouts to stop randomly failing tests
+* Remove unused SANs from the generated TLS certificates
+* Remove the dependency on jq from stemcells
+* Fix duplicate buildpack ids when starting {cf}
+* Fix an issue in the vagrant box where compilation would fail due to old
+  versions of docker.
+* Fix an issue where diego cell could not be mounted on NFS-backed Kubernetes
+  storage class
+* Fix an issue where diego cell could not mount NFS in persi
+* Fix several problems reported with the syslog forwarding implementation
+
+
+[id='sec.1_0']
+== 1.0 Release, January 2018
+
+* Initial product release

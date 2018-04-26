@@ -1,26 +1,56 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:product: {suse} Cloud Applications Platform
+:version: 1.1
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
+:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+endif::[]
+// End attribute entry list
+
+
+[id='sec.service-broker']
 == Service Broker Setup
 
-=== Setting up and using a service broker sidecar
+
+[id='sec.service-broker.sidecar']
+=== Setting up and Using a Service Broker Sidecar
 
 We currently provide helm charts for two service brokers managing
-access to xref:mysql[MySQL] and xref:postgres[Postgres] databases.
+access to MySQL (see <<sec.service-broker.mysql>>) and
+PostgreSQL (<<sec.service-broker.postgresql>>) databases.
 
 This document describes how to use these charts in the context of
-a CAP cluster.
+a {product} cluster.
 
+
+[id='sec.service-broker.sidecar-pre']
 === Prerequisites
 
-- Helm must be configured; see link:https://docs.helm.sh/using_helm/#quickstart[helm docs] if you need assistance.
-- A working CAP deployment.
-- External databases must be reachable from the running applications; please
-  refer to link:http://docs.cloudfoundry.org/concepts/asg.html[application security groups] for details.
+- Helm must be configured. For more information, see the
+  link:https://docs.helm.sh/using_helm/#quickstart[Helm documentation].
+- A working {product} deployment.
+- External databases must be reachable from the running applications. For
+  more information, see the
+  link:http://docs.cloudfoundry.org/concepts/asg.html[CloudFoundry Documentation regarding application security groups].
 
-=== [[mysql]]Deploying the MySQL chart
+
+[id='sec.service-broker.mysql']
+=== Deploying the MySQL chart
 
 You need an external MySQL installation, with account credentials that allow
 creating and deleting both databases and users.
 
-=== Configuring the deployment
+
+[id='sec.service-broker.configure']
+=== Configuring the Deployment
 
 Create a values.yaml file (the rest of the document assumes it is called
 `usb-config-values.yaml`) with the settings required for the install.  Use the
@@ -52,7 +82,7 @@ env:
 
   # UAA_CA_CERT can be obtained with the command line:
   #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  UAA_CA_CERT: |
+  UAA_CA_CERT:|
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
     -----END CERTIFICATE-----
@@ -68,45 +98,51 @@ kube:
     password: hunter2
 ----
 
-=== Deploy the chart
+
+[id='sec.service-broker.chart']
+=== Deploy the Chart
 
 When deploying the chart, a Kubernetes namespace to install the sidecar to is
-required.  It may optionally be the same namespace as CAP is installed to,
+required.  It may optionally be the same namespace as {product} is installed to,
 though only one MySQL service may be deployed into a namespace at a time.
 
 1. Ensure that you have the SUSE helm chart repository available:
 [source,bash]
 $ helm repo add suse https://kubernetes-charts.suse.com/
 
-1. Install the helm chart:
+. Install the helm chart:
 [source,bash]
-$ SIDECAR_NAMESPACE=my-sidecar
+$ SIDECAR_NAMESPACE=my_sidecar
 $ helm install suse/cf-usb-sidecar-mysql \
-       --devel \
-       --namespace ${SIDECAR_NAMESPACE} \
-       --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081" \
-       --values usb-config-values.yaml \
-       --wait
+  --devel \
+  --namespace ${SIDECAR_NAMESPACE} \
+  --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081" \
+  --values usb-config-values.yaml \
+  --wait
 
-1. Wait for all the pods to be ready (Press `Ctrl+C` once all the pods are shown as fully ready)
-:
+. Wait for all the pods to be ready (Press `Ctrl+C` once all the pods are shown as fully ready):
++
 [source,bash]
 $ watch kubectl get pods --namespace=${SIDECAR_NAMESPACE}
 
-1. Confirm that the service has been added to your CAP installation
+. Confirm that the service has been added to your {product} installation:
++
 [source,bash]
 $ cf marketplace
 
-==== Using the service
 
-To create a new service instance, use the Cloud Foundry command line client as normal:
+[id='sec.service-broker.use']
+==== Using the Service
+
+To create a new service instance, use the {cf} command line client:
 
 [source,bash]
 ----
-$ cf create-service mysql default my_service_instance_name
+$ cf create-service mysql default service_instance_name
 ----
 
-Where the last argument is the desired name of the service instance.
+The last argument, `service_instance_name`, is the desired name of the
+service instance.
 
 To bind the service instance to an application, use the `bind-service` subcommand:
 
@@ -115,7 +151,9 @@ To bind the service instance to an application, use the `bind-service` subcomman
 $ cf bind-service my_application my_service_instance_name
 ----
 
-=== [[postgres]]Deploying the PostgreSQL chart
+
+[id='sec.service-broker.postgresql']
+=== Deploying the PostgreSQL chart
 
 The PostgreSQL configuration is slightly different from the MySQL configuration;
 the database-specific keys are named differently, and an additional key is
@@ -141,15 +179,18 @@ env:
 
   # CAP internal certificate authorities
   # CF_CA_CERT can be obtained via the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is the helm revision number
+  #   kubectl get secret -n $NAMESPACE secret-$REVISION \
+  #      -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # Where $NAMESPACE is the namespace CAP was deployed in, and $REVISION is
+  # the helm revision number
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
     -----END CERTIFICATE-----
 
   # UAA_CA_CERT can be obtained with the command line:
-  #   kubectl get secret -n $NAMESPACE secret-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  #   kubectl get secret -n $NAMESPACE secret-$REVISION \
+  #     -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   UAA_CA_CERT:|
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
@@ -166,45 +207,49 @@ kube:
     password: hunter2
 ----
 
-The command to install the helm chart is also different in having a different
-host name for the service location:
+The command to install the Helm chart is also different in that it needs a
+different host name for the service location:
 
 [source,bash]
 ----
 SIDECAR_NAMESPACE=psql_sidecar
 $ helm install suse/cf-usb-sidecar-postgres \
-       --devel \
-       --namespace ${SIDECAR_NAMESPACE} \
-       --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-postgres.${SIDECAR_NAMESPACE}:8081" \
-       --values usb-config-values.yaml \
-       --wait
+  --devel \
+  --namespace ${SIDECAR_NAMESPACE} \
+  --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-postgres.${SIDECAR_NAMESPACE}:8081" \
+  --values usb-config-values.yaml \
+  --wait
 ----
 
-=== Removing service broker sidecar deployments
+[id='sec.service-broker.remove-sidecar']
+=== Removing Service Broker Sidecar Deployments
 
-To correctly remove sidecar deployments, please take the following actions in order:
+To correctly remove sidecar deployments, take the following actions in order:
 
-1. Unbind any applications using instances of the service, and delete those instances
+1. Unbind any applications using instances of the service, and delete those instances:
++
 [source,bash]
 ----
 $ cf unbind-service my_app my_service_instance
 $ cf delete-service my_service_instance
 ----
 
-. Install the link:https://github.com/SUSE/cf-usb-plugin/[CF-USB CLI plugin] for the link:https://github.com/cloudfoundry/cli/[Cloud Foundry CLI]
+. Install the link:https://github.com/SUSE/cf-usb-plugin/[CF-USB CLI plugin] for
+the link:https://github.com/cloudfoundry/cli/[Cloud Foundry CLI]:
 [source,bash]
-$ cf install-plugin https://github.com/SUSE/cf-usb-plugin/releases/download/1.0.0/cf-usb-plugin-1.0.0.0.g47b49cd-linux-amd64
+$cf install-plugin \
+  https://github.com/SUSE/cf-usb-plugin/releases/download/1.0.0/cf-usb-plugin-1.0.0.0.g47b49cd-linux-amd64
 
-. Configure the CF-USB CLI plugin
+. Configure the {cf} USB CLI plugin:
 [source,bash]
 $ cf usb-target https://usb.${DOMAIN}
 
-. Remove the services
+. Remove the services:
 [source,bash]
 # See `env.SERVICE_LOCATION` configuration value when deploying the helm chart.
-$ cf usb-delete-driver-endpoint "http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081"
+$ cf usb delete-driver-endpoint "http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081"
 
-. Delete helm release from Kubernetes
+. Delete Helm release from Kubernetes:
 [source,bash]
 $ helm list # Find the name of the helm deployment
 $ helm delete --purge …

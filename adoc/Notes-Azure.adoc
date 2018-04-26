@@ -1,13 +1,37 @@
-== Notes for installing SUSE Cloud Application Platform on Microsoft Azure
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:product: {suse} Cloud Applications Platform
+:version: 1.1
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
+:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+endif::[]
+// End attribute entry list
 
-SUSE Cloud Application Platform supports running on https://azure.microsoft.com/en-us/services/container-service[Microsoft Azure Container Service (AKS)] starting with version 1.1. This document describes how to prepare the AKS environment for deployment of CAP. See the https://www.suse.com/documentation/cloud-application-platform-1/index.html[SUSE CAP Application Platform Documentation] for more detailed product information and instructions.
 
+[id='sec.azure']
+== Installing {product} on {azure}
+
+{product} {version} supports running on
+https://azure.microsoft.com/en-us/services/container-service[Microsoft Azure
+Container Service (AKS)]. This document describes how to prepare the AKS
+environment for deployment of {product}. For more detailed product
+information and instructions, see the {product} documentation at {doc-url}.
+
+
+[id='sec.azure.requirement']
 === Requirements
 
-To setup the Microsoft Azure environment the command line client *az* is required.
+To setup the {azure} environment, use the command line client `az`.
+On {suse} systems, it can be installed by executing the following commands:
 
-* On SUSE systems it can be installed by executing the following commands:
-+
 [source,bash]
 ----
 $ sudo zypper install -y curl
@@ -17,25 +41,28 @@ $ sudo zypper refresh
 $ sudo zypper install -y azure-cli
 ----
 
-* Login to Azure
-+
+Then log in to {azure}:
+
 [source,bash]
 ----
 $ az login
 ----
 
-=== Setup of Kubernetes
+[id='sec.azure.kubernetes']
+=== Setting Up Kubernetes
 
-* The subscriptions ID needs to be exctracted and written down:
+. Extract the subscriptions ID and write it down:
 +
 [source,bash]
 ----
 $ az account show --query "{ subscription_id: id }"
 ----
 
-
-* Create a service principal and write down the _password_ and _appId_.
-The term _<subscription-id>_ needs to be replaced by the _subscription_id_ noted in the in the previous step. If the Microsoft Azure service is supposed to be located in another data center then in the Western USA _westus_ needs to be replaced.
+. Create a service principal and write down the _password_ and _appId_. The
+term _<subscription-id>_ needs to be replaced by the _subscription_id_ noted
+in the in the previous step. If the {azure} service is supposed to be located
+in a data center other than a Western USA data center `westus` needs to be
+replaced.
 +
 [source,bash]
 ----
@@ -45,7 +72,10 @@ $ az group create --name scf-resource-group --location westus
 $ az ad sp create-for-rbac --role Contributor --scopes "/subscriptions/$SUBSCRIPTION_ID/resourceGroups/scf-resource-group"
 ----
 
-* Create a container service in Azure and replace the terms _<password>_ and _<application-id>_ by the one noted from the previous step. Additionally the phrase _<your-public-ssh-key>_ should be replaced by the public ssh key to be used:
+. Create a container service in {azure} and replace the terms
+_<password>_ and _<application-id>_ with the one noted from the previous
+step. Additionally, the phrase _<your-public-ssh-key>_ should be replaced by
+the public SSH key to be used:
 +
 [source,bash]
 ----
@@ -63,14 +93,17 @@ $ az acs create \
        --master-vm-size Standard_D2_v2
 ----
 
-* Prepare kubernetes environment. If there is already another running Kubernetes it is advised to backup the old configuration located in '~/.kube/'.
+. Prepare kubernetes environment. If there is already another running
+Kubernetes it is advised to backup the old configuration located in
+`~/.kube/`.
 +
 [source,bash]
 ----
 $ az acs kubernetes get-credentials --resource-group="scf-resource-group" --name="scf-container-service"
 ----
 +
-The previous command can fail if the ssh key is password protected. Adding the  _<private_key_file_name>_ to the ssh-agent will fix the issue:
+The above command can fail if the SSH key is password protected. Adding
+the _<private_key_file_name>_ to the ssh-agent will fix the issue:
 +
 [source,bash]
 ----
@@ -78,14 +111,16 @@ $ ssh-add ~/.ssh/<private_key_file_name>
 ----
 
 
-* The Kubernetes config can be verified by listing all the current pods. The minimal required Kubernetes version is 1.6.
+. The Kubernetes config can be verified by listing all the current pods. The minimal required Kubernetes version is 1.6.
 +
 [source,bash]
 ----
 $ kubectl get pods --all-namespaces
 ----
 
-* Enable cgroup swap accounting by running the following commands. This will reboot some of the machines which takes some time. This also does require the commands *sed* and *jq*.
+* Enable cgroup swap accounting by running the following commands. This will
+reboot some of the machines which takes some time. This also does require
+the commands `sed` and `jq`.
 +
 [source,bash]
 ----
@@ -108,7 +143,8 @@ $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contai
     --name {}
 ----
 
-* Create a new public ip address and write it down. It is needed for the later deployment.
+. Create a new public IP address and write it down. It is needed for the
+later deployment.
 +
 [source,bash]
 ----
@@ -116,30 +152,33 @@ $ az network public-ip create --resource-group scf-resource-group --name scf-pub
 ----
 
 
-* Extract the name of one of the kubes agent nic and write it down
+. Extract the name of one of the kubes agent NIC and write it down
 +
 [source,bash]
 ----
 $ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep 0
 ----
 
-* Attach the public ip to the master kubes node by replacing the term _<nic-name>_ by the one noted down before and write down the value of _privateIpAddress_. This private ip address is needed for the later deployment.
+. Attach the public IP to the master kubes node by replacing the term
+_<nic-name>_ by the one noted down before and write down the value of
+_privateIpAddress_. This private IP address is needed for the later
+deployment.
 +
 [source,bash]
 ----
 $ az network nic ip-config update --resource-group scf-resource-group --nic-name <nic-name> --name ipconfig1 --public-ip-address scf-public-ip
 ----
 
-
-* Extract the security group name of the master network security group and write it down
+. Extract the security group name of the master network security group and
+write it down:
 +
 [source,bash]
 ----
 $ az network nsg list --resource-group=scf-resource-group | jq -r '.[] | .name' | grep master
 ----
 
-
-* Create required security groups and replace _<security-group>_ by the name wrote down in the step before.
+. Create required security groups and replace _<security-group>_ with the name
+you wrote down in the previous step:
 +
 [source,bash]
 ----
@@ -151,15 +190,21 @@ $ az network nsg rule create --resource-group scf-resource-group --priority 203 
 $ az network nsg rule create --resource-group scf-resource-group --priority 204 --nsg-name $NSG_NAME --name scf-2793 --direction Inbound --destination-port-ranges 2793 --access Allow
 ----
 
-=== Deploying SUSE Cloud Application Platform
+[id='sec.azure.deploy']
+=== Deploying {product}
 
-For the next steps the public and private ip addresses written down before are required.
+For the next steps the public and private IP addresses written down before
+are required.
 
-Once the Kubernetes environment is prepared proceed with deployment of SUSE Cloud Application Platform as described in the https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html[Deployment Guide].
+When the Kubernetes environment is prepared, proceed with deployment of
+{product} as described in the _Deployment Guide_ at {deployment-url}.
 
-*NOTE:* When deploying to Azure, you will need to set the Garden rootfs driver to `overlay-xfs` (the default would be `btrfs`). You can do that by setting the following key in the `scf-config-values.yaml`:
-
-```
+*NOTE:* When deploying to {azure}, you will need to set the Garden rootfs
+driver to `overlay-xfs` (the default would be `btrfs`). You can do that by
+setting the following key in the `scf-config-values.yaml`:
++
+[source,yaml]
+----
 env:
   GARDEN_ROOTFS_DRIVER: "overlay-xfs"
-```
+----

@@ -1,0 +1,36 @@
+Release Notes: SUSE Cloud Application Platform 1.1
+==================================================
+
+include::entities.adoc[]
+
+:docinfo:
+
+This document provides guidance and an overview to high-level general
+features and updates for {product} {version}. It also describes capabilities
+and limitations of {product} {version}.
+For detailed information about deploying this product, see the
+_Deployment Guide_ at {deployment-url}.
+
+These release notes are updated periodically. The latest version of
+these release notes is always available at {rn-url}. General documentation
+can be found at {doc-url}.
+
+include::Release-Notes.adoc[]
+
+include::known-issues.adoc[]
+
+include::Notes-CaaSP.adoc[]
+
+include::Notes-Azure.adoc[]
+
+include::Service-Broker-Setup.adoc[]
+
+[id='app.secret-sample']
+== Appendix: Configuration with `secrets:` Section
+
+
+[source,yaml]
+----
+include::values-sample.yaml[]
+----
+
