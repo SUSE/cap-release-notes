@@ -15,8 +15,10 @@ ifdef::env-github[]
 endif::[]
 // End attribute entry list
 
+
 [id='sec.service-broker']
 == Service Broker Setup
+
 
 [id='sec.service-broker.sidecar']
 === Setting up and Using a Service Broker Sidecar
@@ -27,6 +29,7 @@ PostgreSQL (<<sec.service-broker.postgresql>>) databases.
 
 This document describes how to use these charts in the context of
 a {product} cluster.
+
 
 [id='sec.service-broker.sidecar-pre']
 === Prerequisites
@@ -49,11 +52,13 @@ $ cf bind-staging-security-group internal-services-workaround
 +
 If the ASG is applied later, running applications must be restarted to make use of the security group.
 
+
 [id='sec.service-broker.mysql']
 === Deploying the MySQL chart
 
 You need an external MySQL installation, with account credentials that allow
 creating and deleting both databases and users.
+
 
 [id='sec.service-broker.configure']
 === Configuring the Deployment
@@ -69,8 +74,8 @@ env:
   # and delete both databases and users
   SERVICE_MYSQL_HOST: mysql.example.com
   SERVICE_MYSQL_PORT: 3306
-  SERVICE_MYSQL_USER: mysql-user
-  SERVICE_MYSQL_PASS: mysql-password
+  SERVICE_MYSQL_USER: mysql-admin-user
+  SERVICE_MYSQL_PASS: mysql-admin-password
 
   # CAP access credentials
   CF_ADMIN_USER: admin
@@ -78,9 +83,10 @@ env:
   CF_DOMAIN: example.com
 
   # CAP internal certificate authorities
+  # The HELM REVISION can be obtained via the command line:
+  # $ kubectl get pods --namespace $UAA_NAMESPACE -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}'
   # CF_CA_CERT can be obtained via the command line:
-  #   kubectl get secret -n $CF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  # Where $*_NAMESPACE is the relevant kubernetes namespace of the deployment, and $REVISION is the helm revision number
+  # $ kubectl get secret -n $SCF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
@@ -103,6 +109,7 @@ kube:
     username: ""
     password: ""
 ----
+
 
 [id='sec.service-broker.chart']
 === Deploy the Chart
@@ -135,6 +142,7 @@ $ watch kubectl get pods --namespace=${SIDECAR_NAMESPACE}
 [source,bash]
 $ cf marketplace
 
+
 [id='sec.service-broker.use']
 ==== Using the Service
 
@@ -155,6 +163,7 @@ To bind the service instance to an application, use the `bind-service` subcomman
 $ cf bind-service my_application my_service_instance_name
 ----
 
+
 [id='sec.service-broker.postgresql']
 === Deploying the PostgreSQL chart
 
@@ -169,8 +178,8 @@ env:
   # delete both databases and users
   SERVICE_POSTGRESQL_HOST: postgres.example.com
   SERVICE_POSTGRESQL_PORT: 5432
-  SERVICE_POSTGRESQL_USER: pgsql-user
-  SERVICE_POSTGRESQL_PASS: pgsql-password
+  SERVICE_POSTGRESQL_USER: pgsql-admin-user
+  SERVICE_POSTGRESQL_PASS: pgsql-admin-password
   # The SSL connection mode when connecting to the database.  For a list of
   # valid values, please see https://godoc.org/github.com/lib/pq
   SERVICE_POSTGRESQL_SSLMODE: disable
@@ -181,9 +190,10 @@ env:
   CF_DOMAIN: example.com
 
   # CAP internal certificate authorities
+  # The HELM REVISION can be obtained via the command line:
+  # $ kubectl get pods --namespace $UAA_NAMESPACE -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}'
   # CF_CA_CERT can be obtained via the command line:
-  #   kubectl get secret -n $CF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
-  # Where $*_NAMESPACE is the relevant kubernetes namespace of the deployment, and $REVISION is the helm revision number
+  # $ kubectl get secret -n $SCF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
@@ -220,6 +230,7 @@ $ helm install suse/cf-usb-sidecar-postgres \
   --values usb-config-values.yaml \
   --wait
 ----
+
 
 [id='sec.service-broker.remove-sidecar']
 === Removing Service Broker Sidecar Deployments
