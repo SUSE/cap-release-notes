@@ -83,17 +83,17 @@ env:
   CF_DOMAIN: example.com
 
   # CAP internal certificate authorities
-  # The HELM REVISION can be obtained via the command line:
+  # The SECRET_NAME can be obtained via the command line:
   # $ kubectl get pods --namespace $UAA_NAMESPACE -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}'
   # CF_CA_CERT can be obtained via the command line:
-  # $ kubectl get secret -n $SCF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # $ kubectl get secret -n $SCF_NAMESPACE $SECRET_NAME -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
     -----END CERTIFICATE-----
 
   # UAA_CA_CERT can be obtained with the command line:
-  #   kubectl get secret -n $UAA_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  #   kubectl get secret -n $UAA_NAMESPACE $SECRET_NAME -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   UAA_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
@@ -190,17 +190,17 @@ env:
   CF_DOMAIN: example.com
 
   # CAP internal certificate authorities
-  # The HELM REVISION can be obtained via the command line:
+  # The SECRET_NAME can be obtained via the command line:
   # $ kubectl get pods --namespace $UAA_NAMESPACE -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}'
   # CF_CA_CERT can be obtained via the command line:
-  # $ kubectl get secret -n $SCF_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  # $ kubectl get secret -n $SCF_NAMESPACE $SECRET_NAME -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   CF_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIESGVsbG8gdGhlcmUgdGhlcmUgaXMgbm8gc2VjcmV0IG1lc3NhZ2UsIHNvcnJ5Cg==
     -----END CERTIFICATE-----
 
   # UAA_CA_CERT can be obtained with the command line:
-  #   kubectl get secret -n $UAA_NAMESPACE secrets-$REVISION -o jsonpath='{.data.internal-ca-cert}' | base64 -d
+  #   kubectl get secret -n $UAA_NAMESPACE $SECRET_NAME -o jsonpath='{.data.internal-ca-cert}' | base64 -d
   UAA_CA_CERT: |
     -----BEGIN CERTIFICATE-----
     MIIETm8gcmVhbGx5IEkgc2FpZCB0aGVyZSBpcyBubyBzZWNyZXQgbWVzc2FnZSEhCg==
