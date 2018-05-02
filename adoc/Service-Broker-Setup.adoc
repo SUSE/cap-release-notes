@@ -40,14 +40,14 @@ a {product} cluster.
 - An Application Security Group (ASG) for applications to reach external databases. For more information, see the 
   link:http://docs.cloudfoundry.org/concepts/asg.html[CloudFoundry Documentation regarding application security groups].
 +
-For testing purposes use the following (insecure) workaround:
+For testing purposes use the following (insecure) security group:
 +
 [source,bash]
 ----
 $ echo > "internal-services.json" '[{ "destination": "0.0.0.0/0", "protocol": "all" }]'
-$ cf create-security-group internal-services-workaround internal-services.json
-$ cf bind-running-security-group internal-services-workaround
-$ cf bind-staging-security-group internal-services-workaround
+$ cf create-security-group internal-services-test internal-services.json
+$ cf bind-running-security-group internal-services-test
+$ cf bind-staging-security-group internal-services-test
 ----
 +
 If the ASG is applied later, running applications must be restarted to make use of the security group.
