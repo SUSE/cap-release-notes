@@ -12,6 +12,8 @@ ifdef::env-github[]
 :cf: Cloud Foundry
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
+:mysql: MySQL
+:postgre: PostgreSQL
 endif::[]
 // End attribute entry list
 
@@ -21,15 +23,15 @@ endif::[]
 
 
 [id='sec.1_1']
-== 1.1 Release, April 2018
+=== 1.1 Release, April 2018
 
 
 [id='sec.1_1.new']
-=== What Is New?
+==== What Is New?
 
 * Now supported on Microsoft Azure Container Services (AKS)
 * Cloud Foundry component and buildpack updates (see <<sec.1_1.feature>>)
-* PostgreSQL and MySQL service broker sidecars, configured and deployed via Helm
+* {postgre} and {mysql} service broker sidecars, configured and deployed via Helm
 * cf backup+ CLI plugin for saving, restoring, or migrating CF data and
 applications
 
@@ -38,7 +40,7 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 
 
 [id='sec.1_1.configuration']
-=== Configuration Changes
+==== Configuration Changes
 
 Changes to the format of `values.yaml` for SCF and UAA require
 special handling when upgrading from {product} 1.0 to 1.1 if you are reusing
@@ -128,7 +130,7 @@ $ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values
 
 
 [id='sec.1_1.issue']
-=== Known Issues
+==== Known Issues
 
 * Do not set the `mysql-proxy`, `routing-api`, `tcp-router`, `blobstore` or
 `diego_access` roles to more than one instance each. Doing so can cause problems
@@ -148,12 +150,12 @@ started manually.
 
 
 [id='sec.1_1.feature']
-=== Features and Fixes
+==== Features and Fixes
 
 * Ability to specify multiple external IP addresses (please see <sec.issue>>
   below on impact to upgrades)
-* MySQL now a clustered role
-* MySQL-proxy enabled for UAA
+* {mysql} now a clustered role
+* {mysql}-proxy enabled for UAA
 * UAA has more logging enabled, so `SCF_LOG_HOST`, `SCF_LOG_PORT` and
   `SCF_LOG_PROTOCOL` have been exposed
 * TCP routing ports are configurable and can be templatized
@@ -186,7 +188,7 @@ started manually.
 
 
 [id='sec.1_0_1']
-== 1.0.1 Release, February 2018
+=== 1.0.1 Release, February 2018
 
 * Using the `helm upgrade` command in {product} 1.0 to 1.0.1 (scf 2.6.11 to
   2.7.0) requires the use of `--force` to drop an unnecessary persistent
@@ -212,6 +214,6 @@ started manually.
 
 
 [id='sec.1_0']
-== 1.0 Release, January 2018
+=== 1.0 Release, January 2018
 
 * Initial product release

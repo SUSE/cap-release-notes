@@ -12,6 +12,8 @@ ifdef::env-github[]
 :cf: Cloud Foundry
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
+:mysql: MySQL
+:postgre: PostgreSQL
 endif::[]
 // End attribute entry list
 
@@ -118,12 +120,17 @@ When deploying the chart, a Kubernetes namespace to install the sidecar to is
 required.  It may optionally be the same namespace as {product} is installed to,
 though only one MySQL service may be deployed into a namespace at a time.
 
-1. Ensure that you have the SUSE helm chart repository available:
+. Ensure that you have the SUSE helm chart repository available:
++
 [source,bash]
+----
 $ helm repo add suse https://kubernetes-charts.suse.com/
+----
 
 . Install the helm chart:
++
 [source,bash]
+----
 $ SIDECAR_NAMESPACE=mysql-sidecar
 $ helm install suse/cf-usb-sidecar-mysql \
   --devel \
@@ -131,16 +138,21 @@ $ helm install suse/cf-usb-sidecar-mysql \
   --set "env.SERVICE_LOCATION=http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081" \
   --values usb-config-values.yaml \
   --wait
+----
 
 . Wait for all the pods to be ready (Press `Ctrl+C` once all the pods are shown as fully ready):
 +
 [source,bash]
+----
 $ watch kubectl get pods --namespace=${SIDECAR_NAMESPACE}
+----
 
 . Confirm that the service has been added to your {product} installation:
 +
 [source,bash]
+----
 $ cf marketplace
+----
 
 
 [id='sec.service-broker.use']
@@ -237,7 +249,7 @@ $ helm install suse/cf-usb-sidecar-postgres \
 
 To correctly remove sidecar deployments, take the following actions in order:
 
-1. Unbind any applications using instances of the service, and delete those instances:
+. Unbind any applications using instances of the service, and delete those instances:
 +
 [source,bash]
 ----
@@ -247,20 +259,24 @@ $ cf delete-service my_service_instance
 
 . Install the link:https://github.com/SUSE/cf-usb-plugin/[CF-USB CLI plugin] for
 the link:https://github.com/cloudfoundry/cli/[Cloud Foundry CLI]:
++
 [source,bash]
 $ cf install-plugin \
   https://github.com/SUSE/cf-usb-plugin/releases/download/1.0.0/cf-usb-plugin-1.0.0.0.g47b49cd-linux-amd64
 
 . Configure the {cf} USB CLI plugin:
++
 [source,bash]
 $ cf usb-target https://usb.${DOMAIN}
 
 . Remove the services:
++
 [source,bash]
 # See `env.SERVICE_LOCATION` configuration value when deploying the helm chart.
 $ cf usb delete-driver-endpoint "http://cf-usb-sidecar-mysql.${SIDECAR_NAMESPACE}:8081"
 
 . Delete Helm release from Kubernetes:
++
 [source,bash]
 $ helm list # Find the name of the helm deployment
 $ helm delete --purge …
