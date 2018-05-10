@@ -24,6 +24,7 @@ https://azure.microsoft.com/en-us/services/container-service[Microsoft Azure
 Container Service (ACS)]. This document describes how to prepare the ACS
 environment for deployment of {product}. For more detailed product
 information and instructions, see the {product} documentation at {doc-url}.
+Please note: {product} is not currently supported on AKS (Managed Kubernetes).
 
 
 [id='sec.azure.requirement']
