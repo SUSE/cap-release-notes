@@ -21,7 +21,7 @@ endif::[]
 
 {product} {version} supports running on
 https://azure.microsoft.com/en-us/services/container-service[Microsoft Azure
-Container Service (AKS)]. This document describes how to prepare the AKS
+Container Service (ACS)]. This document describes how to prepare the ACS
 environment for deployment of {product}. For more detailed product
 information and instructions, see the {product} documentation at {doc-url}.
 
