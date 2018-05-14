@@ -2,6 +2,8 @@ Release Notes: SUSE Cloud Application Platform 1.1
 ==================================================
 
 include::entities.adoc[]
+:azuredocurl: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/cha_cap_depl-azure.html
+
 
 :docinfo:
 
@@ -21,7 +23,12 @@ include::known-issues.adoc[]
 
 include::Notes-CaaSP.adoc[]
 
-include::Notes-Azure.adoc[]
+
+== Installing {product} on {azure}
+
+For instructions on installing {product} on {azure}, see the official
+documentation at {azuredocurl}.
+
 
 include::Service-Broker-Setup.adoc[]
 
