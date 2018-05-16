@@ -10,3 +10,5 @@
 :cf: Cloud Foundry
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
+:mysql: MySQL
+:postgre: PostgreSQL

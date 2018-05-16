@@ -29,7 +29,7 @@ webaccessparams = --stringparam="homepage=https://www.suse.com" \
   --stringparam="overview-page-title=Back\ to\ Release\ Notes\ for\ SUSE\ products"
 
 
-.PHONY: clean pdf text single-html validate update-entities
+.PHONY: clean pdf text single-html validate update-entries
 
 all: single-html pdf text
 

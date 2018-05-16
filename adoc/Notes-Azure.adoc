@@ -12,6 +12,8 @@ ifdef::env-github[]
 :cf: Cloud Foundry
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
+:mysql: MySQL
+:postgre: PostgreSQL
 endif::[]
 // End attribute entry list
 
@@ -200,12 +202,16 @@ are required.
 When the Kubernetes environment is prepared, proceed with deployment of
 {product} as described in the _Deployment Guide_ at {deployment-url}.
 
-*NOTE:* When deploying to {azure}, you will need to set the Garden rootfs
+.Deploying to {azure}
+[NOTE]
+====
+When deploying to {azure}, you will need to set the Garden rootfs
 driver to `overlay-xfs` (the default would be `btrfs`). You can do that by
 setting the following key in the `scf-config-values.yaml`:
-+
+
 [source,yaml]
 ----
 env:
   GARDEN_ROOTFS_DRIVER: "overlay-xfs"
 ----
+====
