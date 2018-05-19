@@ -165,7 +165,7 @@ $ az network public-ip create --resource-group scf-resource-group --name scf-pub
 +
 [source,bash]
 ----
-$ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep 0
+$ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep nic-0
 ----
 
 . Attach the public IP to the master kubes node by replacing the term
