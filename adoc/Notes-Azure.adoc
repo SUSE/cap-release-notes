@@ -112,7 +112,13 @@ the _<private_key_file_name>_ to the ssh-agent will fix the issue:
 ----
 $ ssh-add ~/.ssh/<private_key_file_name>
 ----
-
++
+The above command also can fail if you did not removed the key from previous deployment. Following command will fix the issue:
++
+[source,bash]
+----
+$ ssh-keygen -R myscfmgmt.westus.cloudapp.azure.com
+----
 
 . The Kubernetes config can be verified by listing all the current pods. The minimal required Kubernetes version is 1.6.
 +
