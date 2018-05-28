@@ -192,26 +192,75 @@ $ az network nsg rule create --resource-group scf-resource-group --priority 202 
 $ az network nsg rule create --resource-group scf-resource-group --priority 203 --nsg-name $NSG_NAME --name scf-2222 --direction Inbound --destination-port-ranges 2222 --access Allow
 $ az network nsg rule create --resource-group scf-resource-group --priority 204 --nsg-name $NSG_NAME --name scf-2793 --direction Inbound --destination-port-ranges 2793 --access Allow
 ----
++
+If you plan to deploy the Stratos Web Console as well, create the following rule in addition:
++
+[source,bash]
+----
+$ az network nsg rule create --resource-group scf-resource-group --priority 205 --nsg-name $NSG_NAME --name scf-8443 --direction Inbound --destination-port-ranges 8443 --access Allow
+----
+
 
 [id='sec.azure.deploy']
-=== Deploying {product}
+=== Deploying {product} to {azure}
 
 For the next steps the public and private IP addresses written down before
 are required.
 
-When the Kubernetes environment is prepared, proceed with deployment of
-{product} as described in the _Deployment Guide_ at {deployment-url}.
-
-.Deploying to {azure}
 [NOTE]
 ====
-When deploying to {azure}, you will need to set the Garden rootfs
-driver to `overlay-xfs` (the default would be `btrfs`). You can do that by
-setting the following key in the `scf-config-values.yaml`:
+When deploying to {azure}, you will need to use an adjusted scf-config-values.yaml 
+file with changes for:
 
+   * enter public and private IP as noted down before
+   * set the Garden rootfs driver to `overlay-xfs`
+   * select Kubernetes storage class (e.g. `default`)
+   * unset authentication setting `auth:`
+====
+
+Please use the following example:
 [source,yaml]
 ----
-env:
-  GARDEN_ROOTFS_DRIVER: "overlay-xfs"
+env:    
+    # Enter the domain you created for your CAP cluster
+    DOMAIN: <public ip of chosen node vm>.nip.io
+    
+    # UAA host and port
+    UAA_HOST: uaa.<public ip of chosen node vm>.nip.io
+    UAA_PORT: 2793
+
+    # set the Garden rootfs driver to `overlay-xfs` on Microsoft Azure
+    GARDEN_ROOTFS_DRIVER: "overlay-xfs"
+
+kube:
+    # The IP address assigned to the kube node pointed to by the domain.
+    external_ips: [<private ip of chosen node vm>]
+    
+    # Run kubectl get storageclasses
+    # to view your available storage classes
+    storage_class: 
+        persistent: "default"
+        shared: "shared"
+        
+    # The registry the images will be fetched from. 
+    # The values below should work for
+    # a default installation from the SUSE registry.
+    registry: 
+        hostname: "registry.suse.com"
+        username: ""
+        password: ""
+    organization: "cap"
+
+    # Required for Microsoft Azure
+    auth:
+
+secrets:
+    # Create a password for your CAP cluster
+    CLUSTER_ADMIN_PASSWORD: changeme
+    
+    # Create a password for your UAA client secret
+    UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
 ----
-====
+
+When the Kubernetes environment is prepared, proceed with deployment of
+{product} as described in the _Deployment Guide_ at {deployment-url}.
