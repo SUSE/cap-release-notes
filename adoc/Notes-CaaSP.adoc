@@ -20,13 +20,13 @@ endif::[]
 [id='sec.caasp']
 == Installing {product} on {caasp}
 
-Prerequisite for deploying {cap} is a working installation of Kubernetes. {caasp} is one way to provide that.
+Prerequisite for deploying {product} is a working installation of Kubernetes. {caaspa} is one way to provide that.
 
-For general instructions of how to install {caasp} see the https://www.suse.com/documentation/suse-caasp/index.html[{caasp} documentation].
+For general instructions of how to install {caaspa} see the https://www.suse.com/documentation/suse-caasp/index.html[{caaspa} documentation].
 
-Once you have a working installation of {caasp} follow the instructions in the https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html[{cap} manual] to deploy {cap}.
+Once you have a working installation of {caaspa} follow the instructions in the https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html[{product} manual] to deploy {product}.
 
-The following sections describe one way to get {caasp} deployed on OpenStack so that it is prepared for the deployment of {cap}.
+The following sections describe one way to get {caaspa} deployed on OpenStack so that it is prepared for the deployment of {product}.
 
 [id='sec.caasp.openstack']
 === Deploying {caaspa} on {ostack} with Terraform
