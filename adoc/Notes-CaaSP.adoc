@@ -17,147 +17,20 @@ ifdef::env-github[]
 endif::[]
 // End attribute entry list
 
-
 [id='sec.caasp']
 == Installing {product} on {caasp}
 
-[id='sec.general']
-=== General
+Prerequisite for deploying {cap} is a working installation of Kubernetes. {caasp} is one way to provide that.
 
-* The port 2793 has to be open on the workers, for terraform in the
-'secgroup_worker' resource:
-+
-[source,yaml]
-----
-# diego-access-public (SCF)
-rule {
-  from_port   = 2222
-  to_port     = 2222
-  ip_protocol = "tcp"
-  cidr        = "0.0.0.0/0"
-}
+For general instructions of how to install {caasp} see the https://www.suse.com/documentation/suse-caasp/index.html[{caasp} documentation].
 
-# uaa-pulic (UAA)
-rule {
-  from_port   = 2793
-  to_port     = 2793
-  ip_protocol = "tcp"
-  cidr        = "0.0.0.0/0"
-}
+Once you have a working installation of {caasp} follow the instructions in the https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html[{cap} manual] to deploy {cap}.
 
-rule {
-  from_port   = 2793
-  to_port     = 2793
-  ip_protocol = "udp"
-  cidr        = "0.0.0.0/0"
-}
-
-# router-public (SCF)
-rule {
-  from_port   = 4443
-  to_port     = 4443
-  ip_protocol = "tcp"
-  cidr        = "0.0.0.0/0"
-}
-
-# tcp-router-public (SCF)
-rule {
-  from_port   = 2341
-  to_port     = 2341
-  ip_protocol = "tcp"
-  cidr        = "0.0.0.0/0"
-}
-
-# tcp-router-public (SCF)
-rule {
-  from_port   = 20000
-  to_port     = 20008
-  ip_protocol = "tcp"
-  cidr        = "0.0.0.0/0"
-}
-
-# stultified-unicorn-ui-next (STRATOS)
-rule {
-  from_port   = 8443
-  to_port     = 30820
-  ip_protocol = "tcp"
-  cidr        = "0.0.0.0/0"
-}
-----
-
-* Designate DNS is configured and it supports wildcards, so for example:
-+
-----
-lc.qa.cloud.caasp.suse.net.	  A 	      10.84.72.127
-*.lc.qa.cloud.caasp.suse.net.	CNAME 	  lc.qa.cloud.caasp.suse.net.
-----
-+
--> 10.84.72.127 is the floating IP of the Kubernetes worker with the
-private IP 10.0.6.18
-+
--> The content of scf-config-values.yaml :
-+
-[source,yaml]
-----
-env:
-    CLUSTER_ADMIN_PASSWORD: susetesting
-    DOMAIN: lc.qa.cloud.caasp.suse.net
-    UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
-    UAA_HOST: uaa.lc.qa.cloud.caasp.suse.net
-    UAA_PORT: 2793
-kube:
-    external_ip: 10.0.6.18
-    storage_class:
-        persistent: persistent
-----
-
-[id='sec.caasp.ceph']
-=== Connecting to a Ceph cluster
-
-* For RBD StorageClass
-+
-Only **if you do not have or do not want** your secrets stored in Kubernetes,
-`/etc/ceph/ceph.conf` and `/etc/ceph/ceph.client.admin.keyring` must be present on
-the Kubernetes masters so the masters can dynamically create the PVC.
-+
-For testing purposes only, I used the admin for both admin/user.
-+
-[source,yaml]
-----
-kind: StorageClass
-apiVersion: storage.k8s.io/v1
-metadata:
-  name: persistent
-provisioner: kubernetes.io/rbd
-parameters:
-  monitors: 10.0.5.245:6789,10.0.5.250:6789,10.0.5.247:6789
-  adminId: admin
-  adminSecretName: ceph-secret-admin
-  adminSecretNamespace: default
-  pool: k8s
-  userId: admin
-  userSecretName: ceph-secret-admin
-----
-
-* In Kubernetes, ceph secret must exist in all namespaces, so I created
-them before installing the charts:
-+
-[source,yaml]
-----
-$ kubectl create namespace uaa
-$ kubectl create secret generic ceph-secret-admin
---from-file=ceph-client-key --type=kubernetes.io/rbd --namespace=uaa
-$ kubectl create namespace scf
-$ kubectl create secret generic ceph-secret-admin
---from-file=ceph-client-key --type=kubernetes.io/rbd --namespace=scf
-$ kubectl create namespace stratos
-$ kubectl create secret generic ceph-secret-admin
---from-file=ceph-client-key --type=kubernetes.io/rbd --namespace=stratos
-----
-
+The following sections describe one way to get {caasp} deployed on OpenStack so that it is prepared for the deployment of {cap}.
 
 [id='sec.caasp.openstack']
-=== Running {caaspa} on {ostack}
+=== Deploying {caaspa} on {ostack} with Terraform
+
 
 There are {ostack} images of {caaspa} which can be used to create a
 Kubernetes cluster running on top of {ostack}.
