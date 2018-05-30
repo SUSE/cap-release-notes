@@ -112,7 +112,13 @@ the _<private_key_file_name>_ to the ssh-agent will fix the issue:
 ----
 $ ssh-add ~/.ssh/<private_key_file_name>
 ----
-
++
+The above command also can fail if you did not removed the key from previous deployment. Following command will fix the issue:
++
+[source,bash]
+----
+$ ssh-keygen -R myscfmgmt.westus.cloudapp.azure.com
+----
 
 . The Kubernetes config can be verified by listing all the current pods. The minimal required Kubernetes version is 1.6.
 +
@@ -129,19 +135,19 @@ the commands `sed` and `jq`.
 ----
 $ sudo zypper in -y jq sed
 $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
-  xargs -i{} az vm run-command invoke \
+  xargs -I{} az vm run-command invoke \
     --resource-group "scf-resource-group" \
     --command-id RunShellScript \
     --scripts "sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=\"console=tty1 console=ttyS0 earlyprintk=ttyS0 rootdelay=300\"/GRUB_CMDLINE_LINUX_DEFAULT=\"console=tty1 console=ttyS0 earlyprintk=ttyS0 rootdelay=300 swapaccount=1\"/g' /etc/default/grub.d/50-cloudimg-settings.cfg" --name {}
 
 $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
-  xargs -i{} az vm run-command invoke \
+  xargs -I{} az vm run-command invoke \
     --resource-group "scf-resource-group" \
     --command-id RunShellScript \
     --scripts "sudo update-grub" --name {}
 
 $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
-  xargs -i{} az vm restart --no-wait \
+  xargs -I{} az vm restart --no-wait \
     --resource-group "scf-resource-group" \
     --name {}
 ----
@@ -159,7 +165,7 @@ $ az network public-ip create --resource-group scf-resource-group --name scf-pub
 +
 [source,bash]
 ----
-$ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep 0
+$ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep nic-0
 ----
 
 . Attach the public IP to the master kubes node by replacing the term
