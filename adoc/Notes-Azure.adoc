@@ -256,10 +256,10 @@ kube:
 
 secrets:
     # Create a password for your CAP cluster
-    CLUSTER_ADMIN_PASSWORD: changeme
+    CLUSTER_ADMIN_PASSWORD: password
     
     # Create a password for your UAA client secret
-    UAA_ADMIN_CLIENT_SECRET: uaa-admin-client-secret
+    UAA_ADMIN_CLIENT_SECRET: password
 ----
 
 When the Kubernetes environment is prepared, proceed with deployment of
