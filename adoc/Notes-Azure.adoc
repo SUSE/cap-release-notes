@@ -129,19 +129,19 @@ the commands `sed` and `jq`.
 ----
 $ sudo zypper in -y jq sed
 $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
-  xargs -i{} az vm run-command invoke \
+  xargs -I{} az vm run-command invoke \
     --resource-group "scf-resource-group" \
     --command-id RunShellScript \
     --scripts "sudo sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT=\"console=tty1 console=ttyS0 earlyprintk=ttyS0 rootdelay=300\"/GRUB_CMDLINE_LINUX_DEFAULT=\"console=tty1 console=ttyS0 earlyprintk=ttyS0 rootdelay=300 swapaccount=1\"/g' /etc/default/grub.d/50-cloudimg-settings.cfg" --name {}
 
 $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
-  xargs -i{} az vm run-command invoke \
+  xargs -I{} az vm run-command invoke \
     --resource-group "scf-resource-group" \
     --command-id RunShellScript \
     --scripts "sudo update-grub" --name {}
 
 $ az vm list -g "scf-resource-group" | jq '.[] | select (.tags.poolName | contains("agent")) | .name' | \
-  xargs -i{} az vm restart --no-wait \
+  xargs -I{} az vm restart --no-wait \
     --resource-group "scf-resource-group" \
     --name {}
 ----
@@ -159,7 +159,7 @@ $ az network public-ip create --resource-group scf-resource-group --name scf-pub
 +
 [source,bash]
 ----
-$ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep 0
+$ az network nic list --resource-group scf-resource-group | grep name | grep agent | grep nic-0
 ----
 
 . Attach the public IP to the master kubes node by replacing the term
@@ -252,7 +252,7 @@ kube:
     organization: "cap"
 
     # Required for Microsoft Azure
-    auth:
+    auth: none
 
 secrets:
     # Create a password for your CAP cluster
