@@ -22,6 +22,93 @@ endif::[]
 == Major Changes
 
 
+[id='sec.1_1_1’]
+=== 1.1.1 Release, May 2018
+
+[id='sec.1_1_1.issue']
+==== Known Issues
+
+* If you are using the USB sidecars with an existing {product} installation and you upgrade, you may run into issues whereby it’s impossible to delete service instances or apps. You’ll need to run the following command to update one of the passwords associated with the sidecars:
+
++
+[source]
+----
+CF_NAMESPACE=scf
+SECRET=$(kubectl get --namespace $CF_NAMESPACE deploy -o json | jq -r '[.items[].spec.template.spec.containers[].env[] | select(.name == "INTERNAL_CA_CERT").valueFrom.secretKeyRef.name] | unique[]')
+USB_PASSWORD=$(kubectl get -n scf secret $SECRET -o jsonpath='{@.data.cf-usb-password}' | base64 -d)
+USB_ENDPOINT=$(cf curl /v2/service_brokers | jq -r '.resources[] | select(.entity.name=="usb").entity.broker_url')
+cf update-service-broker usb broker-admin "$USB_PASSWORD" "$USB_ENDPOINT"
+----
+
+* If you see the following behaviour during an upgrade to {product} 1.1.1:
+** The `diego-api` role is not fully functional (in other words, appearing as `(0/1)`)
+** The `bbs` job in the pod which is not starting, as per `monit summary`
+** The bbs stdout log `/var/vcap/sys/log/bbs/bbs.stdout.log` contains an entry that says _Error 1062: Duplicate entry 'version' for key 'PRIMARY'_
++
+Then do the following to unblock the upgrade:
+** kubectl exec into (one of) the mysql pod(s)
++
+----
+kubectl exec -it mysql-0 --namespace cf -- env TERM=xterm /bin/bash
+----
+** Use `msql` to connect to the diego database
++
+----
+mysql --password=$MYSQL_ADMIN_PASSWORD diego
+----
+** Remove the offending entry
++
+----
+DELETE FROM configurations WHERE id='version';
+----
+
+* Do not set the `mysql-proxy`, `routing-api`, `tcp-router`, `blobstore` or
+`diego_access` roles to more than one instance each. Doing so can cause problems
+with subsequent upgrades which could lead to loss of data. Scalability of these
+roles will be enabled in an upcoming maintenance release.
+* The `diego-api`, `diego-brain` and `routing-api` roles are configured as
+active/passive, and passive pods can appear as _Not Ready_. This is expected
+behavior.
+* Azure operators may not be able to connect to Azure Database for
+{mysql}/{postgre} databases with the current brokers.
+
+
+[id='sec.1_1_1.feature']
+==== Features and Fixes
+
+* Enabled `router.forwarded_client_cert` variable for router
+* New syslog roles can have anti-affinity
+* {mysql}-proxy healthcheck timeouts are configurable 
+* cfdot added to all diego roles
+* Removed time stamp check for rsyslog
+* Upgrades will handle certificates better by having the required SAN metadata
+* Rotatable secrets are now immutable
+* Immutable config variables will not be generated
+* For high availability (HA) configurations, upgrades no longer require the `api` role to be scaled down
+* `cf-backup-restore` handles Docker apps properly now
+* `cf-backup-restore` returns a useful error if invalid JSON is parsed 
+* PHP buildpack has been bumped to v.4.3.53.1 address MS-ISAC ADVISORY NUMBER 2018-046
+* Updated sidecars for {mysql} and {postgre}
+
+* Includes these CF component versions:
+** uaa v56.0
+** cf-deployment v.1.21
+** loggregator-release v102.1
+** cf-opensuse42-release 459ef9f
+** cf-syslog-drain-release v6.0
+** cf-usb 79b1a8c
+** cf-mysql-release v36.11.0
+** routing-release 0.174.0
+** cf-sle12-release b96cbc2
+** diego-release v2.1.0
+** uaa-fissile-release 0.0.1-243-ge11bf8d
+** cflinuxfs2-release v1.194.0
+** cf-smoke-tests-release 40.0.1
+** nats-release v23
+** scf-helper-release/src/github.com/cloudfoundry/cf-acceptance-tests 3beb6ed
+** capi-release 1.52.0
+
+
 [id='sec.1_1']
 === 1.1 Release, April 2018
 
@@ -152,7 +239,7 @@ started manually.
 [id='sec.1_1.feature']
 ==== Features and Fixes
 
-* Ability to specify multiple external IP addresses (please see <sec.issue>>
+* Ability to specify multiple external IP addresses (please see <<sec.issue>>
   below on impact to upgrades)
 * {mysql} now a clustered role
 * {mysql}-proxy enabled for UAA
