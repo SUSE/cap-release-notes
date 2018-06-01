@@ -28,6 +28,8 @@ endif::[]
 [id='sec.1_1_1.issue']
 ==== Known Issues
 
+* Upgrading to this release will cause a full secret rotation (i.e., all the internal passwords and certificates the various parts use to talk to each other will be changed). This should have not cause issues with using the cluster. However, there will be some downtime as each of the roles will need to be restarted. If you are using the bundled UAA release, that will need to be upgraded first and the certificates passed to the SCF upgrade as was done on initial installation.
+
 * When upgrading {product}, existing deployments of the `cf-usb-sidecar-mysql` or `cf-usb-sidecar-postgres` brokers may subsequently be unable to delete service instances. The following commands fix this problem by updating the internal cf-usb password:
 
 +
