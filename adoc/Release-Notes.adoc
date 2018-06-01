@@ -28,25 +28,30 @@ endif::[]
 [id='sec.1_1_1.issue']
 ==== Known Issues
 
-* If you are using the USB sidecars with an existing {product} installation and you upgrade, you may run into issues whereby it’s impossible to delete service instances or apps. You’ll need to run the following command to update one of the passwords associated with the sidecars:
+* When upgrading {product}, existing deployments of the `cf-usb-sidecar-mysql` or `cf-usb-sidecar-postgres` brokers may subsequently be unable to delete service instances. The following commands fix this problem by updating the internal cf-usb password:
 
 +
 [source]
 ----
 CF_NAMESPACE=scf
-SECRET=$(kubectl get --namespace $CF_NAMESPACE deploy -o json | jq -r '[.items[].spec.template.spec.containers[].env[] | select(.name == "INTERNAL_CA_CERT").valueFrom.secretKeyRef.name] | unique[]')
-USB_PASSWORD=$(kubectl get -n scf secret $SECRET -o jsonpath='{@.data.cf-usb-password}' | base64 -d)
-USB_ENDPOINT=$(cf curl /v2/service_brokers | jq -r '.resources[] | select(.entity.name=="usb").entity.broker_url')
+SECRET=$(kubectl get --namespace $CF_NAMESPACE deploy -o json \
+  | jq -r '[.items[].spec.template.spec.containers[].env[] \
+  | select(.name == "INTERNAL_CA_CERT").valueFrom.secretKeyRef.name] \
+  | unique[]')
+USB_PASSWORD=$(kubectl get -n scf secret $SECRET -o jsonpath='{@.data.cf-usb-password}' \
+  | base64 -d)
+USB_ENDPOINT=$(cf curl /v2/service_brokers \
+  | jq -r '.resources[] | select(.entity.name=="usb").entity.broker_url')
 cf update-service-broker usb broker-admin "$USB_PASSWORD" "$USB_ENDPOINT"
 ----
 
-* If you see the following behaviour during an upgrade to {product} 1.1.1:
-** The `diego-api` role is not fully functional (in other words, appearing as `(0/1)`)
-** The `bbs` job in the pod which is not starting, as per `monit summary`
-** The bbs stdout log `/var/vcap/sys/log/bbs/bbs.stdout.log` contains an entry that says _Error 1062: Duplicate entry 'version' for key 'PRIMARY'_
+* If after upgrading:
+** the `diego-api` role is not fully functional (i.e. appearing as `(0/1)`)
+** the `bbs` job in the pod is not starting (as per `monit summary`)
+** the bbs stdout log `/var/vcap/sys/log/bbs/bbs.stdout.log` contains _Error 1062: Duplicate entry 'version' for key 'PRIMARY'_
 +
-Then do the following to unblock the upgrade:
-** kubectl exec into (one of) the mysql pod(s)
+Do the following to unblock the upgrade:
+** `kubectl exec` into (one of) the mysql pod(s)
 +
 ----
 kubectl exec -it mysql-0 --namespace cf -- env TERM=xterm /bin/bash
