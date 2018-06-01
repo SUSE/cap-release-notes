@@ -56,10 +56,10 @@ Do the following to unblock the upgrade:
 ----
 kubectl exec -it mysql-0 --namespace cf -- env TERM=xterm /bin/bash
 ----
-** Use `msql` to connect to the diego database
+** Use `mysql` to connect to the diego database
 +
 ----
-mysql --password=$MYSQL_ADMIN_PASSWORD diego
+mysql --defaults-file=/var/vcap/jobs/mysql/config/mylogin.cnf diego
 ----
 ** Remove the offending entry
 +
