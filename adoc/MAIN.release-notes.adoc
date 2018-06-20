@@ -23,7 +23,9 @@ include::Notes-CaaSP.adoc[]
 
 include::Notes-Azure.adoc[]
 
+////
 include::Service-Broker-Setup.adoc[]
+////
 
 [id='app.secret-sample']
 == Appendix: Configuration with `secrets:` Section
