@@ -8,7 +8,7 @@ This repository contains additional notes for the releases of SUSE Cloud Applica
 Some hints for special environments:
 
 * link:/adoc/Notes-CaaSP.adoc[SUSE CaaS (Container as a Service) Platform]
-* link:/adoc/Notes-Azure.adoc[Microsoft Azure Platform]
+* link:https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/cha_cap_depl-azure.html[Microsoft Azure Platform]
 
 === Additional resources
 
