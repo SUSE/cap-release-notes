@@ -18,6 +18,8 @@ endif::[]
 // End attribute entry list
 
 [id='sec.caasp']
+== Please note that the procedure detailed below is NOT a supported way to deploy SUSE CaaS Platform. This page is for internal development use only and MUST NOT be provided to any customers or partners.
+
 == Installing {product} on {caasp}
 
 Prerequisite for deploying {product} is a working installation of Kubernetes. {caaspa} is one way to provide that.
