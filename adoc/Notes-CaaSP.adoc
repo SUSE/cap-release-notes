@@ -18,11 +18,14 @@ endif::[]
 // End attribute entry list
 
 [id='sec.caasp']
-== Please note that the procedure detailed below is NOT a supported way to deploy {caasp]. 
+== Please note that the procedure detailed below is NOT a supported way to deploy {caasp}. 
 
 This page is for internal development use only and MUST NOT be provided to any customers or partners.
+
 For supported ways to deploy {caasp} please follow the deployment guides for your chosen infrastructure platform:
+
 https://www.suse.com/documentation/suse-caasp-2/book_caasp_deployment/data/book_caasp_deployment.html[Bare Metal or Non-OpenStack Virtualisation Platforms]
+
 https://www.suse.com/documentation/suse-openstack-cloud-8/book_install/data/sec_heat_templates_install.html[SUSE OpenStack Cloud]
 
 Following the above guides will provide you with a fully supported {caasp} environment that you can subsequently use to install {product} using the {deployment-url}[{product} Deployment Guide]. 
