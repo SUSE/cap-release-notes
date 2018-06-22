@@ -1,12 +1,12 @@
 // Start attribute entry list (Do not edit here! Edit in entities.adoc)
 ifdef::env-github[]
 :suse: SUSE
-:product: {suse} Cloud Applications Platform
+:product: {suse} Cloud Application Platform
 :version: 1.1
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://www.suse.com/documentation/cloud-application-platform-1
 :deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
-:caasp: {suse} Containers as a Service Platform
+:caasp: {suse} CaaS Platform
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
 :cf: Cloud Foundry
@@ -18,6 +18,19 @@ endif::[]
 // End attribute entry list
 
 [id='sec.caasp']
+== Please note that the procedure detailed below is NOT a supported way to deploy {caasp}. 
+
+This page is for internal development use only and MUST NOT be provided to any customers or partners.
+
+For supported ways to deploy {caasp} please follow the deployment guides for your chosen infrastructure platform:
+
+https://www.suse.com/documentation/suse-caasp-2/book_caasp_deployment/data/book_caasp_deployment.html[Bare Metal or Non-OpenStack Virtualisation Platforms]
+
+https://www.suse.com/documentation/suse-openstack-cloud-8/book_install/data/sec_heat_templates_install.html[SUSE OpenStack Cloud]
+
+Following the above guides will provide you with a fully supported {caasp} environment that you can subsequently use to install {product} using the {deployment-url}[{product} Deployment Guide]. 
+
+
 == Installing {product} on {caasp}
 
 Prerequisite for deploying {product} is a working installation of Kubernetes. {caaspa} is one way to provide that.
