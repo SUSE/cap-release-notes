@@ -6,7 +6,7 @@ ifdef::env-github[]
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://www.suse.com/documentation/cloud-application-platform-1
 :deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
-:caasp: {suse} CaaS Platform
+:caasp: {suse} Containers as a Service Platform
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
 :cf: Cloud Foundry
