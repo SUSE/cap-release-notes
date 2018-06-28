@@ -3,6 +3,7 @@
 This repository contains additional notes for the releases of SUSE Cloud Application Platform which is currently in closed beta.
 
 * link:/adoc/Release-Notes.adoc[Release Notes] for specific releases
+* link:/adoc/known-issues.adoc[Known issues] for known issues
 
 Some hints for special environments:
 
@@ -11,4 +12,33 @@ Some hints for special environments:
 
 === Additional resources
 
-For full documentation of SUSE Cloud Application platform please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation]. Some more details about special use cases can currently be found in the instructions for the open source projects:link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF[SUSE Cloud Foundry] and link:https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes[Stratos UI]. Generic Cloud Foundry documentation is in the link:https://docs.cloudfoundry.org[upstream docs].
+For full documentation of SUSE Cloud Application platform please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation]. Some more details about special use cases can currently be found in the instructions for the open source projects: link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF[SUSE Cloud Foundry] and link:https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes[Stratos UI]. Generic Cloud Foundry documentation is in the link:https://docs.cloudfoundry.org[upstream docs].
+
+=== Contributing
+
+Want to help? We love to hear that! Here are a few hints to guide you:
+
+* These release notes are written in the AsciiDoc (`*.adoc`) format. For some
+great AsciiDoc documentation, see https://asciidoctor.org/docs/asciidoc-writers-guide
+
+* To submit new changes for review, use GitHub pull requests. Travis CI will
+automatically check whether your pull request's content is compatible AsciiDoc.
+
+* There are two main ways these release notes can be viewed: using GitHub's page
+preview or on the link:https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/[SUSE Web site].
+Both modes work somewhat differently:
+** GitHub will simply render a preview of a single `*.adoc` file using
+AsciiDoctor's built-in HTML conversion. This README links to individual content
+files.
+** The SUSE Web site build combines multiple `*.adoc` files into a single HTML
+output file. It is based on AsciiDoctor's AsciiDoc-to-DocBook-XML conversion,
+the result of which is then further converted into HTML/PDF using DAPS and the
+DocBook XSL stylesheets. The central file for this build is
+`adoc/MAIN.release-notes.adoc` which includes individual content files.
+
+* To change any of the "attribute entries" (the text macros containing product
+names at the top of files):
+  . Edit `adoc/entities.adoc` to your heart's content (these are used for the
+  SUSE Web site build)
+  . Run `make update-entries` to update the dependent attribute entries in each
+  of the `*.adoc` files (these are used for GitHub previews).
