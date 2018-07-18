@@ -152,7 +152,7 @@ configuration in <<app.secret-sample>>.
 `CLUSTER_ADMIN_PASSWORD`, `UAA_ADMIN_CLIENT_SECRET`) as they will not be carried
 forward automatically. We recommend always using a values file.
 
-* To rotate secrets, increment the `kube.secret_generation_counter`
+* To rotate secrets, increment the `kube.secrets_generation_counter`
 (immutable generated secrets will not be reset).
 
 * The `kube.external_ip` variable has been changed to `kube.external_ips`,
