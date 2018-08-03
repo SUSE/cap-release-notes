@@ -28,8 +28,6 @@ endif::[]
 
 * :caaspa: 3 uses an updated version of Kubernetes that mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the :product: Deployment Guide. This was optional in :caaspa: 2 but it works the same. Any namespace tied to :product: requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
 
-Link to PSP details in the docs [DRAFT: http://docserv.nue.suse.com/documents/CAP_1/cap-deployment/html/cha.cap.install-production.html#sec.cap.caasp-3]
-
 * UAA should be left as single availability and not high availability (HA)
 
 [id='sec.1_2.feature']
