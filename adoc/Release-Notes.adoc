@@ -24,14 +24,17 @@ endif::[]
 [id='sec.1_2.issue']
 ==== Known Issues
 
-* Upgrading to 1.2 introduces a new active/passive model that will result in a longer-than-usual app instance downtime for upgrades to this new version. As part of this change, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods`. This will be noticeable when seeing Kubernetes pods marked as Unready. It is expected behaviour with Kubernetes that unready pods won’t get upgraded. 
+* Upgrading to :product: 1.2 introduces a new active/passive model that will result in a longer-than-usual app instance downtime for upgrades to this new version. As part of this change, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods`. This will be noticeable when seeing Kubernetes pods marked as Unready. It is expected behaviour with Kubernetes that unready pods won’t get upgraded. 
 
-* CaaS Platform 3 uses an updated version of Kubernetes that mandates a stricter security policy via PodSecurityPolicy. This was optional in CaaS Platform 2. Link to PSP details in the docs [DRAFT: http://docserv.nue.suse.com/documents/CAP_1/cap-deployment/html/cha.cap.install-production.html#sec.cap.caasp-3]
-UAA should be left as single availability and not high availability (HA)
+* :caaspa: 3 uses an updated version of Kubernetes that mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the :product: Deployment Guide. This was optional in :caaspa: 2 but it works the same. Any namespace tied to :product: requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
+
+Link to PSP details in the docs [DRAFT: http://docserv.nue.suse.com/documents/CAP_1/cap-deployment/html/cha.cap.install-production.html#sec.cap.caasp-3]
+
+* UAA should be left as single availability and not high availability (HA)
 
 [id='sec.1_2.feature']
 ==== Features and Fixes
-* Support for Amazon EKS and CaaS Platform v3
+* Support for Amazon EKS and :caaspa: v3
 * Updated Stratos UI to v2
 * Support for Azure load balancer enabled
 * Updated backup/restore plugin (v1.0.8)
