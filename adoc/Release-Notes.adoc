@@ -21,6 +21,9 @@ endif::[]
 [id='sec.major-change']
 == Major Changes
 
+[id='sec.1_2']
+=== 1.2 Release, August 2018
+
 [id='sec.1_2.issue']
 ==== Known Issues
 
