@@ -1,4 +1,4 @@
-Release Notes: SUSE Cloud Application Platform 1.1
+Release Notes: SUSE Cloud Application Platform 1.2
 ==================================================
 
 include::entities.adoc[]
