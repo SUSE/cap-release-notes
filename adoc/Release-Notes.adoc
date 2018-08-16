@@ -22,7 +22,7 @@ endif::[]
 == Major Changes
 
 [id='sec.1_2']
-=== 1.2 Release, August 2018
+=== Release 1.2, August 2018
 
 [id='sec.1_2.issue']
 ==== Known Issues
@@ -91,7 +91,7 @@ endif::[]
 
 
 [id='sec.1_1_1']
-=== 1.1.1 Release, May 2018
+=== Release 1.1.1, May 2018
 
 [id='sec.1_1_1.issue']
 ==== Known Issues
@@ -187,7 +187,7 @@ behavior.
 
 
 [id='sec.1_1']
-=== 1.1 Release, April 2018
+=== Release 1.1, April 2018
 
 
 [id='sec.1_1.new']
@@ -352,7 +352,7 @@ started manually.
 
 
 [id='sec.1_0_1']
-=== 1.0.1 Release, February 2018
+=== Release 1.0.1, February 2018
 
 * Using the `helm upgrade` command in {product} 1.0 to 1.0.1 (scf 2.6.11 to
   2.7.0) requires the use of `--force` to drop an unnecessary persistent
@@ -378,6 +378,6 @@ started manually.
 
 
 [id='sec.1_0']
-=== 1.0 Release, January 2018
+=== Release 1.0, January 2018
 
 * Initial product release
