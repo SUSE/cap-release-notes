@@ -29,9 +29,11 @@ endif::[]
 
 * If you are upgrading to {product} 1.2.1, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods`. This will be the case with all future 1.x upgrades due to the expected behaviour with Kubernetes that unready pods won’t get upgraded.
 
-* Similar to {caaspa} 3, {azure} uses an updated version of Kubernetes that mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
+* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
 
-* {azure} users will need to add `--node-osdisk-size=60` as part of their AKS creation command to ensure the root partition has enough space for the install and future upgrades. The {product} Deployment Guide has a section called `Create Resource Group and AKS Instance` and the `node-osdisk-size` parameter would need to be added to the `az aks create` command.
+* {azure} users who previously had a Kubernetes policy without RBAC, but now have AKS with RBAC (which is the new default with AKS), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an AKS policy without RBAC, then you can ignore this change.
+
+* {azure} users will need to add `--node-osdisk-size=60` as part of their AKS creation command to ensure the root partition has enough space for the install and future upgrades. The {product} _Deployment Guide_ has a section called `Create Resource Group and AKS Instance` and the `node-osdisk-size` parameter would need to be added to the `az aks create` command. For more information about deploying {product}, see the _Deployment Guide_ at {deployment-url}.
 
 
 [id='sec.1_2_1.feature']
@@ -44,6 +46,16 @@ endif::[]
 * HA for `nfs-broker`, `cc-clock` and `syslog-scheduler` roles
 * Enabled cloud controller security events
 * Exposed `broker_client_timeout_seconds` as a router parameter
+* Realigned cf role composition to be more inline with upstream, which includes these changes:
+** `mysql-proxy` has been merged into the `mysql` role
+** `diego-locket` has been merged into `diego-api`
+** `log-api` roles now combines `loggregator` and `syslog-rlp` 
+** `syslog-adapter` renamed as `adapter`
+* Removed processes list from all roles
+* Removed duplicate `routing_api.locket.api_location` property
+* `syslog-adapter` added to syslog adapter cert
+* `INTERNAL_CA_KEY` not included in every pod by default
+* Better mechanism for waiting on `mysql` included
 * Includes these CF component versions:
 ** UAA: v60.2
 ** cf-deployment: 2.7.0
