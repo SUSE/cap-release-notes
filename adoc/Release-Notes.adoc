@@ -27,17 +27,18 @@ endif::[]
 [id='sec.1_2_1.issue']
 ==== Known Issues
 
-* If you are upgrading to {product} 1.2.1, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods`. This will be the case with all future 1.x upgrades due to the expected behaviour with Kubernetes that unready pods won’t get upgraded.
+* Starting with {product} 1.2.1, during helm upgrade, Kubernetes will not upgrade pods that are not ready by default. In order to upgrade all pods, use the complete command here: `helm upgrade --force --recreate-pods`
 
-* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
+* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3
 
-* {azure} users who previously had a Kubernetes policy without RBAC, but now have AKS with RBAC (which is the new default with AKS), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an AKS policy without RBAC, then you can ignore this change.
+* {azure} users who previously had a Kubernetes policy without RBAC, but now have Microsoft Azure Kubernetes Service (AKS) with RBAC (which is the new default with AKS), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an AKS policy without RBAC, then you can ignore this change.
 
-* {azure} users will need to add `--node-osdisk-size=60` as part of their AKS creation command to ensure the root partition has enough space for the install and future upgrades. The {product} _Deployment Guide_ has a section called `Create Resource Group and AKS Instance` and the `node-osdisk-size` parameter would need to be added to the `az aks create` command. For more information about deploying {product}, see the _Deployment Guide_ at {deployment-url}.
+* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the AKS (Azure Kubernetes Service) instance: `az aks create`. For the complete command, the {product} _Deployment Guide_ has a section under the AKS section called `Create Resource Group and AKS Instance`: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_create-aks-instance.html
 
 
 [id='sec.1_2_1.feature']
 ==== Features and Fixes
+* Updated Stratos UI to v2.1
 * Introduction of App-autoscaler (off by default)
 * Introduction of Minibroker for Redis 
 * Support for Azure service brokers
