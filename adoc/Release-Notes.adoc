@@ -39,8 +39,8 @@ endif::[]
 [id='sec.1_2_1.feature']
 ==== Features and Fixes
 * Updated Stratos UI to v2.1
-* Introduction of App-autoscaler (off by default)
-* Introduction of Minibroker for Redis 
+* Introduction of App-autoscaler (experimental, off by default)
+* Introduction of Minibroker for Redis (experimental)
 * Support for Azure service brokers
 * Cloud Foundry deployment bumped to 2.7.0
 * `Groot-btrfs` now available
