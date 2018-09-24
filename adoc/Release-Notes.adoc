@@ -21,6 +21,80 @@ endif::[]
 [id='sec.major-change']
 == Major Changes
 
+[id='sec.1_2_1']
+=== Release 1.2.1, September 2018
+
+[id='sec.1_2_1.issue']
+==== Known Issues
+
+* Starting with {product} 1.2.1, during helm upgrade, Kubernetes will not upgrade pods that are not ready by default. In order to upgrade all pods, use the complete command here: `helm upgrade --force --recreate-pods`
+
+* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3
+
+* {azure} users who previously had a Kubernetes policy without RBAC, but now have Microsoft Azure Kubernetes Service (AKS) with RBAC (which is the new default with AKS), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an AKS policy without RBAC, then you can ignore this change.
+
+* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the AKS (Azure Kubernetes Service) instance: `az aks create`. For the complete command, the {product} _Deployment Guide_ has a section under the AKS section called `Create Resource Group and AKS Instance`: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_create-aks-instance.html
+
+
+[id='sec.1_2_1.feature']
+==== Features and Fixes
+* Updated Stratos UI to v2.1
+* Introduction of App-autoscaler (experimental, off by default)
+* Introduction of Minibroker for Redis (experimental)
+* Support for Azure service brokers
+* Cloud Foundry deployment bumped to 2.7.0
+* `Groot-btrfs` now available
+* HA for `nfs-broker`, `cc-clock` and `syslog-scheduler` roles
+* Enabled cloud controller security events
+* Exposed `broker_client_timeout_seconds` as a router parameter
+* Realigned cf role composition to be more inline with upstream, which includes these changes:
+** `mysql-proxy` has been merged into the `mysql` role
+** `diego-locket` has been merged into `diego-api`
+** `log-api` roles now combines `loggregator` and `syslog-rlp` 
+** `syslog-adapter` renamed as `adapter`
+* Removed processes list from all roles
+* Removed duplicate `routing_api.locket.api_location` property
+* `syslog-adapter` added to syslog adapter cert
+* `INTERNAL_CA_KEY` not included in every pod by default
+* Better mechanism for waiting on `mysql` included
+* Includes these CF component versions:
+** UAA: v60.2
+** cf-deployment: 2.7.0
+** ruby-buildpack: 1.7.21.1
+** go-buildpack: 1.8.22.1
+** kubectl: 1.9.6
+** capi-release: 1.61.0
+** cflinuxfs2-release: v1.227.0
+** cf-mysql-release: v36.15.0
+** cf-opensuse42-release: 648e8f1
+** cf-sle12-release: c585efc
+** cf-smoke-tests-release: 40.0.5
+** cf-syslog-drain-release: v7.0
+** cf-usb: 7a45076
+** consul-release: v195
+** diego-release: v2.12.1
+** garden-runc-release:  v1.15.1
+** loggregator-release: v103.0
+** nats-release: v24
+** nfs-volume-release: v1.2.0
+** postgres-release: v26
+** routing-release: 0.179.0
+** scf-helper-release: b276460
+** cf-acceptance-tests: c83c97b9
+** testbrain: 1.0.0-61-ga172cf9
+** statsd-injector-release: v1.3.0
+** uaa-fissile-release: 0.0.1-299-gdd37ec6
+* Buildpacks:
+** binary-buildpack-release: 1.0.17
+** dotnet-core-buildpack-release: 1.0.26-14-gf951834
+** go-buildpack-release: 1.7.19-21-g0897183
+** java-buildpack-release: 3.16-18-gfeab2b6
+** nodejs-buildpack-release: 1.5.30-13-g584d686
+** php-buildpack-release: 3dc85f9
+** python-buildpack-release: 1.5.16-14-ga2bbb4c
+** ruby-buildpack-release: bd1f612
+** staticfile-buildpack-release: 1.4.0-12-gdfc6c09
+
 [id='sec.1_2']
 === Release 1.2, August 2018
 
