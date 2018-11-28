@@ -28,7 +28,7 @@ endif::[]
 
 * Support for Amazon AWS Service Broker 
 * Credhub now available to CF apps and compatible brokers (disabled by default)
-* App-AutoScaler now supported for :azure: AKS & Amazon EKS
+* App-AutoScaler now supported for :azure: AKS & Amazon EKS (disabled by default)
 * Minibroker support for Redis, MongoDB, MySQL, Postgres, & MariaDB
 * Stratos UI is now v2.2 including:
 ** New Metrics endpoint for keeping and exposing CF application and Kubernetes metrics
