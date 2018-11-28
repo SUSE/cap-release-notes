@@ -17,9 +17,94 @@ ifdef::env-github[]
 endif::[]
 // End attribute entry list
 
-
 [id='sec.major-change']
 == Major Changes
+
+[id='sec.1_3']
+=== Release 1.3, November 2018
+
+[id='sec.1_3.issue']
+==== What Is New?
+
+* Support for Amazon AWS service brokers 
+* Credhub now available for operators (disabled by default)
+* App-autoscaler now supported for :azure: AKS & Amazon EKS
+* Minibroker now supported for Redis, MongoDB, MySQL, Postgres & MariaDB
+* Stratos UI is now v2.2 with these new features:
+** 
+
+For more information about deploying {product}, see the _Deployment Guide_ at
+{deployment-url}.
+
+==== Known Issues
+
+* App-autoscaler will not work on :caasp: without Hairpin enabled.
+
+* :azure: instances should now be increased to `Standard_D4_v2` or larger from the previously documented `Standard_D2_v2` due to the new features.
+
+* Credhub on :azure: is considered experimental.
+
+* Minibroker with MariaDB will see timeout issues upon deletion, so if an error appears, then wait a minute and retry.
+
+* As of writing, the Amazon AWS service broker has become v1.0 and some changes have crept in since the beta version that will require an update to the associated CAP Helm chart. THIS MAY LIKELY BE REMOVED BUT FOR CONTEXT PER REVIEW
+
+* Universal service brokers will require a workaround post-upgrade to reconnect with SCF/CAP as the URL has changed:
+
+** Run `kubectl get secret --namespace scf` and copy the name of the secret, which will have the syntax `secrets-2.14.5-1`
+** Run `cf service-brokers` to get the URL for the `cf-usb` host, which will look similar to `https://cf-usb.scf.svc.cluster.local:24054`
+** Get the current CF_USB password by running `kubectl get secret --namespace scf <secret_name> -o yaml | grep \\scf-usb-password: | cut -d: -f2 | base64 -id`, where <secret_name> is the name from the first step
+** Finally, update the service broker via `cf update-service-broker usb broker-admin <password> https://cf-usb-cf-usb.scf.svc.cluster.local:24054`, where <password> is the password from the third step, and the URL is the result of the second step with the leading `cf-usb` part doubled up with a dash as a separator.
+
+[id='sec.1_3.feature']
+==== Features and Fixes
+
+* One Kubernetes service per job now, whereby the service names will include both the instance group (previously the role) and job name, which impacts the role manifest YAML
+* Changed two variable names to align with upstream practices -- this may require changes to sizing
+** diego-ssh replaces diego-access
+** api-group replaces api
+* UAA charts now have affinity/antiaffinity logic
+* Exposed SMTP_HOST & SMTP_FROM_ADDRESS variables to allow for account creation & password reset
+* consul and postgres roles removed as they had become redundant
+* Kubernetes readiness check no longer looks for hyperkube explicitly
+* Updated cluster role names to ensure no namespace conflicts in Kubernetes
+* Corrected service name to work with syslog drains
+* Includes these CF component versions:
+** UAA: v60.2
+** cf-deployment: 2.7.0
+** kubectl: 1.9.6
+** capi-release: 1.61.0
+** cflinuxfs2-release: v1.227.0
+** cf-mysql-release: v36.15.0
+** cf-opensuse42-release: 1.7.87
+** cf-sle12-release: 1.51.115
+** cf-smoke-tests-release: 40.0.5
+** cf-syslog-drain-release: v7.0
+** cf-usb: 7a45076
+** consul-release: v195
+** diego-release: v2.12.1
+** garden-runc-release: v1.15.1
+** groot-btrfs: 305b068d
+** loggregator-agent-release: v2.0
+** loggregator-release: v103.0
+** nats-release: v24
+** nfs-volume-release: v1.2.0
+** postgres-release: v26
+** routing-release: 0.179.0
+** scf-helper-release: b9fa59d
+** cf-acceptance-tests: c83c97b9
+** testbrain: 1.0.0-61-ga172cf9
+** statsd-injector-release: v1.3.0
+** uaa-fissile-release: 0.0.1-321-g6c32268
+* Buildpacks:
+** binary-buildpack-release: 1.0.27.1
+** dotnet-core-buildpack-release: 1.0.26-14-gf951834
+** go-buildpack-release: 1.8.28.1
+** java-buildpack-release: 4.16.1-3-g3cf9321
+** nodejs-buildpack-release: 1.6.34.1
+** php-buildpack-release: 4.3.63.1
+** python-buildpack-release: 1.6.23.1
+** ruby-buildpack-release: 1.7.26.1
+** staticfile-buildpack-release: 1.4.34.1
 
 [id='sec.1_2_1']
 === Release 1.2.1, September 2018
