@@ -42,11 +42,11 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 
 * App-AutoScaler will not work on :caasp: without Hairpin enabled.
 
-* Enabling new feature roles (e.g. Credhub and App-AutoScaler) will require more memory and CPU resources in minimal installations. For example, :azure: instances should now be increased to `Standard_D4_v2` or larger from the previously documented `Standard_D2_v2` if the new feature pods are enabled.
+* Enabling new feature roles such as Credhub and App-AutoScaler will require more memory and CPU resources in minimal installations(at least 22GB in total for single instances of all roles enabled). For example, :azure: instances should now be increased to `Standard_D4_v2` or larger from the previously documented `Standard_D2_v2` if the new feature pods are enabled.
 
 * Credhub on :azure: is considered experimental.
 
-* Minibroker with MariaDB will see timeout issues upon deletion. If an error appears, wait one minute and retry.
+* Minibroker with MariaDB will see timeout issues upon deletion. If an error appears, wait one minute and retry. If `cf delete-service ...` fails but the instance pods are removed from Kubernetes, the service instance data can be safely removed with `cf purge-service-instance ...`.
 
 * Amazon AWS Service Broker has changed with the recent release of v1.0. The Helm chart from SUSE will be updated to include these changes in the near future. 
 
