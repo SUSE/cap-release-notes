@@ -26,10 +26,11 @@ endif::[]
 [id='sec.1_3.issue']
 ==== What Is New?
 
-* Support for Amazon AWS Service Broker 
-* Credhub now available to {cf} apps and compatible brokers (disabled by default)
-* App-AutoScaler now supported for {azure} AKS & Amazon EKS (disabled by default)
-* Minibroker support for Redis, MongoDB, {mysql}, {postgre}, & MariaDB
+* SCF is now v2.14.5 including:
+** Support for Amazon AWS Service Broker 
+** Credhub now available to {cf} apps and compatible brokers (disabled by default)
+** App-AutoScaler now supported for {azure} AKS & Amazon EKS (disabled by default)
+** Minibroker support for Redis, MongoDB, {mysql}, {postgre}, & MariaDB
 * Stratos UI is now v2.2 including:
 ** New Metrics endpoint for keeping and exposing {cf} application and Kubernetes metrics
 ** New views for Kubernetes application, pod, and node metrics
@@ -126,6 +127,7 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 [id='sec.1_2_1.feature']
 ==== Features and Fixes
 * Updated Stratos UI to v2.1
+* Updated SCF to v2.13.3
 * Introduction of App-autoscaler (experimental, off by default)
 * Introduction of Minibroker for Redis (experimental)
 * Support for {azure} service brokers
@@ -196,8 +198,9 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 
 [id='sec.1_2.feature']
 ==== Features and Fixes
-* Support for Amazon EKS and {caaspa} v3
 * Updated Stratos UI to v2
+* Updated SCF to v2.11.0
+* Support for Amazon EKS and {caaspa} v3
 * Support for Azure load balancer enabled
 * Updated backup/restore plugin (v1.0.8)
 * New active/passive role management for pods whereby the past model of using Ready and Not Ready as states has been retired. Pods will now be labeled as Active or Passive and rely on stateful sets to be managed, allowing for more high availability. Details available here: https://github.com/SUSE/fissile/wiki/Pod-Management-using-Role-Manifest-Tags
@@ -314,6 +317,7 @@ behavior.
 [id='sec.1_1_1.feature']
 ==== Features and Fixes
 
+* Includes SCF v2.10.1
 * Enabled `router.forwarded_client_cert` variable for router
 * New syslog roles can have anti-affinity
 * {mysql}-proxy healthcheck timeouts are configurable 
@@ -477,6 +481,7 @@ started manually.
 [id='sec.1_1.feature']
 ==== Features and Fixes
 
+* Includes SCF v2.8.0
 * Ability to specify multiple external IP addresses (please see <<sec.issue>>
   below on impact to upgrades)
 * {mysql} now a clustered role
