@@ -27,11 +27,11 @@ endif::[]
 ==== What Is New?
 
 * Support for Amazon AWS Service Broker 
-* Credhub now available to CF apps and compatible brokers (disabled by default)
-* App-AutoScaler now supported for :azure: AKS & Amazon EKS (disabled by default)
-* Minibroker support for Redis, MongoDB, MySQL, Postgres, & MariaDB
+* Credhub now available to {cf} apps and compatible brokers (disabled by default)
+* App-AutoScaler now supported for {azure} AKS & Amazon EKS (disabled by default)
+* Minibroker support for Redis, MongoDB, {mysql}, {postgre}, & MariaDB
 * Stratos UI is now v2.2 including:
-** New Metrics endpoint for keeping and exposing CF application and Kubernetes metrics
+** New Metrics endpoint for keeping and exposing {cf} application and Kubernetes metrics
 ** New views for Kubernetes application, pod, and node metrics
 ** Many more new features and fixes. See https://github.com/SUSE/stratos/releases/tag/2.2.0
 
@@ -40,17 +40,17 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 
 ==== Known Issues
 
-* App-AutoScaler will not work on :caasp: without Hairpin enabled.
+* App-AutoScaler will not work on {caasp} without Hairpin enabled.
 
-* Enabling new feature roles such as Credhub and App-AutoScaler will require more memory and CPU resources in minimal installations(at least 22GB in total for single instances of all roles enabled). For example, :azure: instances should now be increased to `Standard_D4_v2` or larger from the previously documented `Standard_D2_v2` if the new feature pods are enabled.
+* Enabling new feature roles such as Credhub and App-AutoScaler will require more memory and CPU resources in minimal installations (at least 22 GB in total for single instances of all roles enabled). For example, {azure} instances should now be increased to `Standard_D4_v2` or larger from the previously documented `Standard_D2_v2` if the new feature pods are enabled.
 
-* Credhub on :azure: is considered experimental.
+* Credhub on {azure} is considered experimental.
 
 * Minibroker with MariaDB will see timeout issues upon deletion. If an error appears, wait one minute and retry. If `cf delete-service ...` fails but the instance pods are removed from Kubernetes, the service instance data can be safely removed with `cf purge-service-instance ...`.
 
-* Amazon AWS Service Broker has changed with the recent release of v1.0. The Helm chart from SUSE will be updated to include these changes in the near future. 
+* Amazon AWS Service Broker has changed with the recent release of v1.0. The Helm chart from {suse} will be updated to include these changes in the near future.
 
-* The URL of the internal cf-usb broker endpoint has changed. Brokers for PostgreSQL and MySQL that use cf-usb will require the following manual fix after upgrade to reconnect with SCF/CAP:
+* The URL of the internal cf-usb broker endpoint has changed. Brokers for {postgre} and {mysql} that use cf-usb will require the following manual fix after upgrade to reconnect with SCF/CAP:
 
 ** Run `kubectl get secret --namespace scf` and copy the name of the secret (e.g. `secrets-2.14.5-1`)
 ** Run `cf service-brokers` to get the URL for the `cf-usb` host (e.g. `https://cf-usb.scf.svc.cluster.local:24054`)
@@ -70,7 +70,7 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 * Kubernetes readiness check no longer looks for hyperkube explicitly
 * Updated cluster role names to ensure no namespace conflicts in Kubernetes
 * Corrected service name to work with syslog drains
-* Includes these CF component versions:
+* Includes these {cf} component versions:
 ** UAA: v60.2
 ** cf-deployment: 2.7.0
 ** kubectl: 1.9.6
@@ -118,7 +118,7 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 
 * Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3
 
-* {azure} users who previously had a Kubernetes policy without RBAC, but now have Microsoft Azure Kubernetes Service (AKS) with RBAC (which is the new default with AKS), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an AKS policy without RBAC, then you can ignore this change.
+* {azure} users who previously had a Kubernetes policy without RBAC, but now have {azure} Kubernetes Service (AKS) with RBAC (which is the new default with AKS), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an AKS policy without RBAC, then you can ignore this change.
 
 * If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the AKS (Azure Kubernetes Service) instance: `az aks create`. For the complete command, the {product} _Deployment Guide_ has a section under the AKS section called `Create Resource Group and AKS Instance`: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_create-aks-instance.html
 
@@ -128,8 +128,8 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 * Updated Stratos UI to v2.1
 * Introduction of App-autoscaler (experimental, off by default)
 * Introduction of Minibroker for Redis (experimental)
-* Support for Azure service brokers
-* Cloud Foundry deployment bumped to 2.7.0
+* Support for {azure} service brokers
+* {cf} deployment bumped to 2.7.0
 * `Groot-btrfs` now available
 * HA for `nfs-broker`, `cc-clock` and `syslog-scheduler` roles
 * Enabled cloud controller security events
@@ -144,7 +144,7 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 * `syslog-adapter` added to syslog adapter cert
 * `INTERNAL_CA_KEY` not included in every pod by default
 * Better mechanism for waiting on `mysql` included
-* Includes these CF component versions:
+* Includes these {cf} component versions:
 ** UAA: v60.2
 ** cf-deployment: 2.7.0
 ** ruby-buildpack: 1.7.21.1
