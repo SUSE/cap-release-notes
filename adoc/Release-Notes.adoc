@@ -10,10 +10,21 @@ ifdef::env-github[]
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
 :cf: Cloud Foundry
+:scf: {suse} {cf}
+:k8s: Kubernetes
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
 :mysql: MySQL
+:mariadb: MariaDB
 :postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
 endif::[]
 // End attribute entry list
 
@@ -26,51 +37,68 @@ endif::[]
 [id='sec.1_3.issue']
 ==== What Is New?
 
-* SCF is now v2.14.5 including:
-** Support for Amazon AWS Service Broker 
-** Credhub now available to {cf} apps and compatible brokers (disabled by default)
-** App-AutoScaler now supported for {azure} AKS & Amazon EKS (disabled by default)
-** Minibroker support for Redis, MongoDB, {mysql}, {postgre}, & MariaDB
-* Stratos UI is now v2.2 including:
-** New Metrics endpoint for keeping and exposing {cf} application and Kubernetes metrics
-** New views for Kubernetes application, pod, and node metrics
-** Many more new features and fixes. See https://github.com/SUSE/stratos/releases/tag/2.2.0
+* {scf} has been updated to version 2.14.5:
+** Includes support for {awsa} Service Broker
+** Centralized credential management with CredHub is now available to {cf} apps and compatible brokers (disabled by default)
+** Automatically scaling resource with App-AutoScaler is now supported for {aks} and {eks} (disabled by default)
+** Minibroker has gained support for {redis}, {mongo}, {mysql}, {postgre}, and {mariadb}
+* The Stratos UI has been updated to version 2.2:
+** There is a new metrics endpoint for keeping and exposing {cf} application and {k8s} metrics
+** There are new views for {k8s} application, pod, and node metrics
+** For a more detailed list of new features and fixes, see https://github.com/SUSE/stratos/releases/tag/2.2.0.
 
-For more information about deploying {product}, see the _Deployment Guide_ at
+For information about deploying {product}, see the _Deployment Guide_ at
 {deployment-url}.
 
 ==== Known Issues
 
 * App-AutoScaler will not work on {caasp} without Hairpin enabled.
 
-* Enabling new feature roles such as Credhub and App-AutoScaler will require more memory and CPU resources in minimal installations (at least 22 GB in total for single instances of all roles enabled). For example, {azure} instances should now be increased to `Standard_D4_v2` or larger from the previously documented `Standard_D2_v2` if the new feature pods are enabled.
+* Enabling new feature roles, such as CredHub and App-AutoScaler, requires more memory and CPU resources in minimal installations (at least 22 GB in total for single instances that have all roles enabled). If these new feature pods are enabled, for example, on {azure} instances, move to the tier _Standard_D4_v2_ or larger.
 
-* Credhub on {azure} is considered experimental.
+* CredHub on {azure} is considered experimental.
 
-* Minibroker with MariaDB will see timeout issues upon deletion. If an error appears, wait one minute and retry. If `cf delete-service ...` fails but the instance pods are removed from Kubernetes, the service instance data can be safely removed with `cf purge-service-instance ...`.
+* Minibroker with {mariadb} will see timeout issues upon deletion. If an error appears, wait one minute and retry. If the `cf delete-service` command fails but the instance pods are removed from {k8s}, the service instance data can safely be removed with a `cf purge-service-instance` command.
 
-* Amazon AWS Service Broker has changed with the recent release of v1.0. The Helm chart from {suse} will be updated to include these changes in the near future.
+* The {awsa} Service Broker has changed with the recent release of v1.0. The Helm chart from {suse} will be updated in the near future to include these changes.
 
-* The URL of the internal cf-usb broker endpoint has changed. Brokers for {postgre} and {mysql} that use cf-usb will require the following manual fix after upgrade to reconnect with SCF/CAP:
+* The URL of the internal `cf-usb` broker endpoint has changed. To reconnect with {scf}/{product}, brokers for {postgre} and {mysql} that use `cf-usb` will require the following manual fix after the upgrade:
+[arabic]
+.. Run `kubectl get secret --namespace scf` and copy the name of the secret (for example, `secrets-2.14.5-1`)
+.. Run `cf service-brokers` to get the URL for the `cf-usb` host (for example, `https://cf-usb.scf.svc.cluster.local:24054`)
+.. Get the current `CF_USB` password by running:
++
+[source,bash]
+----
+kubectl get secret --namespace scf <SECRET_NAME> -o yaml | \
+  grep \\scf-usb-password: | cut -d: -f2 | base64 -id
+----
++
+Replace `<SECRET_NAME>` with the name from the first step.
+.. Finally, update the service broker:
++
+[source,bash]
+----
+cf update-service-broker usb broker-admin <PASSWORD> \
+  https://cf-usb-cf-usb.scf.svc.cluster.local:24054
+----
++
+Replace `<PASSWORD>` with the password from step 3. The URL is a modified version of URL in step 2: as the subdomain name, use `cf-usb-cf-usb` instead of `cf-usb`.
 
-** Run `kubectl get secret --namespace scf` and copy the name of the secret (e.g. `secrets-2.14.5-1`)
-** Run `cf service-brokers` to get the URL for the `cf-usb` host (e.g. `https://cf-usb.scf.svc.cluster.local:24054`)
-** Get the current CF_USB password by running `kubectl get secret --namespace scf <secret_name> -o yaml | grep \\scf-usb-password: | cut -d: -f2 | base64 -id`, where <secret_name> is the name from the first step
-** Finally, update the service broker via `cf update-service-broker usb broker-admin <password> https://cf-usb-cf-usb.scf.svc.cluster.local:24054`, where <password> is the password from the third step, and the URL is the result of the second step with the leading `cf-usb` part doubled with a dash separator.
 
 [id='sec.1_3.feature']
 ==== Features and Fixes
 
-* One Kubernetes service per job. The service names will include both the instance group (previously the role) and job name, which impacts the role manifest YAML
-* Changed two variable names to align with upstream practices -- this may require changes to sizing
-** diego-ssh replaces diego-access
-** api-group replaces api
+* One {k8s} service per job. The service names will include both the instance group (previously the role) and job name, which impacts the role manifest YAML
+* Changed two variable names to align with upstream practices--this may require changes to sizing:
+** `diego-ssh` replaces `diego-access`
+** `api-group` replaces `api`
 * UAA charts now have affinity/antiaffinity logic
 * Exposed SMTP_HOST & SMTP_FROM_ADDRESS variables to allow for account creation & password reset
-* consul and postgres roles removed as they had become redundant
-* Kubernetes readiness check no longer looks for hyperkube explicitly
-* Updated cluster role names to ensure no namespace conflicts in Kubernetes
-* Corrected service name to work with syslog drains
+* `consul` and `postgres` roles removed as they had become redundant
+* {k8s} readiness check no longer looks for `hyperkube` explicitly
+* Updated cluster role names to ensure no namespace conflicts in {k8s}
+* Corrected service name to work with `syslog` drains
 * Includes these {cf} component versions:
 ** UAA: v60.2
 ** cf-deployment: 2.7.0
@@ -115,35 +143,35 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 [id='sec.1_2_1.issue']
 ==== Known Issues
 
-* Starting with {product} 1.2.1, during helm upgrade, Kubernetes will not upgrade pods that are not ready by default. In order to upgrade all pods, use the complete command here: `helm upgrade --force --recreate-pods`
+* Starting with {product} 1.2.1, during helm upgrade, {k8s} will not upgrade pods that are not ready by default. To upgrade all pods, use the complete command: `helm upgrade --force --recreate-pods`
 
-* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3
+* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part of the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3
 
-* {azure} users who previously had a Kubernetes policy without RBAC, but now have {azure} Kubernetes Service (AKS) with RBAC (which is the new default with AKS), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an AKS policy without RBAC, then you can ignore this change.
+* {azure} users who previously had a {k8s} policy without RBAC, but now have {aks} ({aksa}) with RBAC (which is the new default with {aksa}), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an {aksa} policy without RBAC, then you can ignore this change.
 
-* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the AKS (Azure Kubernetes Service) instance: `az aks create`. For the complete command, the {product} _Deployment Guide_ has a section under the AKS section called `Create Resource Group and AKS Instance`: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_create-aks-instance.html
+* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the {aksa} instance: `az aks create`. For the complete command, see the _{product} Deployment Guide_, section _AKS_, subsection _Create Resource Group and AKS Instance_ (https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_create-aks-instance.html).
 
 
 [id='sec.1_2_1.feature']
 ==== Features and Fixes
 * Updated Stratos UI to v2.1
-* Updated SCF to v2.13.3
-* Introduction of App-autoscaler (experimental, off by default)
-* Introduction of Minibroker for Redis (experimental)
+* Updated {scf} to v2.13.3
+* Introduction of App-AutoScaler (experimental, off by default)
+* Introduction of Minibroker for {redis} (experimental)
 * Support for {azure} service brokers
 * {cf} deployment bumped to 2.7.0
 * `Groot-btrfs` now available
 * HA for `nfs-broker`, `cc-clock` and `syslog-scheduler` roles
 * Enabled cloud controller security events
 * Exposed `broker_client_timeout_seconds` as a router parameter
-* Realigned cf role composition to be more inline with upstream, which includes these changes:
+* Realigned {cf} role composition to be more in line with upstream, which includes these changes:
 ** `mysql-proxy` has been merged into the `mysql` role
 ** `diego-locket` has been merged into `diego-api`
 ** `log-api` roles now combines `loggregator` and `syslog-rlp` 
 ** `syslog-adapter` renamed as `adapter`
-* Removed processes list from all roles
+* Removed process list from all roles
 * Removed duplicate `routing_api.locket.api_location` property
-* `syslog-adapter` added to syslog adapter cert
+* `syslog-adapter` added to syslog adapter certificate
 * `INTERNAL_CA_KEY` not included in every pod by default
 * Better mechanism for waiting on `mysql` included
 * Includes these {cf} component versions:
@@ -190,20 +218,20 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 [id='sec.1_2.issue']
 ==== Known Issues
 
-* Upgrading to {product} 1.2 introduces a new active/passive model that will result in a longer-than-usual app instance downtime for upgrades to this new version. As part of this change, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods`. This will be noticeable when seeing Kubernetes pods marked as Unready. It is expected behaviour with Kubernetes that unready pods won’t get upgraded.
+* Upgrading to {product} 1.2 introduces a new active/passive model that will result in a longer-than-usual app instance downtime for upgrades to this new version. As part of this change, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods`. This will be noticeable when seeing {k8s} pods marked as _Unready_. _Unready_ pods will not be upgraded.
 
-* {caaspa} 3 uses an updated version of Kubernetes that mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part the {product} Deployment Guide. This was optional in {caaspa} 2 but it works the same. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
+* {caaspa} 3 uses an updated version of {k8s} that mandates a stricter security policy via PodSecurityPolicy (PSP) which is included as part of the _{product} Deployment Guide_. This was optional in {caaspa} 2 but it works the same. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
 
 * UAA should be left as single availability and not high availability (HA)
 
 [id='sec.1_2.feature']
 ==== Features and Fixes
 * Updated Stratos UI to v2
-* Updated SCF to v2.11.0
-* Support for Amazon EKS and {caaspa} v3
-* Support for Azure load balancer enabled
+* Updated {scf} to v2.11.0
+* Support for {eks} and {caaspa} v3
+* Support for {azure} load balancer enabled
 * Updated backup/restore plugin (v1.0.8)
-* New active/passive role management for pods whereby the past model of using Ready and Not Ready as states has been retired. Pods will now be labeled as Active or Passive and rely on stateful sets to be managed, allowing for more high availability. Details available here: https://github.com/SUSE/fissile/wiki/Pod-Management-using-Role-Manifest-Tags
+* New active/passive role management for pods whereby the past model of using _Ready_ and _Not Ready_, as states has been retired. Pods will now be labeled as Active or Passive and rely on stateful sets to be managed, allowing for more high availability. Details available here: https://github.com/SUSE/fissile/wiki/Pod-Management-using-Role-Manifest-Tags
 * All roles aside from UAA can now be HA
 * Certificate expiration now configurable
 * Added support for manual rotation of cloud controller database keys
@@ -212,10 +240,10 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 * Updated the role manifest validation to let the secrets generator use `KUBE_SERVICE_DOMAIN_SUFFIX` without having to configure HA itself
 * `SCF_LOG_PORT` now set to default port of 514
 * Fixed an issue during upgrade whereby USB sidecars did not receive updated password info, ensuring they will properly communicate with previously registered services
-* Patched an issue with the timestamp for monit_rsyslogd
+* Patched an issue with the timestamp for `monit_rsyslogd`
 * `cf-backup-restore` restores security groups properly now
 * `cf-backup-restore` now relies on statically linked Linux binaries
-* Includes these CF component versions:
+* Includes these {cf} component versions:
 ** UAA: v59
 ** cf-deployment: 1.36
 ** ruby-buildpack: 1.7.18.2
@@ -260,9 +288,9 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 [id='sec.1_1_1.issue']
 ==== Known Issues
 
-* Upgrading now rotates all internal passwords and certificates which may cause some downtime (e.g. users will be unable to push applications) as the roles are restarted. This should not impact the availability of hosted applications running multiple instances. 
+* Upgrading now rotates all internal passwords and certificates which may cause some downtime (for example, users will be unable to push applications) as the roles are restarted. This should not impact the availability of hosted applications running multiple instances. 
 
-* If you are using the bundled UAA release, upgrade this first and pass the new certificate to the SCF upgrade command as per the upgrade instructions below.
+* If you are using the bundled UAA release, upgrade this first and pass the new certificate to the {scf} upgrade command as outlined in the upgrade instructions below.
 
 * When upgrading, existing deployments of the `cf-usb-sidecar-mysql` or `cf-usb-sidecar-postgres` brokers may subsequently be unable to delete service instances. The following commands fix this problem by updating the internal cf-usb password:
 
@@ -310,7 +338,7 @@ roles will be enabled in an upcoming maintenance release.
 * The `diego-api`, `diego-brain` and `routing-api` roles are configured as
 active/passive, and passive pods can appear as _Not Ready_. This is expected
 behavior.
-* Azure operators may not be able to connect to Azure Database for
+* {azure} operators may not be able to connect to {azure} Database for
 {mysql}/{postgre} databases with the current brokers.
 
 
@@ -332,23 +360,23 @@ behavior.
 * PHP buildpack has been bumped to v.4.3.53.1 address MS-ISAC ADVISORY NUMBER 2018-046
 * Updated sidecars for {mysql} and {postgre}
 
-* Includes these CF component versions:
-** uaa v56.0
-** cf-deployment v.1.21
-** loggregator-release v102.1
-** cf-opensuse42-release 459ef9f
-** cf-syslog-drain-release v6.0
-** cf-usb 79b1a8c
-** cf-mysql-release v36.11.0
-** routing-release 0.174.0
-** cf-sle12-release b96cbc2
-** diego-release v2.1.0
-** uaa-fissile-release 0.0.1-243-ge11bf8d
-** cflinuxfs2-release v1.194.0
-** cf-smoke-tests-release 40.0.1
-** nats-release v23
-** scf-helper-release/src/github.com/cloudfoundry/cf-acceptance-tests 3beb6ed
-** capi-release 1.52.0
+* Includes these {cf} component versions:
+** uaa: v56.0
+** cf-deployment: v.1.21
+** loggregator-release: v102.1
+** cf-opensuse42-release: 459ef9f
+** cf-syslog-drain-release: v6.0
+** cf-usb: 79b1a8c
+** cf-mysql-release: v36.11.0
+** routing-release: 0.174.0
+** cf-sle12-release: b96cbc2
+** diego-release: v2.1.0
+** uaa-fissile-release: 0.0.1-243-ge11bf8d
+** cflinuxfs2-release: v1.194.0
+** cf-smoke-tests-release: 40.0.1
+** nats-release: v23
+** scf-helper-release/src/github.com/cloudfoundry/cf-acceptance-tests: 3beb6ed
+** capi-release: 1.52.0
 
 
 [id='sec.1_1']
@@ -373,7 +401,7 @@ For more information about deploying {product}, see the _Deployment Guide_ at
 
 Changes to the format of `values.yaml` for SCF and UAA require
 special handling when upgrading from {product} 1.0 to 1.1 if you are reusing
-configuration files (e.g. `scf-config-values.yaml`):
+configuration files (for example, `scf-config-values.yaml`):
 
 * All secrets formerly set under `env:` are now set under `secrets:`.
 Any `_PASSWORD`, `_SECRET`, `_CERT`, or `_KEY` value explicitly set in
@@ -389,7 +417,7 @@ forward automatically. We recommend always using a values file.
 (immutable generated secrets will not be reset).
 
 * The `kube.external_ip` variable has been changed to `kube.external_ips`,
-allowing for services to be exposed on multiple Kubernetes worker nodes (for
+allowing for services to be exposed on multiple {k8s} worker nodes (for
 example, behind a TCP load balancer). Before upgrading, change the setting or
 add a new setting specified as an array. For example:
 +
@@ -491,7 +519,7 @@ started manually.
 * TCP routing ports are configurable and can be templatized
 * CPU limits can be set for pods.
 * Memory limits for pods now properly enforced.
-* Kubernetes annotations enabled so operators can specify what nodes
+* {k8s} annotations enabled so operators can specify what nodes
   particular roles can be run on
 * Fixed cloud controller clock so that it will wait until API is ready
 * Overhauled secret rotation for upgrades
@@ -537,10 +565,10 @@ started manually.
 * Fix duplicate buildpack ids when starting {cf}
 * Fix an issue in the vagrant box where compilation would fail due to old
   versions of docker.
-* Fix an issue where diego cell could not be mounted on NFS-backed Kubernetes
+* Fix an issue where diego cell could not be mounted on NFS-backed {k8s}
   storage class
 * Fix an issue where diego cell could not mount NFS in persi
-* Fix several problems reported with the syslog forwarding implementation
+* Fix several problems reported with the syslog-forwarding implementation
 
 
 [id='sec.1_0']

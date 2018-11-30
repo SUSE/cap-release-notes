@@ -138,7 +138,7 @@ env:
   NGINX_MAX_REQUEST_BODY_SIZE: "2048"
 
   # Comma separated list of IP addresses and domains which should not be
-  # directoed through a proxy, if any.
+  # directed through a proxy, if any.
   NO_PROXY: ~
 
   # Comma separated list of white-listed options that may be set during create

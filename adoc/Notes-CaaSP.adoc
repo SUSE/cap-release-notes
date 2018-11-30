@@ -10,10 +10,21 @@ ifdef::env-github[]
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
 :cf: Cloud Foundry
+:scf: {suse} {cf}
+:k8s: Kubernetes
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
 :mysql: MySQL
+:mariadb: MariaDB
 :postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
 endif::[]
 // End attribute entry list
 
@@ -23,8 +34,8 @@ endif::[]
 For supported ways to deploy {product} on {caasp} please follow the deployment 
 guides for your chosen infrastructure platform:
 
-https://www.suse.com/documentation/suse-caasp-2/book_caasp_deployment/data/book_caasp_deployment.html[Bare Metal or Non-OpenStack Virtualisation Platforms]
+* https://www.suse.com/documentation/suse-caasp-2/book_caasp_deployment/data/book_caasp_deployment.html[Bare Metal or Non-OpenStack Virtualization Platforms]
 
-https://www.suse.com/documentation/suse-openstack-cloud-8/book_install/data/sec_heat_templates_install.html[SUSE OpenStack Cloud]
+* https://www.suse.com/documentation/suse-openstack-cloud-8/book_install/data/sec_heat_templates_install.html[SUSE OpenStack Cloud]
 
-Following the above guides will provide you with a fully supported {caasp} environment that you can subsequently use to install {product} using the {deployment-url}[{product} Deployment Guide]. 
+Following the above guides will provide you with a fully supported {caasp} environment that you can subsequently use to install {product} using the {deployment-url}[{product} Deployment Guide].
