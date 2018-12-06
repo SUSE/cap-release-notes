@@ -18,6 +18,30 @@ these release notes is always available at {rn-url}. General documentation
 can be found at {doc-url}.
 
 
+[id='sec.intro']
+== About {product}
+
+{product} is a modern application delivery platform used to bring an advanced
+cloud native developer experience to {k8s}--the de-facto standard for
+enterprise container orchestration. {product} eliminates manual IT
+configuration and helps accelerate innovation by getting applications to
+market faster. Developers can serve themselves and get apps to the cloud in
+minutes instead of weeks, while staying within IT guidelines, and without
+relying on scarce IT resources to perform manual configuration each step of
+the way. Streamlining application delivery opens a clear path to increased
+business agility, led by enterprise development, operations, and DevOps teams.
+
+{product} increases business agility by helping enterprises to:
+
+* Boost developer productivity with easy one step deployment of cloud native
+applications using the language and framework most appropriate for the task.
+* Reduce complexity and increase IT efficiency with a single, lean, platform
+that brings together proven open source technologies for rapid application
+delivery at scale.
+* Maximize return on investment with industry leading open-source
+technologies that leverage your existing investments.
+
+
 include::Release-Notes.adoc[]
 
 
