@@ -64,6 +64,8 @@ For instructions on installing {product} on {azure}, see the official
 documentation at {azuredocurl}.
 
 
+include::source-code.adoc[]
+
 include::legal.adoc[]
 
 

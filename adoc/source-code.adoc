@@ -1,0 +1,44 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:product: {suse} Cloud Application Platform
+:version: 1.3
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
+:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/book_cap_deployment.html
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:scf: {suse} {cf}
+:k8s: Kubernetes
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
+:mysql: MySQL
+:mariadb: MariaDB
+:postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
+endif::[]
+// End attribute entry list
+
+[id='sec.source']
+== Obtaining Source Code
+
+This {suse} product includes materials licensed to {suse} under the GNU
+General Public License (GPL). The GPL requires {suse} to provide the
+source code that corresponds to the GPL-licensed material. The source code
+is available for download at
+https://www.suse.com/download-linux/source-code.html. Also,
+for up to three years after distribution of the {suse} product, upon
+request, {suse} will mail a copy of the source code. Requests should be
+sent by e-mail to sle_source_request@suse.com or as
+otherwise instructed at
+https://www.suse.com/download-linux/source-code.html. {suse}
+may charge a reasonable fee to recover distribution costs.
