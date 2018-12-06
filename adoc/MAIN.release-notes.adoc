@@ -64,6 +64,9 @@ For instructions on installing {product} on {azure}, see the official
 documentation at {azuredocurl}.
 
 
+include::legal.adoc[]
+
+
 [id='app.secret-sample']
 == Appendix: Configuration with `secrets:` Section
 
