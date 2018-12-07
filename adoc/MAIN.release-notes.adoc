@@ -42,6 +42,9 @@ delivery at scale.
 technologies that leverage your existing investments.
 
 
+include::support-statement.adoc[]
+
+
 include::Release-Notes.adoc[]
 
 
