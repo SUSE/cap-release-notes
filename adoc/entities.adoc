@@ -8,7 +8,18 @@
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
 :cf: Cloud Foundry
+:scf: {suse} {cf}
+:k8s: Kubernetes
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
 :mysql: MySQL
+:mariadb: MariaDB
 :postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB

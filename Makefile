@@ -19,7 +19,7 @@ XSLTPROC_COMMAND = xsltproc \
 --xinclude --nonet
 
 mainfile = adoc/MAIN.release-notes.adoc
-prereqs = DC-release-notes ${mainfile}
+prereqs = DC-release-notes ${mainfile} adoc/*
 daps_xslt_rn_dir = /usr/share/daps/daps-xslt/relnotes
 
 text_params =
