@@ -137,7 +137,9 @@ cf update-service-broker usb broker-admin <PASSWORD> \
   https://cf-usb-cf-usb.scf.svc.cluster.local:24054
 ----
 +
-Replace `<PASSWORD>` with the password from step 3. The URL is a modified version of URL in step 2: as the subdomain name, use `cf-usb-cf-usb` instead of `cf-usb`.
+Replace `<PASSWORD>` with the password from step 3. The URL is a modified
+version of the URL from step 2: however, as the subdomain name, use
+`cf-usb-cf-usb` instead of `cf-usb`.
 
 
 [id='sec.1_2_1']
