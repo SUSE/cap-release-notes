@@ -9,7 +9,7 @@ Hints for specialized environments:
 
 * link:https://www.suse.com/documentation/suse-caasp-3/book_caasp_deployment/data/book_caasp_deployment.html[SUSE CaaS (Container as a Service) Platform & Bare Metal or Non-OpenStack Virtualization Platforms]
 * link:https://www.suse.com/documentation/suse-openstack-cloud-8/book_installation/data/sec_heat_templates_install.html[SUSE CaaS (Container as a Service) Platform & SUSE OpenStack Cloud]
-* link:https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/cha_cap_depl-azure.html[Microsoft Azure Platform]
+* link:https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/cha_cap_depl-azure.html[Microsoft Azure Platform]
 
 === Additional Resources
 
