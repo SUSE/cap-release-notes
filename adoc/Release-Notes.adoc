@@ -47,8 +47,8 @@ endif::[]
 ** There are new views for {k8s} application, pod, and node metrics
 ** For a more detailed list of new features and fixes, see https://github.com/SUSE/stratos/releases/tag/2.2.0.
 
-For information about deploying {product}, see the _Deployment Guide_ at
-{deployment-url}.
+For information about deploying and administering {product}, see the product manuals at
+{doc-url}.
 
 
 [id='sec.1_3.feature']
@@ -212,11 +212,11 @@ version of the URL from step 2: however, as the subdomain name, use
 
 * Starting with {product} 1.2.1, during helm upgrade, {k8s} will not upgrade pods that are not ready by default. To upgrade all pods, use the complete command: `helm upgrade --force --recreate-pods`
 
-* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part of the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3
+* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part of the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3 
 
 * {azure} users who previously had a {k8s} policy without RBAC, but now have {aks} ({aksa}) with RBAC (which is the new default with {aksa}), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an {aksa} policy without RBAC, then you can ignore this change.
 
-* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the {aksa} instance: `az aks create`. For the complete command, see the _{product} Deployment Guide_, section _AKS_, subsection _Create Resource Group and AKS Instance_ (https://www.suse.com/documentation/cloud-application-platform-1/book_cap_deployment/data/sec_cap_create-aks-instance.html).
+* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the {aksa} instance: `az aks create`. For the complete command, see the _{product} Deployment Guide_, section _AKS_, subsection _Create Resource Group and AKS Instance_ (https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/sec_cap_create-aks-instance.html).
 
 
 [id='sec.1_2']
