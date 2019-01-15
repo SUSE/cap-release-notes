@@ -63,7 +63,6 @@ For information about deploying and administering {product}, see the product man
 * `consul` and `postgres` roles removed as they had become redundant
 * {k8s} readiness check no longer looks for `hyperkube` explicitly
 * Updated cluster role names to ensure no namespace conflicts in {k8s}
-* Corrected service name to work with `syslog` drains
 * Includes these {cf} component versions:
 ** UAA: v60.2
 ** cf-deployment: 2.7.0
