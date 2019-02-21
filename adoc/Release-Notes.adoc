@@ -31,6 +31,127 @@ endif::[]
 [id='sec.major-change']
 == Major Changes
 
+[id='sec.1_3_1']
+=== Release 1.3.1, February 2019
+
+[id='sec.1_3_1.new']
+==== What Is New?
+
+* {scf} has been updated to version 2.15.2:
+** Default PodSecurityPolicies (PSPs) come with the helm charts
+** cflinuxfs3 now available as a stack
+** Added nginx buildpack
+** Support added for placement zones & isolation segments
+* The Stratos UI has been updated to version 2.3:
+** Support for extensions
+** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.3.0.
+
+For information about deploying and administering {product}, see the product manuals at
+{doc-url}.
+
+
+[id='sec.1_3_1.feature']
+==== Features and Fixes
+
+* App-AutoScaler no longer depends on hairpin
+* CredHub on {azure} is now supported
+* Corrected service name to work with `syslog` drains
+* Certificates rely on correct FQDN for UAA
+* Removed obsolete key and diego-cell readiness probe from `role-manifest.yml`
+* Changed one variable name to align with upstream practices--this may require changes to sizing:
+** `cf-routing` replaces `routing`
+* Includes these {cf} component versions:
+** app-autoscaler: 1.0.0
+** bpm: 1.0.0
+** capi: 1.66.0
+** cf-deployment: 3.6.0
+** cf-mysql: 36.15.0
+** cf-routing: 0.180.0
+** cf-sle12: 1.52.6
+** cf-smoke-tests: 40.0.6
+** cf-syslog-drain: 7.0
+** cf-usb: 1.0.1
+** cflinuxfs2: 1.266.0
+** cflinuxfs3: 0.60.0
+** credhub: 2.0.2
+** diego: 2.16.0
+** garden-runc: 1.16.3
+** groot-btrfs: 1.0.4
+** kubectl: 1.9.6
+** loggregator: 103.1
+** loggregator-agent: 2.0
+** nats: 25
+** nfs-volume: 1.2.0
+** opensuse42: 1.8.6
+** postgres-release: 26
+** scf-helper: 1.0.1
+** cf-acceptance-tests: 2.8
+** statsd-injector: 1.3.0
+** uaa: 60.2
+** uaa-fissile: c9edf895
+* Buildpacks:
+** binary-buildpack: 1.0.30
+** dotnet-core-buildpack: 2.0.3
+** go-buildpack: 1.8.33
+** java-buildpack: 4.17.2
+** nginx-buildpack: 1.0.8
+** nodejs-buildpack: 1.6.43
+** php-buildpack: 4.3.70
+** python-buildpack: 1.6.27
+** ruby-buildpack: 1.7.31
+** staticfile-buildpack: 1.4.39
+
+
+[id='sec.1_3_1.issue']
+==== Known Issues
+
+* For deployments on {eksa}: the {awsa} Service Broker (https://aws.amazon.com/partners/servicebroker/) should now be used instead of the deprecated `cf-brokers` wrapper.
+
+* For custom PSPs, `SYS_RESOURCE` no longer needs to be specified under added capabilities in the `scf-config-values.yml`
+
+* During an upgrade from 2.14 to 2.15.2, the GoRouter and the applications it routes to will be unavailable until the new GoRouter pods are ready. You can work around this by setting the following label on the existing GoRouter pod specs:
+labels:
++
+[source]
+----
+labels:
+.. `app.kubernetes.io/component: "router"`
+.. `skiff-role-name: "router"`
+----
+
+* The App-AutoScaler services are exposed as Kube services of type LoadBalancer with public IP addresses/hostnames. Calls to App-AutoScaler are routed through the GoRouter. Therefore, you do not need to create separate DNS entries for those addresses/hostnames.
+
+* Deletion of {mariadb} instances created with Minibroker can fail with timeouts. If an error appears, wait one minute and retry. If the `cf delete-service` command fails but the instance pods are removed from {k8s}, the service instance data can safely be removed with a `cf purge-service-instance` command.
+
+* On {azure} it is recommended to run on instance types DS4_v2 or larger due to the introduction of the cflinuxfs3 stack.
+
+* The URL of the internal `cf-usb` broker endpoint has been corrected from the duplicate name from the previous version. To reconnect with {scf}/{product}, brokers for {postgre} and {mysql} that use `cf-usb` will require the following manual fix after the upgrade:
+
+[arabic]
+.. Run `kubectl get secret --namespace scf` and copy the name of the secret (for example, `secrets-2.15.2-1`)
+.. Run `cf service-brokers` to get the URL for the `cf-usb` host (for example, `https://cf-usb-cf-usb.scf.svc.cluster.local:24054`)
+.. Get the current `CF_USB` password by running:
++
+[source,bash]
+----
+kubectl get secret --namespace scf <SECRET_NAME> -o yaml | \
+  grep \\scf-usb-password: | cut -d: -f2 | base64 -id
+----
++
+Replace `<SECRET_NAME>` with the name from the first step.
+.. Finally, update the service broker:
++
+[source,bash]
+----
+cf update-service-broker usb broker-admin <PASSWORD> \
+  https://cf-usb.scf.svc.cluster.local:24054
+----
++
+Replace `<PASSWORD>` with the password from step 3. The URL is a modified
+version of the URL from step 2: however, as the subdomain name, use
+`cf-usb` instead of `cf-usb-cf-usb`.
+
+
 [id='sec.1_3']
 === Release 1.3, November 2018
 
@@ -60,7 +181,7 @@ For information about deploying and administering {product}, see the product man
 ** `api-group` replaces `api`
 * UAA charts now have affinity/antiaffinity logic
 * Exposed SMTP_HOST & SMTP_FROM_ADDRESS variables to allow for account creation & password reset
-* `consul` and `postgres` roles removed as they had become redundant
+* `consul` role removed due to redundandcy
 * {k8s} readiness check no longer looks for `hyperkube` explicitly
 * Updated cluster role names to ensure no namespace conflicts in {k8s}
 * Includes these {cf} component versions:
@@ -75,7 +196,6 @@ For information about deploying and administering {product}, see the product man
 ** cf-smoke-tests-release: 40.0.5
 ** cf-syslog-drain-release: v7.0
 ** cf-usb: 7a45076
-** consul-release: v195
 ** diego-release: v2.12.1
 ** garden-runc-release: v1.15.1
 ** groot-btrfs: 305b068d
