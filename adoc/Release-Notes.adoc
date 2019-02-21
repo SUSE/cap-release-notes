@@ -53,11 +53,11 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_3_1.feature']
 ==== Features and Fixes
 
-* App-autoscaler no longer dependent on hairpin
-* Credhub on Azure is now supported
+* App-AutoScaler no longer depends on hairpin
+* CredHub on {azure} is now supported
 * Corrected service name to work with `syslog` drains
-* Certificates rely on correct UAA FQDN
-* Removed obsolete key and diego-cell readiness probe from role-manifest.yml
+* Certificates rely on correct FQDN for UAA
+* Removed obsolete key and diego-cell readiness probe from `role-manifest.yml`
 * Changed one variable name to align with upstream practices--this may require changes to sizing:
 ** `cf-routing` replaces `routing`
 * Includes these {cf} component versions:
@@ -105,18 +105,21 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_3_1.issue']
 ==== Known Issues
 
-* For deployments on Amazon EKS: the The {awsa} Service Broker(https://aws.amazon.com/partners/servicebroker/) should now be used instead of the deprecated `cf-brokers` wrapper.
+* For deployments on {eksa}: the {awsa} Service Broker(https://aws.amazon.com/partners/servicebroker/) should now be used instead of the deprecated `cf-brokers` wrapper.
 
-* For custom PSPs, `SYS_RESOURCE` no longer needs to specified under added capabilities in the scf-config-values.yml
+* For custom PSPs, `SYS_RESOURCE` no longer needs to be specified under added capabilities in the `scf-config-values.yml`
 
 * During an upgrade from 2.14 to 2.15.2, the GoRouter and the applications it routes to will be unavailable until the new GoRouter pods are ready. You can work around this by setting the following label on the existing GoRouter pod specs:
 labels:
-
++
+[source]
+----
+labels:
 .. `app.kubernetes.io/component: "router"`
 .. `skiff-role-name: "router"`
+----
 
-
-* The App Autoscaler services are exposed as Kube services of type LoadBalancer with public IP addresses/hostnames. However, no separate DNS entries need to be created for those addresses/hostnames as calls to autoscaler will be routed through the GoRouter.
+* The App-AutoScaler services are exposed as Kube services of type LoadBalancer with public IP addresses/hostnames. Calls to App-AutoScaler are routed through the GoRouter. Therefore, you do not need to create separate DNS entries for those addresses/hostnames.
 
 * Minibroker with {mariadb} will see timeout issues upon deletion. If an error appears, wait one minute and retry. If the `cf delete-service` command fails but the instance pods are removed from {k8s}, the service instance data can safely be removed with a `cf purge-service-instance` command.
 
