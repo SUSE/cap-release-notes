@@ -111,16 +111,16 @@ For information about deploying and administering {product}, see the product man
 
 * During an upgrade from 2.14 to 2.15.2, the GoRouter and the applications it routes to will be unavailable until the new GoRouter pods are ready. You can work around this by setting the following label on the existing GoRouter pod specs:
 labels:
-[source,bash]
-----
-.. app.kubernetes.io/component: "router"
-.. skiff-role-name: "router"
+
+.. `app.kubernetes.io/component: "router"`
+.. `skiff-role-name: "router"`
+
 
 * The App Autoscaler services are exposed as Kube services of type LoadBalancer with public IP addresses/hostnames. However, no separate DNS entries need to be created for those addresses/hostnames as calls to autoscaler will be routed through the GoRouter.
 
 * Minibroker with {mariadb} will see timeout issues upon deletion. If an error appears, wait one minute and retry. If the `cf delete-service` command fails but the instance pods are removed from {k8s}, the service instance data can safely be removed with a `cf purge-service-instance` command.
 
-* On {azure} it is recommended to run on instance types DS4_v2 or larger due to the introduction of the cfslinuxfs3 stack.
+* On {azure} it is recommended to run on instance types DS4_v2 or larger due to the introduction of the cflinuxfs3 stack.
 
 * The URL of the internal `cf-usb` broker endpoint has been corrected from the duplicate name from the previous version. To reconnect with {scf}/{product}, brokers for {postgre} and {mysql} that use `cf-usb` will require the following manual fix after the upgrade:
 
