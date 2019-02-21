@@ -107,7 +107,7 @@ For information about deploying and administering {product}, see the product man
 
 * For deployments on Amazon EKS: the The {awsa} Service Broker(https://aws.amazon.com/partners/servicebroker/) should now be used instead of the deprecated `cf-brokers` wrapper.
 
-* For custom PSPs, `SYS_RESOURCE` no longer needs to specified under added capabilities in the role-manifest.yml
+* For custom PSPs, `SYS_RESOURCE` no longer needs to specified under added capabilities in the scf-config-values.yml
 
 * During an upgrade from 2.14 to 2.15.2, the GoRouter and the applications it routes to will be unavailable until the new GoRouter pods are ready. You can work around this by setting the following label on the existing GoRouter pod specs:
 labels:
