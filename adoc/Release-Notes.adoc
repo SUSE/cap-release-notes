@@ -121,7 +121,7 @@ labels:
 
 * The App-AutoScaler services are exposed as Kube services of type LoadBalancer with public IP addresses/hostnames. Calls to App-AutoScaler are routed through the GoRouter. Therefore, you do not need to create separate DNS entries for those addresses/hostnames.
 
-* Minibroker with {mariadb} will see timeout issues upon deletion. If an error appears, wait one minute and retry. If the `cf delete-service` command fails but the instance pods are removed from {k8s}, the service instance data can safely be removed with a `cf purge-service-instance` command.
+* Deletion of {mariadb} instances created with Minibroker can fail with timeouts. If an error appears, wait one minute and retry. If the `cf delete-service` command fails but the instance pods are removed from {k8s}, the service instance data can safely be removed with a `cf purge-service-instance` command.
 
 * On {azure} it is recommended to run on instance types DS4_v2 or larger due to the introduction of the cflinuxfs3 stack.
 
