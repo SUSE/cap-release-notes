@@ -105,7 +105,7 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_3_1.issue']
 ==== Known Issues
 
-* For deployments on {eksa}: the {awsa} Service Broker(https://aws.amazon.com/partners/servicebroker/) should now be used instead of the deprecated `cf-brokers` wrapper.
+* For deployments on {eksa}: the {awsa} Service Broker (https://aws.amazon.com/partners/servicebroker/) should now be used instead of the deprecated `cf-brokers` wrapper.
 
 * For custom PSPs, `SYS_RESOURCE` no longer needs to be specified under added capabilities in the `scf-config-values.yml`
 
