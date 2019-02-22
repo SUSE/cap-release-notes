@@ -123,7 +123,7 @@ labels:
 
 * Deletion of {mariadb} instances created with Minibroker can fail with timeouts. If an error appears, wait one minute and retry. If the `cf delete-service` command fails but the instance pods are removed from {k8s}, the service instance data can safely be removed with a `cf purge-service-instance` command.
 
-* On {azure} it is recommended to run on instance types DS4_v2 or larger due to the introduction of the cflinuxfs3 stack.
+* On {azure} it is recommended to run on instance types `Standard_DS4_v2` or larger due to the introduction of the cflinuxfs3 stack. It's also recommended to use Premium SSD for the storage class.
 
 * The URL of the internal `cf-usb` broker endpoint has been corrected from the duplicate name from the previous version. To reconnect with {scf}/{product}, brokers for {postgre} and {mysql} that use `cf-usb` will require the following manual fix after the upgrade:
 
@@ -181,7 +181,7 @@ For information about deploying and administering {product}, see the product man
 ** `api-group` replaces `api`
 * UAA charts now have affinity/antiaffinity logic
 * Exposed SMTP_HOST & SMTP_FROM_ADDRESS variables to allow for account creation & password reset
-* `consul` role removed due to redundandcy
+* `consul` role removed due to redundancy
 * {k8s} readiness check no longer looks for `hyperkube` explicitly
 * Updated cluster role names to ensure no namespace conflicts in {k8s}
 * Includes these {cf} component versions:
