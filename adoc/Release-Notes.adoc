@@ -105,7 +105,7 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_3_1.issue']
 ==== Known Issues
 
-* Starting with {product} 1.3.1, during helm upgrade from 1.3.0, the `--recreate-pods` is no longer required as the recent change to the active/passive model allowed for previously Unready pods to be upgraded. This will allow for zero app downtime.
+* For {product} 1.3.1, during the helm upgrade from 1.3.0, the `--recreate-pods` is not required as the recent change to the active/passive model allowed for previously Unready pods to be upgraded. This will allow for zero app downtime from the previous version.
 
 * For deployments on {eksa}: the {awsa} Service Broker (https://aws.amazon.com/partners/servicebroker/) should now be used instead of the deprecated `cf-brokers` wrapper.
 
