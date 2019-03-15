@@ -127,6 +127,35 @@ labels:
 
 * On {azure} it is recommended to run on instance types `Standard_DS4_v2` or larger due to the introduction of the cflinuxfs3 stack. It's also recommended to use Premium SSD for the storage class.
 
+* If you notice application instances (long-running processes or "LRPs") improperly persisting and accepting traffic after update or scaling actions, there may be an instance of the cc-clock role that did not come up properly due to an incorrect internal protocol setting. To address this:
+
+[arabic]
+.. Create a file called `cc-clock-patch.yml` with the following contents:
++
+[source,bash]
+----
+bosh:
+   instance_groups:
+   - name: cc-clock
+     jobs:
+     - name: cloud_controller_clock
+       properties:
+         cc:
+           external_protocol: http 
+----
+.. Rerun the upgrade of the CAP deployment via a Helm command with this syntax: `helm upgrade scf suse/cf --reuse-values --namespace scf -f cc-clock-patch-yml`
+.. For high-availability (HA) deployments, manually restart the cc-clock-N pods by deleting them one at a time to avoid app downtime; newer updated pods will be created automatically:
++
+[source,bash]
+----
+kubectl delete pod - n scf cc-clock-0
+kubectl delete pod - n scf cc-clock-1
+kubectl delete pod - n scf cc-clock-2
+----
+.. For single availability deployments, since there's only one cc-clock pod, app downtime is unavoidable.
+
+//-
+
 * The URL of the internal `cf-usb` broker endpoint has been corrected from the duplicate name from the previous version. To reconnect with {scf}/{product}, brokers for {postgre} and {mysql} that use `cf-usb` will require the following manual fix after the upgrade:
 
 [arabic]
