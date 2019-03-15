@@ -127,7 +127,7 @@ labels:
 
 * On {azure} it is recommended to run on instance types `Standard_DS4_v2` or larger due to the introduction of the cflinuxfs3 stack. It's also recommended to use Premium SSD for the storage class.
 
-* When updating or scaling down instances of an app, there may be older instances of the app that remain running and accepting traffic in what Diego deems as "long-running processes" (or LRPs). If seen, then there may be an instance of the `cc-clock` role that did not come up properly due to an incorrect protocol. To address this:
+* If you notice application instances (long-running processes or "LRPs") improperly persisting and accepting traffic after update or scaling actions, there may be an instance of the cc-clock role that did not come up properly due to an incorrect internal protocol setting. To address this:
 
 [arabic]
 .. Create a file called `cc-clock-patch.yml` with the following contents:
