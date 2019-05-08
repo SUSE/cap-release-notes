@@ -1,4 +1,5 @@
 :suse: SUSE
+:current-year: 2019
 :product: {suse} Cloud Application Platform
 :version: 1.3.1
 :rn-url: https://www.suse.com/releasenotes
