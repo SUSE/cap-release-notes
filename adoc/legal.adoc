@@ -1,6 +1,7 @@
 // Start attribute entry list (Do not edit here! Edit in entities.adoc)
 ifdef::env-github[]
 :suse: SUSE
+:current-year: 2019
 :product: {suse} Cloud Application Platform
 :version: 1.4
 :rn-url: https://www.suse.com/releasenotes
@@ -58,7 +59,7 @@ weaponry end uses. Refer to https://www.suse.com/company/legal/ for more
 information on exporting {suse} software. {suse} assumes no responsibility
 for your failure to obtain any necessary export approvals.
 
-Copyright © 2017-2018 SUSE LLC.
+Copyright © 2017-{current-year} SUSE LLC.
 
 This release notes document is licensed under a Creative Commons
 Attribution-ShareAlike 4.0 International License (CC-BY-SA-4.0). You should
