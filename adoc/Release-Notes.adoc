@@ -41,9 +41,9 @@ endif::[]
 ** A tech preview of Eirini is available.
 ** Added SLE15 stack.
 ** Added feature flags to enable roles such as autoscaler, cf-usb, credhub and eirini.
-** Added Sync Integration Test Suite (SITS)
-** Added support for nginx Ingress Controller with customizable Ingress via user suppplied annotations.
-** Added .net-core buildpack (2.2.7)
+** Added Sync Integration Test Suite (SITS).
+** Added support for NGINX Ingress Controller with customizable Ingress via user suppplied annotations.
+** Added .net-core buildpack (2.2.7).
 * The Stratos UI has been updated to version 2.4:
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.4.0.
 
@@ -56,19 +56,19 @@ For information about deploying and administering {product}, see the product man
 
 * cf-mysql-release has been reverted to 36.15.0 to avoid intermittent database connectivity errors in HA setup.
 
-* Changed app autoscaler-postgres to a non-HA setup due to a known limitation - see https://github.com/cloudfoundry/postgres-release/#known-limitations
+* Changed app autoscaler-postgres to a non-HA setup due to a known limitation - see https://github.com/cloudfoundry/postgres-release/#known-limitations.
 
-* The app autoscaler services are no longer deployed as Kube services of type LoadBalancer and therefore, are not exposed on public IP addresses or hostnames.
+* The app autoscaler services are no longer deployed as Kubernetes services of type LoadBalancer and therefore, are not exposed on public IP addresses or hostnames.
 
-* Fixed autoscaler to not skip SSL validation.
+* Fixed autoscaler to perform SSL validation.
 
 * Fixed autoscaler to listen to cluster internal CF API endpoint.
 
-* The default `nproc` limits for the vcap user for all SCF roles have been bumped up to 1024/2048 (soft/hard). You can use different limits by setting `kube.limits.nproc.soft` and `kube.limits.nproc.hard` in helm chart values. 
+* The default `nproc` limits for the vcap user for all SCF roles have been bumped to 1024/2048 (soft/hard). You can use different limits by setting `kube.limits.nproc.soft` and `kube.limits.nproc.hard` in the Helm chart values. 
 
 * Cleaned up role readiness probe outputs.
 
-* Fixed the test for an insecure docker registry (uses tcpdomain for the route)
+* Fixed the test for an insecure Docker registry (uses tcpdomain for the route).
 
 
 * Includes these {cf} component versions:
@@ -116,28 +116,28 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_4.issue']
 ==== Known Issues
 
-* The instructions for enabling eirini can be found at https://github.com/SUSE/scf/wiki/Eirini
+* The instructions for enabling Eirini can be found at https://github.com/SUSE/scf/wiki/Eirini.
 
-* Resuming a past practice, with {product} 1.4, use the complete command: `helm upgrade --force --recreate-pods` for an upgrade. This will reintroduce downtime for apps but without `recreate-pods` multiple versions of statefulsets may co-exist which can cause incompatibilities between depedent statefulsets and result in a broken upgrade. This applies to Stratos pods as well.
+* Resuming a past practice, with {product} 1.4, use the complete command: `helm upgrade --force --recreate-pods` for an upgrade. This will reintroduce downtime for apps but without `--recreate-pods`, multiple versions of statefulsets may co-exist which can cause incompatibilities between depedent statefulsets, and result in a broken upgrade. This applies to Stratos pods as well.
 
-* With the introduction of feature flags, setting `sizing.<role>.count` to enable/disable a feature is no longer supported. You must explicitly set `enable.<feature>` to `true` or `false` to enable/disable a feature. As an example, if you had enabled credhub or autoscaler in {product} 1.3.1 then you must add `enable.credhub=true` or `enable.autoscaler=true` during the `helm upgrade`. If you had previously set `sizing.<role>.count` to `1` you can remove that as the new minimum setting is `1`. Conversely, if you had disabled a feature in {product} 1.3.1 you should remove the corresponding sizing setting and instead explicitly set `enable.<feature>=false` during the upgrade. If you would like to deploy more than `1` instance of an optional role you would need to use an appropriate value for `sizing.<role>.count` in addition to using the feature flag.
+* With the introduction of feature flags, setting `sizing.<role>.count` to enable/disable a feature is no longer supported. You must explicitly set `enable.<feature>` to `true` or `false` to enable/disable a feature. As an example, if you had enabled credhub or autoscaler in {product} 1.3.1, then you must add `enable.credhub=true` or `enable.autoscaler=true` during the `helm upgrade`. If you had previously set `sizing.<role>.count` to `1` you can remove that as the new minimum setting is `1`. Conversely, if you had disabled a feature in {product} 1.3.1, you should remove the corresponding sizing setting and, instead, explicitly set `enable.<feature>=false` during the upgrade. If you would like to deploy more than `1` instance of an optional role, you would need to use an appropriate value for `sizing.<role>.count` in addition to using the feature flag.
 
 
-* If autoscaler was enabled in {product} 1.3.1 you must pecify `sizing.autoscaler_postgres.disk_sizes.postgres_data=100` during the helm upgrade to avoid upgrade errors. Alternatively, you can disable the autoscaler before the upgrade and re-enable after the upgrade is finished. Without any of these workarounds the upgrade would fail with `Error: UPGRADE FAILED: StatefulSet.apps "autoscaler-postgres" is invalid` message.
+* If autoscaler was enabled in {product} 1.3.1, you must specify `sizing.autoscaler_postgres.disk_sizes.postgres_data=100` during the helm upgrade to avoid upgrade errors. Alternatively, you can disable the autoscaler before the upgrade and re-enable after the upgrade is finished. Without any of these workarounds, the upgrade would fail with `Error: UPGRADE FAILED: StatefulSet.apps "autoscaler-postgres" is invalid` message.
 
-* If you are using the nginx Ingress Controller and seeing `Request Entity Too Large` errors you should bump up the ingress proxy body size to an appropriate value by setting the `ingress.annotations` key in helm chart values as in the following:
+* If you are using the NGINX Ingress Controller and seeing `Request Entity Too Large` errors, you should bump up the ingress proxy body size to an appropriate value by setting the `ingress.annotations` key in helm chart values as in the following:
 
 ```
   ingress:
      annotations:
-       nginx.ingress.kubernetes.io/proxy-body-size 64m
+       nginx.ingress.kubernetes.io/proxy-body-size: 64m
 ```
 
-* If during an upgrade the `post-deployment` job does not complete re-apply the `helm upgrade`.
+* If during an upgrade the `post-deployment` job does not complete, re-apply the `helm upgrade`.
 
-* On GKE the swap accounting related kernel boot parameter changes on the worker nodes may not be retained as GCP may automatically re-provision nodes to perform upgrades or repairs. One option you may want to consider is to set up the GKE cluster with `auto-repair` and `auto-upgrade` set to `false` to reduce the ephemeral nature of the GKE nodes. See https://cloud.google.com/kubernetes-engine/docs/concepts/node-images#modifications for more details.
+* On GKE, the swap accounting related kernel boot parameter changes on the worker nodes may not be retained as GCP may automatically re-provision nodes to perform upgrades or repairs. One option you may want to consider is to set up the GKE cluster with `auto-repair` and `auto-upgrade` set to `false` to reduce the ephemeral nature of the GKE nodes. See https://cloud.google.com/kubernetes-engine/docs/concepts/node-images#modifications for more details.
 
-* On GKE you should set up the kubernetes storage class to be backed by an SSD instead of a standard disk. 
+* On GKE you should set up the Kubernetes storage class to be backed by an SSD instead of a standard disk. 
 
 
 
