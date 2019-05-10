@@ -37,14 +37,15 @@ endif::[]
 [id='sec.1_4.new']
 ==== What Is New?
 
-* {scf} has been updated to version 2.15.2:
-** Default PodSecurityPolicies (PSPs) come with the helm charts
-** cflinuxfs3 now available as a stack
-** Added nginx buildpack
-** Support added for placement zones & isolation segments
-* The Stratos UI has been updated to version 2.3:
-** Support for extensions
-** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.3.0.
+* {scf} has been updated to version 2.16.4:
+** A tech preview of Eirini is available.
+** Added SLE15 stack.
+** Added feature flags to enable roles such as autoscaler, cf-usb, credhub and eirini.
+** Added Sync Integration Test Suite (SITS)
+** Added support for nginx Ingress Controller with customizable Ingress via user suppplied annotations.
+** Added .net-core buildpack (2.2.7)
+* The Stratos UI has been updated to version 2.4:
+** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.4.0.
 
 For information about deploying and administering {product}, see the product manuals at
 {doc-url}.
@@ -95,6 +96,33 @@ For information about deploying and administering {product}, see the product man
 ** ruby-buildpack: 
 ** staticfile-buildpack: 
 
+[id='sec.1_4.issue']
+==== Known Issues
+
+* Resuming a past practice, with {product} 1.4, during helm upgrade use the complete command: `helm upgrade --force --recreate-pods`. This will reintroduce downtime for apps but without `recreate-flags` multiple versions of statefulsets may co-exist which can cause incompatibilities between depedent statefulsets and result in a broken upgrade. This applies to Stratos pods as well.
+
+* With the introduction of feature flags, setting `sizing.<role>.count` to enable/disable a feature is no longer supported. You must explicitly set `enable.<feature>` to `true` or `false` to enable/disable a feature. As an example, if you had enabled credhub or autoscaler in {product} 1.3.1 then you must add `enable.credhub=true` or `enable.autoscaler=true` during the `helm upgrade`. If you had previously set `sizing.<role>.count` to `1` you can remove that as that is the new minimum setting. Conversely, if you had disabled a feature in {product} 1.3.1 you should remove the corresponding sizing setting and instead explicitly set `enable.<feature>=false` during the upgrade.
+
+* The App-AutoScaler services are no longer deployed as Kube services of type LoadBalancer and therefore, are not exposed on public IP addresses or hostnames. [should be in fixes?]
+
+* The default `nproc` limits for the vcap user for all SCF roles have been bumped up to 1024/2048 (soft/hard). You can use different limits by setting `kube.limits.nproc.soft` and `kube.limits.nproc.hard` in helm chart values.
+
+* If autoscaler was enabled in {product} 1.3.1 please make sure you specify `sizing.autoscaler_postgres.disk_sizes.postgres_data=100` during the helm upgrade to avoid upgrade errors. Alternatively, you can disable the autoscaler before the upgrade and re-enable after the upgrade is finished. Without any of these workarounds the upgrade would fail with `Error: UPGRADE FAILED: StatefulSet.apps "autoscaler-postgres" is invalid`.
+
+* If you are using the nginx Ingress Controller and seeing `Request Entity Too Large` errors you should bump up the ingress proxy body size to an appropriate value by setting the `ingress.annotations` key in helm chart values as in the following:
+
+```
+  ingress:
+     annotations:
+       nginx.ingress.kubernetes.io/proxy-body-size 64m
+```
+
+* 
+
+
+
+
+
 [id='sec.1_3_1']
 === Release 1.3.1, February 2019
 
@@ -112,11 +140,6 @@ For information about deploying and administering {product}, see the product man
 
 For information about deploying and administering {product}, see the product manuals at
 {doc-url}.
-
-[id='sec.1_4.issue']
-==== Known Issues
-
-* Resuming a past practice, with {product} 1.4, during helm upgrade, {k8s} will not upgrade pods that are not ready by default, particularly mysql-related pods. To upgrade all pods, use the complete command: `helm upgrade --force --recreate-pods`. This will reintroduce downtime for apps but ensures the upgrade doesn't break.
 
 
 [id='sec.1_3_1.feature']
