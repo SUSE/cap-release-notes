@@ -54,7 +54,7 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_4.feature']
 ==== Features and Fixes
 
-* cf-mysql-release for both UAA and SCF have been reverted to 36.15.0 to avoid intermittent database connectivity errors in HA setup.
+* cf-mysql-release has been reverted to 36.15.0 to avoid intermittent database connectivity errors in HA setup.
 
 * Changed app autoscaler-postgres to a non-HA setup due to a known limitation - see https://github.com/cloudfoundry/postgres-release/#known-limitations
 
