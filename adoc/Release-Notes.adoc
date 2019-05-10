@@ -72,33 +72,33 @@ For information about deploying and administering {product}, see the product man
 
 
 * Includes these {cf} component versions:
-** app-autoscaler: 
-** bpm: 
+** app-autoscaler: 1.0.0
+** bits-service: 2.26.0
+** bpm: 1.0.0
 ** capi: 1.79.0
 ** cf-deployment: 6.10
 ** cf-mysql: 36.15.0
-** cf-routing:
-** cf-sle12:
-** cf-smoke-tests: 
-** cf-syslog-drain: 
-** cf-usb: 
-** cflinuxfs2: 
-** cflinuxfs3: 
-** credhub: 
-** diego: 
+** cf-routing: 0.184.0
+** cf-sle12: 1.75.11
+** cf-smoke-tests: 40.0.44
+** cf-syslog-drain: 8.1
+** cf-usb: 1.0.1
+** cflinuxfs2: 1.281.0
+** cflinuxfs3: 0.81.0
+** credhub: 2.1.2
+** diego: 2.25.0
 ** eirini: 0.0.4
-** garden-runc: 
-** groot-btrfs: 
-** kubectl: 
-** loggregator: 
-** loggregator-agent: 
-** nats: 
+** garden-runc: 1.17.2
+** groot-btrfs: 1.0.4
+** kubectl: 1.9.6
+** loggregator: 104.4
+** loggregator-agent: 3.2
+** nats: 26
 ** nfs-volume: 1.7.6
-** opensuse42: 
-** postgres-release: 
-** scf-helper: 
+** postgres-release: 26
+** scf-helper: 1.0.2
 ** cf-acceptance-tests: 
-** statsd-injector: 
+** statsd-injector: 1.5.0
 ** uaa: 
 ** uaa-fissile: 
 * Buildpacks:
@@ -118,12 +118,12 @@ For information about deploying and administering {product}, see the product man
 
 * The instructions for enabling eirini can be found at https://github.com/SUSE/scf/wiki/Eirini
 
-* Resuming a past practice, with {product} 1.4, use the complete command: `helm upgrade --force --recreate-pods` for an upgrade. This will reintroduce downtime for apps but without `recreate-pods` multiple versions of statefulsets may co-exist which can cause incompatibilities between depedent statefulsets and result in a broken upgrade. This applies to Stratos pods as well.
+* Resuming a past practice, with {product} 1.4, use the complete command: `helm upgrade --force --recreate-pods` for an upgrade. This will reintroduce downtime for apps but without `recreate-pods` multiple versions of statefulsets may co-exist which can cause incompatibilities between dependent statefulsets and result in a broken upgrade. This applies to Stratos pods as well.
 
 * With the introduction of feature flags, setting `sizing.<role>.count` to enable/disable a feature is no longer supported. You must explicitly set `enable.<feature>` to `true` or `false` to enable/disable a feature. As an example, if you had enabled credhub or autoscaler in {product} 1.3.1 then you must add `enable.credhub=true` or `enable.autoscaler=true` during the `helm upgrade`. If you had previously set `sizing.<role>.count` to `1` you can remove that as the new minimum setting is `1`. Conversely, if you had disabled a feature in {product} 1.3.1 you should remove the corresponding sizing setting and instead explicitly set `enable.<feature>=false` during the upgrade. If you would like to deploy more than `1` instance of an optional role you would need to use an appropriate value for `sizing.<role>.count` in addition to using the feature flag.
 
 
-* If autoscaler was enabled in {product} 1.3.1 you must pecify `sizing.autoscaler_postgres.disk_sizes.postgres_data=100` during the helm upgrade to avoid upgrade errors. Alternatively, you can disable the autoscaler before the upgrade and re-enable after the upgrade is finished. Without any of these workarounds the upgrade would fail with `Error: UPGRADE FAILED: StatefulSet.apps "autoscaler-postgres" is invalid` message.
+* If autoscaler was enabled in {product} 1.3.1 you must specify `sizing.autoscaler_postgres.disk_sizes.postgres_data=100` during the helm upgrade to avoid upgrade errors. Alternatively, you can disable the autoscaler before the upgrade and re-enable after the upgrade is finished. Without any of these workarounds the upgrade would fail with `Error: UPGRADE FAILED: StatefulSet.apps "autoscaler-postgres" is invalid` message.
 
 * If you are using the nginx Ingress Controller and seeing `Request Entity Too Large` errors you should bump up the ingress proxy body size to an appropriate value by setting the `ingress.annotations` key in helm chart values as in the following:
 
