@@ -25,6 +25,7 @@ ifdef::env-github[]
 :postgre: PostgreSQL
 :redis: Redis
 :mongo: MongoDB
+:ng: NGINX
 endif::[]
 // End attribute entry list
 
