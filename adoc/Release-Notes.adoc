@@ -38,7 +38,7 @@ endif::[]
 ==== What Is New?
 
 * {scf} has been updated to version 2.16.4:
-** A tech preview of Eirini is available.
+** A tech preview of Eirini is available. To enable Eirini, follow the instructions from https://github.com/SUSE/scf/wiki/Eirini. 
 ** Added SLE15 stack.
 ** Added feature flags to enable roles such as autoscaler, cf-usb, credhub and eirini.
 ** Added Sync Integration Test Suite (SITS).
@@ -123,12 +123,13 @@ For information about deploying and administering {product}, see the product man
 * If autoscaler was enabled in {product} 1.3.1, you must specify `sizing.autoscaler_postgres.disk_sizes.postgres_data=100` during the helm upgrade to avoid upgrade errors. Alternatively, you can disable the autoscaler before the upgrade and re-enable after the upgrade is finished. Without any of these workarounds, the upgrade would fail with `Error: UPGRADE FAILED: StatefulSet.apps "autoscaler-postgres" is invalid` message.
 
 * If you are using the NGINX Ingress Controller and seeing `Request Entity Too Large` errors, you should bump up the ingress proxy body size to an appropriate value by setting the `ingress.annotations` key in helm chart values as in the following:
-
-```
++
+[source]
+----
   ingress:
      annotations:
        nginx.ingress.kubernetes.io/proxy-body-size: 64m
-```
+----
 
 * If during an upgrade the `post-deployment` job does not complete, re-apply the `helm upgrade`.
 
