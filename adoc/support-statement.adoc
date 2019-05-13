@@ -1,3 +1,33 @@
+-e // Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:product: {suse} Cloud Application Platform
+:version: 1.4
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
+:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/part_cap_deployment.html
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:scf: {suse} {cf}
+:k8s: Kubernetes
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
+:mysql: MySQL
+:mariadb: MariaDB
+:postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
+:ng: NGINX
+-e endif::[]
+// End attribute entry list
 // Start attribute entry list (Do not edit here! Edit in entities.adoc)
 ifdef::env-github[]
 :suse: SUSE
@@ -28,33 +58,64 @@ ifdef::env-github[]
 endif::[]
 // End attribute entry list
 
+
+[id=sec.Support]
 [id=sec.Support]
 == Support Statement for {product}
+== Support Statement for {product}
+
 
 To receive support, you need an appropriate subscription with {suse}. For
+To receive support, you need an appropriate subscription with {suse}. For
+more information, see
 more information, see
 https://www.suse.com/support/?id=SUSE_Cloud_Application_Platform.
+https://www.suse.com/support/?id=SUSE_Cloud_Application_Platform.
+
 
 The following definitions apply:
+The following definitions apply:
+
 
 L1:: Problem determination, which means technical support designed to provide
+L1:: Problem determination, which means technical support designed to provide
+compatibility information, usage support, ongoing maintenance, information
 compatibility information, usage support, ongoing maintenance, information
 gathering and basic troubleshooting using available documentation.
+gathering and basic troubleshooting using available documentation.
+
 
 L2:: Problem isolation, which means technical support designed to analyze
+L2:: Problem isolation, which means technical support designed to analyze
+data, reproduce customer problems, isolate problem area and provide a
 data, reproduce customer problems, isolate problem area and provide a
 resolution for problems not resolved by Level 1 or prepare for Level 3.
+resolution for problems not resolved by Level 1 or prepare for Level 3.
+
 
 L3:: Problem resolution, which means technical support designed to resolve
+L3:: Problem resolution, which means technical support designed to resolve
+problems by engaging engineering to resolve product defects which have been
 problems by engaging engineering to resolve product defects which have been
 identified by Level 2 Support.
+identified by Level 2 Support.
+
 
 For contracted customers and partners, {product} is delivered with L3 support
+For contracted customers and partners, {product} is delivered with L3 support
+for all packages, except for the following:
 for all packages, except for the following:
 
+
+* Technology Previews
 * Technology Previews
 * Sound, graphics, fonts and artwork
+* Sound, graphics, fonts and artwork
+* Packages that require an additional customer contract
 * Packages that require an additional customer contract
 
+
 {suse} will only support the usage of original packages. That is,
+{suse} will only support the usage of original packages. That is,
+packages that are unchanged and not recompiled.
 packages that are unchanged and not recompiled.
