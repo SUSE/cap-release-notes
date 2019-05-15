@@ -5,11 +5,10 @@ services:
 
 env:
   global:
-    - secure: ADD_ENCRYPTED_SECRET
+    - secure: Ga4jTdppvS7TDk3k3uHkPTMikGXBSocxfz30e+o0JmoTlH2Q7dHSDsVIgr7fV1gjZvKXgzdoxu162abFogtUD+c086bCw2IeJb1wGENzH+/zmRI2WWqknEXtuwS/lxV9HDbo9MDfX8rY0S2P23XeQpOpdIZvZjE0n+44HRYqn7OVBampcU6YF6aSCiCilssZjoi7KRVx3igfic2h8C0I7S/1922G54T0//0d8DvMewiCeIgGgahtiPuBs+MsaIPO9gvmIdW724Qi1HZJsFPbGz7tfnmequTz/V7Y2oqYxz8gAjIg6eI2fcQjH77mn38Nd6EWeEfSu78CI91GqUlD5TmRhl7vhzg1KcozmTGIkUABrfLLumbgcaT5StAVk1P6ZJaCuRB8B4m20va7KmqOW9MwRnCHyAFiEF6GQhfmij1/cj6ROx9hUa2whiU0nJGPETgRVsWLxlhDtnervPsEgjGNFVDUZHitGB1LLUkyc8DEaflmjkIdwPT5gPKuwqsvSdHGc4rO3V+80Fq+/5cRdiij8Ij8YT9Lal5kpDIHJ2EaXhI5TVdl/IxOIT3KH8vyGqjqapPTmcFn/rgChYsYpr2ZZPiBhDbpRMrjavwnk9u2kJKyY5R+wMeF12XrQxVLFiC58f9nnWzFNncXodQw8Ot764PLP5p4KR22e7acGrQ=
+    - COMMIT_AUTHOR_MAIL: "doc-team@suse.com"
     # If you want to see a list of installed packages in the doc-ci docker container, set to TRUE
     - LIST_PACKAGES=0
-    # List branches that should be published on GitHub pages, omit the maintenance/ prefix
-    - PUBLISH_PRODUCTS="develop"
 
 before_install:
   - echo "TRAVIS_PULL_REQUEST=$TRAVIS_PULL_REQUEST" >> env.list
@@ -19,6 +18,7 @@ before_install:
   - echo "LIST_PACKAGES=$LIST_PACKAGES" >> env.list
   - echo "PUBLISH_PRODUCTS=\"$PUBLISH_PRODUCTS\"" >> env.list
   - echo "ENCRYPTED_PRIVKEY_SECRET=$ENCRYPTED_PRIVKEY_SECRET" >> env.list
+  - echo "$ENCRYPTED_PRIVKEY_SECRET" | cut -b1-10
   - echo "TRAVIS_COMMIT=$TRAVIS_COMMIT" >> env.list
   - wget https://raw.githubusercontent.com/openSUSE/doc-ci/develop/travis/travis.sh
   - ls
