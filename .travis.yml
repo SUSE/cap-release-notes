@@ -18,7 +18,6 @@ before_install:
   - echo "LIST_PACKAGES=$LIST_PACKAGES" >> env.list
   - echo "PUBLISH_PRODUCTS=\"$PUBLISH_PRODUCTS\"" >> env.list
   - echo "ENCRYPTED_PRIVKEY_SECRET=$ENCRYPTED_PRIVKEY_SECRET" >> env.list
-  - echo "$ENCRYPTED_PRIVKEY_SECRET" | cut -b1-10
   - echo "TRAVIS_COMMIT=$TRAVIS_COMMIT" >> env.list
   - wget https://raw.githubusercontent.com/openSUSE/doc-ci/develop/travis/travis.sh
   - ls
