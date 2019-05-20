@@ -1,37 +1,115 @@
-== README
+== SUSE Cloud Application Platform Release Notes
 
-This repository contains additional notes for the releases of SUSE Cloud Application Platform which is currently in closed beta.
+This repository contains the release notes for SUSE Cloud Application Platform.
 
-* link:/adoc/Release-Notes.adoc[Release Notes] for specific releases
-* link:/adoc/known-issues.adoc[Known issues] for known issues
+=== Published Version of the Release Notes
 
-Hints for specialized environments:
+These release notes are published at
+https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/.
+This published version is automatically updated from the `master` branch every
+24 hours.
+
+
+=== Preview Versions of the Release Notes
+
+You can preview these release notes in the following two ways:
+
+* Documents built by Travis CI: https://susedoc.github.io/#cap-rn
+** These previews are indicative of how the final document will look like.
+** The builds from Travis are updated automatically after every commit (with
+   a delay of ten minutes or less).
+* Make sure to pick the right branch to preview. Branches need to be
+  specifically configured for publishing on this page -- for more
+  information, see <<sec.branch-builds>>).
+
+* Use the GitHub preview: link:adoc/MAIN.release-notes.adoc[]
+** This preview mode is not 100% indicative of the final output.
+** Not everything will look perfect: you may happen upon bare attribute entries
+   (`{}`) and embedded sections will appear as a link only.
+** This preview mode is updated immediately and available for all branches.
+
+For technical details on the differences between the preview builds, see
+<<sec.preview-difference>>.
+
+
+=== Additional Documentation Resources on SUSE CAP
+
+* For full documentation of SUSE Cloud Application platform, please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation].
+* More details about special use cases can currently be found in the instructions for the following SUSE-driven open-source projects:
+** link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF[SUSE Cloud Foundry]
+** link:https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes[Stratos UI]
+* Generic Cloud Foundry documentation is in the link:https://docs.cloudfoundry.org[upstream docs].
+
+
+==== Documentation for Special Environments
 
 * link:https://www.suse.com/documentation/suse-caasp-3/book_caasp_deployment/data/book_caasp_deployment.html[SUSE CaaS (Container as a Service) Platform & Bare Metal or Non-OpenStack Virtualization Platforms]
 * link:https://www.suse.com/documentation/suse-openstack-cloud-8/book_installation/data/sec_heat_templates_install.html[SUSE CaaS (Container as a Service) Platform & SUSE OpenStack Cloud]
 * link:https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/cha_cap_depl-azure.html[Microsoft Azure Platform]
 
-=== Additional Resources
-
-For full documentation of SUSE Cloud Application platform please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation]. Some more details about special use cases can currently be found in the instructions for the open source projects: link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF[SUSE Cloud Foundry] and link:https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes[Stratos UI]. Generic Cloud Foundry documentation is in the link:https://docs.cloudfoundry.org[upstream docs].
 
 === Contributing
 
-Want to help? We love to hear that! Here are a few hints to guide you:
+Want to help? We love to hear that!
 
-* These release notes are written in the AsciiDoc (`*.adoc`) format. For some
+
+==== Document Format
+
+These release notes are written in the AsciiDoc (`*.adoc`) format. For some
 great AsciiDoc documentation, see https://asciidoctor.org/docs/asciidoc-writers-guide
 
-* To submit new changes for review, use GitHub pull requests. Travis CI will
-automatically check whether your pull request's content is compatible AsciiDoc.
 
-* There are two main ways these release notes can be viewed: using GitHub's page
-preview or on the link:https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/[SUSE Web site].
-Both modes work somewhat differently:
-** GitHub will simply render a preview of a single `*.adoc` file using
+==== Submitting Changes
+
+To submit new changes for review, use GitHub pull requests. Travis CI will
+automatically check whether your pull request's content is compatible AsciiDoc.
+However, as AsciiDoc is a plain-text based format, it is important to visually
+verify that everything is correct using one of the previews.
+
+
+==== Previewing Locally
+
+On a computer with openSUSE or SLES/SLED, you can use DAPS (or `daps2docker`) to
+generate preview documents as HTML, PDF, or plain-text.
+
+* Using `daps2docker` -- Building this way is a bit heavy-handed but it
+  generally sidesteps issues with the DAPS version on your platform or issues
+  with PDF generation and should work on any Linux distribution that Docker
+  is available on:
++
+. Install the package `daps2docker` from `https://build.opensuse.org/project/show/Documentation:Tools`.
+. From the main directory of this repository, run `daps2docker DC-release-notes`
+  (generates PDF and HTML)
+
+* Using DAPS -- This is the way that the internal OBS instance builds the
+  published release notes:
++
+. Install the package `daps` from the openSUSE or SLE repositories. Make
+   sure your DAPS version is 3.0 or higher and the package
+   `ruby__x.x__-rubygem-asciidoctor` is installed (replace `x.x` with an
+   appropriate version of Ruby).
+. Run `make all` (generates PDF, HTML, text file, and HTML for YaST)
+
+
+[id='sec.branch-builds']
+==== Enabling susedoc.github.io Preview Builds for Specific Branches
+
+On link:https://susedoc.github.io/#cap-rn[], previews are built only for
+specific branches that are configured at link:https://github.com/SUSEdoc/susedoc.github.io[].
+To enable your feature branch for builds, the XML configuration file in that
+repository needs to be changed. You may not have write access to this
+repository but you can create a Pull Request for that repository or ask any
+of @sknorr, @fsundermeyer, @btat, or @gaktive to change the configuration for
+you.
+
+
+[id='sec.preview-difference']
+==== Technical Differences Between GitHub Preview and Final Version
+
+* GitHub will simply render a preview of a single `*.adoc` file using
 AsciiDoctor's built-in HTML conversion. This README links to individual content
 files.
-** The SUSE Web site build combines multiple `*.adoc` files into a single HTML
+* The SUSE Web site build combines multiple `*.adoc` files into a single HTML
 output file. It is based on AsciiDoctor's AsciiDoc-to-DocBook-XML conversion,
 the result of which is then further converted into HTML/PDF using DAPS and the
 DocBook XSL stylesheets. The central file for this build is
