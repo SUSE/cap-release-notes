@@ -44,7 +44,7 @@ endif::[]
 ** Added SLE15 stack.
 ** Added feature flags to enable roles such as autoscaler, cf-usb, credhub and eirini.
 ** Added Sync Integration Test Suite (SITS).
-** Added support for NGINX Ingress Controller with customizable Ingress via user suppplied annotations.
+** Added support for NGINX Ingress Controller with customizable Ingress via user supplied annotations.
 ** Added .net-core buildpack (2.2.7).
 * The Stratos UI has been updated to version 2.4:
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.4.0.
