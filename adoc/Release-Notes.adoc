@@ -118,7 +118,7 @@ For information about deploying and administering {product}, see the product man
 
 * The instructions for enabling Eirini can be found at https://github.com/SUSE/scf/wiki/Eirini.
 
-* Eirini will not presently work on Kubernetes environments running cri-o; please use Docker runtime instead for now.
+* Currently, Eirini does not work on {k8s} environments running cri-o. To make Eirini work, use the Docker runtime.
 
 * Resuming a past practice, with {product} 1.4, use the complete command: `helm upgrade --force --recreate-pods` for an upgrade. This will reintroduce downtime for apps but without `--recreate-pods`, multiple versions of statefulsets may co-exist which can cause incompatibilities between dependent statefulsets, and result in a broken upgrade. This applies to Stratos pods as well.
 
