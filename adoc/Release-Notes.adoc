@@ -33,6 +33,81 @@ endif::[]
 [id='sec.major-change']
 == Major Changes
 
+[id='sec.1_4_1']
+=== Release 1.4.1, July 2019
+
+[id='sec.1_4_1.new']
+==== What Is New?
+
+* {scf} has been updated to version 2.17.1:
+** Added support for embedded UAA, which allows UAA and SCF to reside in the same chart for environments that don't require a separate UAA chart. 
+
+[id='sec.1_4_1.feature']
+==== Features and Fixes
+
+* Set the default value of AZ_LABEL_NAME to failure-domain.beta.kubernetes.io/zone
+* Simplified service accounts and pod security policies
+* Switched to log-cache for container metrics
+* Implemented a patch to squash Cloud Controller database migrations
+* Fixed version and SHA1 of cf-mysql-release 36.15.0
+* Fixed TLS issues in log-cache
+
+* Includes these {cf} component versions:
+
+** app-autoscaler: 1.2.1
+** bits-service: 
+** bpm: 
+** capi: 
+** cats: 7.11
+** cf-deployment: 7.11
+** cf-mysql: 36.15.0
+** cf-routing: 0.184.0
+** cf-sle12: 1.75.11
+** cf-smoke-tests: 40.0.44
+** cf-syslog-drain: 8.1
+** cf-usb: 1.0.1
+** cflinuxfs2: 1.281.0
+** cflinuxfs3: 0.108.0
+** credhub: 2.1.2
+** diego: 2.25.0
+** eirini: 0.0.4
+** garden-runc: 1.17.2
+** groot-btrfs: 1.0.4
+** kubectl: 1.9.6
+** loggregator: 104.4
+** loggregator-agent: 3.2
+** nats: 26
+** nfs-volume: 1.7.6
+** postgres-release: 26
+** scf-helper: 1.0.2
+** cf-acceptance-tests: 
+** statsd-injector: 1.5.0
+** uaa: 68.0
+* Buildpacks:
+** binary-buildpack: 1.0.32
+** dotnet-core-buildpack: 2.2.12
+** go-buildpack: 1.8.41
+** java-buildpack: 4.19.1 
+** nginx-buildpack: 1.0.14
+** nodejs-buildpack: 1.6.51
+** php-buildpack: 4.3.77
+** python-buildpack: 1.6.34
+** ruby-buildpack: 1.7.40
+** staticfile-buildpack: 1.4.43
+
+[id='sec.1_4_1.issue']
+==== Known Issues
+
+* With `cf-deployment` 7.11, that marks the final CF version that supports the `cflinuxfs2` stack. Future CAP versions will incorporate more recent `cf-deployment` versions that will only work with `cflinuxfs3` or `sle15` stacks, so you should start planning to moving your apps to those stacks for futureproofing.
+
+* The embedded UAA option makes it simpler to deploy and upgrade when the UAA is not being shared between multiple projects. Instead of installing a separate UAA chart, and then exporting the CA cert so it can be shared with SCF, all you have to do is add one option to the SCF install:
++
+[source]
+----
+helm install ... --set enable.uaa=true
+----
+
+
 [id='sec.1_4']
 === Release 1.4, May 2019
 
