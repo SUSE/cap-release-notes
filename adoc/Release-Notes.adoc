@@ -49,7 +49,7 @@ endif::[]
 * Simplified service accounts and pod security policies
 * Switched to log-cache for container metrics
 * Implemented a patch to squash Cloud Controller database migrations
-* Fixed version and SHA1 of `cf-mysql-release` 36.15.0
+* Fixed version and SHA1 of `cf-mysql-release` tied to version 36.15.0
 * Fixed TLS issues in `log-cache`
 
 * Includes these {cf} component versions:
