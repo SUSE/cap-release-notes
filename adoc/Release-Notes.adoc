@@ -45,19 +45,19 @@ endif::[]
 [id='sec.1_4_1.feature']
 ==== Features and Fixes
 
-* Set the default value of AZ_LABEL_NAME to failure-domain.beta.kubernetes.io/zone
+* Set the default value of `AZ_LABEL_NAME` to `failure-domain.beta.kubernetes.io/zone`
 * Simplified service accounts and pod security policies
 * Switched to log-cache for container metrics
 * Implemented a patch to squash Cloud Controller database migrations
-* Fixed version and SHA1 of cf-mysql-release 36.15.0
-* Fixed TLS issues in log-cache
+* Fixed version and SHA1 of `cf-mysql-release` 36.15.0
+* Fixed TLS issues in `log-cache`
 
 * Includes these {cf} component versions:
 
 ** app-autoscaler: 1.2.1
-** bits-service: 
-** bpm: 
-** capi: 
+** bits-service: 2.26.0
+** bpm: 1.0.0
+** capi: 1.79.0
 ** cats: 7.11
 ** cf-deployment: 7.11
 ** cf-mysql: 36.15.0
