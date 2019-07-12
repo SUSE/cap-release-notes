@@ -61,27 +61,26 @@ endif::[]
 ** cats: 7.11
 ** cf-deployment: 7.11
 ** cf-mysql: 36.15.0
-** cf-routing: 0.184.0
+** cf-routing: 0.187.0
 ** cf-sle12: 1.75.11
-** cf-smoke-tests: 40.0.44
-** cf-syslog-drain: 8.1
+** cf-smoke-tests: 40.0.51
+** cf-syslog-drain: 10.0
 ** cf-usb: 1.0.1
 ** cflinuxfs2: 1.281.0
 ** cflinuxfs3: 0.108.0
 ** credhub: 2.1.2
-** diego: 2.25.0
+** diego: 2.30.0
 ** eirini: 0.0.4
-** garden-runc: 1.17.2
+** garden-runc: 1.19.1
 ** groot-btrfs: 1.0.4
 ** kubectl: 1.9.6
-** loggregator: 104.4
-** loggregator-agent: 3.2
+** loggregator: 105.2
+** loggregator-agent: 3.9
 ** nats: 26
-** nfs-volume: 1.7.6
+** nfs-volume: 1.5.2
 ** postgres-release: 26
 ** scf-helper: 1.0.2
-** cf-acceptance-tests: 
-** statsd-injector: 1.5.0
+** statsd-injector: 1.9.0
 ** uaa: 68.0
 * Buildpacks:
 ** binary-buildpack: 1.0.32
@@ -165,7 +164,6 @@ For information about deploying and administering {product}, see the product man
 ** loggregator: 104.4
 ** loggregator-agent: 3.2
 ** nats: 26
-** nfs-volume: 1.7.6
 ** postgres-release: 26
 ** scf-helper: 1.0.2
 ** cf-acceptance-tests: 
