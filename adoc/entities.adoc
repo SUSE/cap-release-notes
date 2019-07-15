@@ -1,7 +1,7 @@
 :suse: SUSE
 :current-year: 2019
 :product: {suse} Cloud Application Platform
-:version: 1.4
+:version: 1.4.1
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://www.suse.com/documentation/cloud-application-platform-1
 :deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/part_cap_deployment.html
