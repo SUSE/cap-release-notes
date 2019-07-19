@@ -40,7 +40,6 @@ endif::[]
 ==== What Is New?
 
 * {scf} has been updated to version 2.17.1.
-* Added option to deploy UAA from the SCF Helm chart. If you are newly deploying CAP and do not require a separate UAA deployment, you can now generate a UAA StatefulSet within the SCF deployment. To do so, set `enable.uaa=true` in the Helm values. This means there is no need to copy the `UAA_CA_CERT` during setup. In this configuration, UAA uses the same database as SCF, reducing the memory footprint of the cluster. If you are upgrading an existing CAP cluster, this option should be left as `false` (default).
 
 [id='sec.1_4_1.feature']
 ==== Features and Fixes
@@ -98,8 +97,6 @@ endif::[]
 ==== Known Issues
 
 * `cf-deployment` 7.11 is the last Cloud Foundry version that supports the `cflinuxfs2` stack. The `cflinuxfs2` and `sle12` stacks are deprecated in favor of `cflinuxfs3` and `sle15` respectively. Start planning to migrate applications to those stacks for futureproofing, as these stacks will be removed in a future release. The Stack Auditor plugin for `cf` can help with this migration (see https://docs.cloudfoundry.org/adminguide/stack-auditor.html). 
-
-* As noted above, do not use the new `enable.uaa=true` SCF chart setting in upgrades of existing CAP 1.4.0 clusters. This will cause a new UAA role to be created which SCF will use instead of the existing UAA deployment. This option is disabled by default in the chart values. 
 
 
 [id='sec.1_4']
