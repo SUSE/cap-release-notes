@@ -96,7 +96,12 @@ endif::[]
 [id='sec.1_4_1.issue']
 ==== Known Issues
 
-* `cf-deployment` 7.11 is the last Cloud Foundry version that supports the `cflinuxfs2` stack. The `cflinuxfs2` and `sle12` stacks are deprecated in favor of `cflinuxfs3` and `sle15` respectively. Start planning to migrate applications to those stacks for futureproofing, as these stacks will be removed in a future release. The Stack Auditor plugin for `cf` can help with this migration (see https://docs.cloudfoundry.org/adminguide/stack-auditor.html). 
+* `cf-deployment` 7.11 is the last {cf} version that supports the `cflinuxfs2`
+  stack. The `cflinuxfs2` and `sle12` stacks are deprecated in favor of
+  `cflinuxfs3` and `sle15` respectively. Start planning to migrate applications
+  to the newer stacks for futureproofing, as the older stacks will be removed
+  in a future release. The Stack Auditor plugin for `cf` can help with this
+  migration (see https://docs.cloudfoundry.org/adminguide/stack-auditor.html).
 
 
 [id='sec.1_4']
