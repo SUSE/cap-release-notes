@@ -33,6 +33,35 @@ endif::[]
 [id='sec.major-change']
 == Major Changes
 
+[id='sec.1_5']
+=== Release 1.5, September 2019
+
+[id='sec.1_5.new']
+==== What Is New?
+
+* {scf} has been updated to version 2.18.0.
+
+[id='sec.1_5.issue']
+==== Known Issues
+
+IMPORTANT: In order to deploy to this version, or upgrade from {scf} 2.17.1, part of {cap} 1.4.1, to this version, you will need to scale down the database roles to 1 pod in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment
+
+Steps: TBD
+
+IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered "reserved". 
+
+IMPORTANT: As for {scf} 2.18.0, since our cf-deployment version is 9.5, the cflinuxfs2 stack is no longer supported, as was warned in {scf} 2.17.1 or {cap} 1.4.1. We still ship the cflinuxfs2 buildpack for migration purposes but we encourage all admins to move to cflinuxfs3 or sle15 as newer buildpacks will not work with the deprecated cflinuxfs2. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported.
+
+[id='sec.1_5.feature']
+==== Features and Fixes
+* cf-deployment has been updated to version 9.5.0.
+* Eirini updated to 0.0.15
+* PXC (Percona XtraDB Cluster) replaces cf-mysql for database management -- PLEASE READ IMPORTANT SECTION
+* Added `config.HA_strict` flag to allow role size overrides on top of config.HA
+
+* Includes these {cf} component versions:
+...
+
 [id='sec.1_4_1']
 === Release 1.4.1, July 2019
 
