@@ -44,21 +44,21 @@ endif::[]
 [id='sec.1_5.issue']
 ==== Known Issues
 
-IMPORTANT: In order to deploy to this version, or upgrade from {scf} 2.17.1, part of {cap} 1.4.1, to this version, you will need to scale down the database roles to 1 pod in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment
+IMPORTANT: In order to deploy this version, or upgrade from {cap} 1.4.1, you will need to scale down the `mysql` role to 1 in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
 
 Steps to deploy: [verified by Docs, need to format properly for AsciiDocs]
 
-1. Install 1.5, HA but scale the `mysql` role to 1 as a transition step. 
+1. Install 1.5 HA but scale the `mysql` role to 1 as a transition step. (For these commands, we will assume that `scf-uaa` and `scf-cf` are the chart names.)
 
 UAA:
 helm install --name scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1
 
-2. Set the value of the `secrets.UAA_CA_CERT` to pass your uaa secret and certificate to scf as per Section 5.10 of the {CAP} Deployment Guide: https://www.suse.com/documentation/cloud-application-platform-1/singlehtml/book-cap-guides/book-cap-guides.html#sec-cap-install-scf-prod
+2. Set the value of the `secrets.UAA_CA_CERT` to pass your `uaa` secret and certificate to `scf` as per Section 5.10 of the {CAP} Deployment Guide: https://www.suse.com/documentation/cloud-application-platform-1/singlehtml/book-cap-guides/book-cap-guides.html#sec-cap-install-scf-prod
 
 SCF:
 helm install --name scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
 
-3. Scale the `mysql` roles up to the default HA configuration.
+3. Scale the `mysql` role up to the default HA configuration.
 
 UAA:
 helm upgrade scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true --set config.HA=true
