@@ -48,32 +48,17 @@ IMPORTANT: In order to deploy to this version, or upgrade from {scf} 2.17.1, par
 
 Steps to deploy: [verified by Docs, need to format properly for AsciiDocs]
 
-1. Install 1.5, HA but scale mysql to 1 
+1. Install 1.5, HA but scale the `mysql` role to 1 as a transition step. 
+
 UAA:
-helm install --name scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true
+helm install --name scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1
+
+2. Set the value of the `secrets.UAA_CA_CERT` to pass your uaa secret and certificate to scf as per Section 5.10 of the {CAP} Deployment Guide: https://www.suse.com/documentation/cloud-application-platform-1/singlehtml/book-cap-guides/book-cap-guides.html#sec-cap-install-scf-prod
 
 SCF:
-helm install --name scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
+helm install --name scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
 
-Steps to upgrade: [verified by Docs, need to format properly for AsciiDocs]
-
-1. Upgrade from 1.4.1, HA but scale mysql to 1 
-UAA:
-helm upgrade scf-uaa --namespace uaa suse/uaa --reuse-values --set config.HA=false --set sizing.uaa.count=2 --set sizing.mysql.count=1
-
-SCF:
-helm upgrade scf-cf --namespace scf suse/cf --reuse-values --set config.HA=false --set=sizing.diego_cell.count=3 --set=sizing.adapter.count=2 --set=sizing.api_group.count=2 --set=sizing.autoscaler_actors.count=2 --set=sizing.autoscaler_api.count=2 --set=sizing.autoscaler_metrics.count=2 --set=sizing.cc_clock.count=2 --set=sizing.cc_uploader.count=2 --set=sizing.cc_worker.count=2 --set=sizing.cf_usb_group.count=2 --set=sizing.diego_api.count=2 --set=sizing.diego_brain.count=2 --set=sizing.diego_ssh.count=2 --set=sizing.doppler.count=2 --set=sizing.locket.count=2 --set=sizing.log_api.count=2 --set=sizing.log_cache_scheduler.count=2 --set=sizing.nats.count=2 --set=sizing.nfs_broker.count=2 --set=sizing.router.count=2 --set=sizing.routing_api.count=2 --set=sizing.syslog_scheduler.count=2 --set=sizing.tcp_router.count=2 --set=sizing.mysql.count=1
-
-Delete the PVC(s) for mysql-1 from both uaa and scf namespaces.
-
-2. Upgrade to 1.5RC, HA but mysql at 1 
-UAA:
-helm upgrade scf-uaa --namespace uaa suse/uaa  -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1
-
-SCF:
-helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
-
-3. Upgrade 1.5RC, full HA 
+3. Scale the `mysql` roles up to the default HA configuration.
 
 UAA:
 helm upgrade scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true --set config.HA=true
@@ -81,10 +66,37 @@ helm upgrade scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_s
 SCF:
 helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 
+Steps to upgrade: [verified by Docs, need to format properly for AsciiDocs]
+
+1. Before upgrading from 1.4.1, while keeping HA, scale the `mysql` role to 1. (Note: the subsequent instructions assume that the charts were installed with `config.HA` set to `true`.)
+
+UAA:
+helm upgrade scf-uaa --namespace uaa suse/uaa --reuse-values --set config.HA=false --set sizing.uaa.count=2 --set sizing.mysql.count=1
+
+SCF:
+helm upgrade scf-cf --namespace scf suse/cf --reuse-values --set config.HA=false --set=sizing.diego_cell.count=3 --set=sizing.adapter.count=2 --set=sizing.api_group.count=2 --set=sizing.autoscaler_actors.count=2 --set=sizing.autoscaler_api.count=2 --set=sizing.autoscaler_metrics.count=2 --set=sizing.cc_clock.count=2 --set=sizing.cc_uploader.count=2 --set=sizing.cc_worker.count=2 --set=sizing.cf_usb_group.count=2 --set=sizing.diego_api.count=2 --set=sizing.diego_brain.count=2 --set=sizing.diego_ssh.count=2 --set=sizing.doppler.count=2 --set=sizing.locket.count=2 --set=sizing.log_api.count=2 --set=sizing.log_cache_scheduler.count=2 --set=sizing.nats.count=2 --set=sizing.nfs_broker.count=2 --set=sizing.router.count=2 --set=sizing.routing_api.count=2 --set=sizing.syslog_scheduler.count=2 --set=sizing.tcp_router.count=2 --set=sizing.mysql.count=1
+
+Delete the PVC(s) for `mysql-1` from both `uaa` and `scf` namespaces.
+
+2. Run the upgrade to 1.5 but keep the `mysql` at 1 for now, leaving the rest of the install as HA.
+
+UAA:
+helm upgrade scf-uaa --namespace uaa suse/uaa  -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1
+
+SCF:
+helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
+
+3. Upgrade the `mysql` role to the default HA configuration, bringing 1.5 to full HA.
+
+UAA:
+helm upgrade scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true --set config.HA=true
+
+SCF:
+helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 
 IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered "reserved". 
 
-IMPORTANT: As for {scf} 2.18.0, since our cf-deployment version is 9.5, the cflinuxfs2 stack is no longer supported, as was warned in {scf} 2.17.1 or {cap} 1.4.1. We still ship the cflinuxfs2 buildpack for migration purposes but we encourage all admins to move to cflinuxfs3 or sle15 as newer buildpacks will not work with the deprecated cflinuxfs2. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported.
+IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was warned in {scf} 2.17.1 or {cap} 1.4.1. We still ship the `cflinuxfs2` buildpack for migration purposes but we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
 
 [id='sec.1_5.feature']
 ==== Features and Fixes
