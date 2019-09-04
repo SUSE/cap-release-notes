@@ -46,16 +46,18 @@ endif::[]
 
 IMPORTANT: In order to deploy to this version, or upgrade from {scf} 2.17.1, part of {cap} 1.4.1, to this version, you will need to scale down the database roles to 1 pod in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment
 
-Steps to upgrade: [verified by Docs, need to format properly for AsciiDocs]
+Steps to deploy: [verified by Docs, need to format properly for AsciiDocs]
 
-========== Install 1.4.1, full HA ==========
+1. Install 1.5, HA but scale mysql to 1 
 UAA:
 helm install --name scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true
 
 SCF:
 helm install --name scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 
-========== Upgrade 1.4.1, HA but scale mysql to 1 ==========
+Steps to upgrade: [verified by Docs, need to format properly for AsciiDocs]
+
+1. Upgrade from 1.4.1, HA but scale mysql to 1 
 UAA:
 helm upgrade scf-uaa --namespace uaa suse/uaa --reuse-values --set config.HA=false --set sizing.uaa.count=2 --set sizing.mysql.count=1
 
@@ -64,20 +66,20 @@ helm upgrade scf-cf --namespace scf suse/cf --reuse-values --set config.HA=false
 
 Delete the PVC(s) for mysql-1 from both uaa and scf namespaces.
 
-========== Upgrade to 1.5RC, HA but mysql at 1 ==========
+2. Upgrade to 1.5RC, HA but mysql at 1 
 UAA:
-helm upgrade scf-uaa --namespace uaa <chart-path>  -f <rc-values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1 --set sizing.uaa.count=2
+helm upgrade scf-uaa --namespace uaa suse/uaa  -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1
 
 SCF:
-helm upgrade scf-cf --namespace scf <chart-path>  -f <rc-values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
+helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
 
-========== Upgrade 1.5RC, full HA ==========
+3. Upgrade 1.5RC, full HA 
 
 UAA:
-helm upgrade scf-uaa --namespace uaa <chart-path> -f <rc-values.yaml> --set config.HA_strict=true --set config.HA=true
+helm upgrade scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true --set config.HA=true
 
 SCF:
-helm upgrade scf-cf --namespace scf <chart-path> -f <rc-values.yaml> --set config.HA_strict=true --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
+helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 
 
 IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered "reserved". 
