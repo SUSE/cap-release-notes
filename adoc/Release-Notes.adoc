@@ -44,12 +44,12 @@ endif::[]
 [id='sec.1_5.issue']
 ==== Known Issues
 
-IMPORTANT: In order to deploy this version, or upgrade from {cap} 1.4.1, you will need to scale down the `mysql` role to 1 in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
+IMPORTANT: In order to deploy this version in HA, or upgrade from {cap} 1.4.1 from HA, you will need to scale down the `mysql` role to 1 in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
 
-Steps to deploy: [verified by Docs, need to format properly for AsciiDocs]
+Steps for a fresh install of CAP 1.5 HA: 
 
 [arabic]
-.. Install 1.5 HA UAA but scale the `mysql` role to 1 as a transition step. (For these commands, we will assume that `scf-uaa` and `scf-cf` are the chart names.)
+.. Install HA UAA but scale the `mysql` role to 1 as a transition step. (For these commands, we will assume that `scf-uaa` and `scf-cf` are the chart names.)
 +
 [source,bash]
 ----
@@ -76,10 +76,10 @@ helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_str
 --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
 
-Steps to upgrade: [verified by Docs, need to format properly for AsciiDocs]
+Steps to upgrade from CAP 1.4.1 in HA mode:
 
 [arabic]
-.. Before upgrading from 1.4.1, while keeping HA, scale the `mysql` role to 1. (Note: the subsequent instructions assume that the charts were installed with `config.HA` set to `true`.)
+.. Before upgrading, while keeping HA, scale the `mysql` role to 1. (Note: the subsequent instructions assume that the charts were installed with `config.HA` set to `true`.)
 +
 [source,bash]
 ----
@@ -118,16 +118,18 @@ helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_str
 --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
 
-IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered "reserved". 
+IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered reserved. 
 
 IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was warned in {scf} 2.17.1 or {cap} 1.4.1. We still ship the `cflinuxfs2` buildpack for migration purposes but we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
 
+* If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm is not working with that role. Therefore, point the Ingress controller to the `uaa` service created via the `cf` Helm chart manually. Alternatively, deploy `uaa` separately via the `suse/uaa` chart, which will create Ingress pointer automatically.
+
 [id='sec.1_5.feature']
 ==== Features and Fixes
-* cf-deployment has been updated to version 9.5.0.
+* `cf-deployment` has been updated to version 9.5.0.
 * Eirini updated to 0.0.14
-* PXC (Percona XtraDB Cluster) replaces cf-mysql for database management -- PLEASE READ IMPORTANT SECTIONS
-* Ability to set config.HA_strict=false in combination with config.HA=true to allow lowering the sizing count for a role below what is required for HA
+* PXC (Percona XtraDB Cluster) replaces cf-mysql for database management -- PLEASE READ IMPORTANT SECTIONS ABOVE
+* Ability to set `config.HA_strict=false` in combination with `config.HA=true` to allow lowering the sizing count for a role below what is required for HA
 
 * Includes these {cf} component versions:
 ...
