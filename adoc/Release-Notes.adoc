@@ -39,7 +39,26 @@ endif::[]
 [id='sec.1_5.new']
 ==== What Is New?
 
-* {scf} has been updated to version 2.18.0.
+* {scf} has been updated to version 2.18.0:
+** PXC (Percona XtraDB Cluster) replaces cf-mysql for database management -- please read the Known Issues section for this version on deployment and upgrade changes
+** Ability to set `config.HA_strict=false` in combination with `config.HA=true` to allow lowering the sizing count for a role below what is required for HA
+** UAA can now be embedded in the `cf` namespace -- please read the Known Issues section for this version on deployment limitations
+* The Stratos UI has been updated to version 2.5.1:
+** Tech preview for helm feature
+** Add custom welcome message on endpoints page
+** Add support for connecting CaaSP V4 endpoints
+** Refinements to the Autoscaler UI
+** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.5.1.
+
+For information about deploying and administering {product}, see the product manuals at
+{doc-url}.
+
+[id='sec.1_5.feature']
+==== Features and Fixes
+* `cf-deployment` has been updated to version 9.5.0.
+* Eirini updated to 0.0.14
+* Includes these {cf} component versions:
+...
 
 [id='sec.1_5.issue']
 ==== Known Issues
@@ -123,16 +142,6 @@ IMPORTANT: If you are using a buildpack that uses the same name as a shipped bui
 IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was advised in {scf} 2.17.1 or {cap} 1.4.1. The `cflinuxfs2` buildpack is no longer shipped, but if you are upgrading from an earlier version, `cflinuxfs2` will not be removed. However, for migration purposes but we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
 
 * If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present.
-
-[id='sec.1_5.feature']
-==== Features and Fixes
-* `cf-deployment` has been updated to version 9.5.0.
-* Eirini updated to 0.0.14
-* PXC (Percona XtraDB Cluster) replaces cf-mysql for database management -- PLEASE READ IMPORTANT SECTIONS ABOVE
-* Ability to set `config.HA_strict=false` in combination with `config.HA=true` to allow lowering the sizing count for a role below what is required for HA
-
-* Includes these {cf} component versions:
-...
 
 [id='sec.1_4_1']
 === Release 1.4.1, July 2019
