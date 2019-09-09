@@ -40,13 +40,13 @@ endif::[]
 ==== What Is New?
 
 * {scf} has been updated to version 2.18.0:
-** PXC (Percona XtraDB Cluster) replaces cf-mysql for database management -- please read the Known Issues section for this version on deployment and upgrade changes
+** PXC (Percona XtraDB Cluster) replaces `cf-mysql` for database management -- please read the Known Issues section for this version on deployment and upgrade changes
 ** Ability to set `config.HA_strict=false` in combination with `config.HA=true` to allow lowering the sizing count for a role below what is required for HA
 ** UAA can now be embedded in the `cf` namespace -- please read the Known Issues section for this version on deployment limitations
 * The Stratos UI has been updated to version 2.5.1:
 ** Tech preview for helm feature
 ** Add custom welcome message on endpoints page
-** Add support for connecting CaaSP V4 endpoints
+** Add support for connecting {caasp} V4 endpoints
 ** Refinements to the Autoscaler UI
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.5.1.
 
@@ -56,9 +56,26 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_5.feature']
 ==== Features and Fixes
 * `cf-deployment` has been updated to version 9.5.0.
-* Eirini updated to 0.0.14
+* Eirini updated to 0.0.15
+* Removed the `cluster-admin` role binding for the eirini service account
+* Switched over to `PXC` from `cf-mysql` for database management
 * Includes these {cf} component versions:
-...
+** cf-deployment: 9.5
+** cflinuxfs3: 0.118.0
+** eirini: 0.0.15
+** groot-btrfs: 1.0.5
+** scf-helper: 1.0.3
+* Buildpacks:
+** binary-buildpack: 1.0.33
+** dotnet-core-buildpack: 2.2.13
+** go-buildpack: 1.8.42
+** java-buildpack: 4.20.0 
+** nginx-buildpack: 1.0.15
+** nodejs-buildpack: 1.6.53
+** php-buildpack: 4.3.80
+** python-buildpack: 1.6.36
+** ruby-buildpack: 1.7.42
+** staticfile-buildpack: 1.4.43
 
 [id='sec.1_5.issue']
 ==== Known Issues
