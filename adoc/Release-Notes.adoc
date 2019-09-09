@@ -56,13 +56,13 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_5.feature']
 ==== Features and Fixes
 * `cf-deployment` has been updated to version 9.5.0.
-* Eirini updated to 0.0.15
+* Eirini updated to 0.0.14
 * Removed the `cluster-admin` role binding for the eirini service account
 * Switched over to `PXC` from `cf-mysql` for database management
 * Includes these {cf} component versions:
 ** cf-deployment: 9.5
 ** cflinuxfs3: 0.118.0
-** eirini: 0.0.15
+** eirini: 0.0.14
 ** groot-btrfs: 1.0.5
 ** scf-helper: 1.0.3
 * Buildpacks:
