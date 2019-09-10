@@ -60,11 +60,35 @@ For information about deploying and administering {product}, see the product man
 * Removed the `cluster-admin` role binding for the eirini service account
 * Switched over to `PXC` from `cf-mysql` for database management
 * Includes these {cf} component versions:
+** app-autoscaler: 1.2.1
+** bits-service: 2.28.0
+** bpm: 1.1.0
+** capi: 1.83.0
 ** cf-deployment: 9.5
+** cf-mysql: 36.15.0
+** cf-routing: 0.188.0
+** cf-sle12: 1.81.26
+** cf-sle15: 10.28
+** cf-smoke-tests: 40.0.112
+** cf-syslog-drain: 10.2
+** cf-usb: 1.0.1
 ** cflinuxfs3: 0.118.0
+** credhub: 2.4.0
+** diego: 2.34.0
 ** eirini: 0.0.14
+** garden-runc: 1.19.3
 ** groot-btrfs: 1.0.5
+** log-cache: 2.2.2
+** loggregator: 105.5
+** loggregator-agent: 3.9
+** mapfs: 1.1.0
+** nats: 27
+** nfs-volume: 1.5.2
+** postgres-release: 26
+** pxc: 0.18.0
 ** scf-helper: 1.0.3
+** statsd-injector: 1.10.0
+** uaa: 72.0
 * Buildpacks:
 ** binary-buildpack: 1.0.33
 ** dotnet-core-buildpack: 2.2.13
@@ -171,7 +195,7 @@ kubectl delete mutatingwebhookconfigurations -n eirini eirini-x-mutating-hook-ei
 
 Deleting the webhook means that the `eirini-persi` service would not be available. Note that this workaround is not needed on {aks}.
 
-* If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present.
+* If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present. Therefore, the ingress controller will not work with embedded `uaa` but other load balancers will work.
 
 * On occasion, the `credhub` pod may fail to start due to database migration failures; this has been spotted intermittently on {aks} and to a lesser extent, other public clouds. In these situations, manual intervention is required to track the last completed transaction in `credhub_user` database and update the flyway schema history table with the record of the last completed transaction. Please contact support for further instructions.
 
