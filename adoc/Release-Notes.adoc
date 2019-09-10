@@ -81,24 +81,21 @@ For information about deploying and administering {product}, see the product man
 ==== Known Issues
 
 IMPORTANT: In order to deploy this version in HA, or upgrade from {cap} 1.4.1 from HA, you will need to scale down the `mysql` role to 1 in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
-
 Steps for a fresh install of CAP 1.5 HA: 
-
 [arabic]
-.. Install HA UAA but scale the `mysql` role to 1 as a transition step. (For these commands, we will assume that `scf-uaa` and `scf-cf` are the chart names.)
+.. Install HA UAA but scale the `mysql` role to 1 as a transition step. (In the commands below, `susecf-uaa` and `susecf-scf` are assumed to be the release names and `suse/uaa` and `suse/cf` are the chart names in the repository. Adjust those names accordingly to suit your configuration.)
 +
 [source,bash]
 ----
-helm install --name scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true \ 
+helm install --name susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true \
 --set config.HA_strict=false --set sizing.mysql.count=1
-
 ----
 +
 .. Set the value of the `secrets.UAA_CA_CERT` to pass your `uaa` secret and certificate to `scf` as per Section 5.10 of the {CAP} Deployment Guide: https://www.suse.com/documentation/cloud-application-platform-1/singlehtml/book-cap-guides/book-cap-guides.html#sec-cap-install-scf-prod
 +
 [source,bash]
 ----
-helm install --name scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
+helm install --name susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
 --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
 +
@@ -111,17 +108,17 @@ helm upgrade scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_s
 helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
 --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
-
 Steps to upgrade from CAP 1.4.1 in HA mode:
-
+Note: the following instructions assume the 1.4.1 charts were installed with the default HA setup; i.e. with `config.HA` set to `true`.
+However, you don't need to use `config.HA` if you are using custom sizing in your 1.4.1 deployment. You can continue to use the custom sizing parameters for all but the `mysql` roles; make sure you specify `--set=sizing.mysql.count=1` during the pre-upgrade step. After the upgrade completes successfully and all the roles are up and ready, you can use the sizing parameter for the `mysql` role to scale it up to the number of instances you would like to deploy, e.g. `--set=sizing.mysql.count=3`.
 [arabic]
 .. Before upgrading, while keeping HA, scale the `mysql` role to 1. (Note: the subsequent instructions assume that the charts were installed with `config.HA` set to `true`.)
 +
 [source,bash]
 ----
-helm upgrade scf-uaa --namespace uaa suse/uaa --reuse-values --set config.HA=false \ 
+helm upgrade susecf-uaaa --namespace uaa suse/uaa --reuse-values --set config.HA=false \ 
 --set sizing.uaa.count=2 --set sizing.mysql.count=1
-helm upgrade scf-cf --namespace scf suse/cf --reuse-values --set config.HA=false \ 
+helm upgrade susecf-cf --namespace scf suse/cf --reuse-values --set config.HA=false \ 
 --set=sizing.diego_cell.count=3 --set=sizing.adapter.count=2 --set=sizing.api_group.count=2 \ 
 --set=sizing.autoscaler_actors.count=2 --set=sizing.autoscaler_api.count=2 \ 
 --set=sizing.autoscaler_metrics.count=2 --set=sizing.cc_clock.count=2 --set=sizing.cc_uploader.count=2 \ 
@@ -138,9 +135,9 @@ Delete the PVC(s) for `mysql-1` from both `uaa` and `scf` namespaces.
 +
 [source,bash]
 ----
-helm upgrade scf-uaa --namespace uaa suse/uaa  -f <values.yaml> --set config.HA=true \ 
+helm upgrade susecf-uaa --namespace uaa suse/uaa  -f <values.yaml> --set config.HA=true \ 
 --set config.HA_strict=false --set sizing.mysql.count=1
-helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
+helm upgrade susecf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
 --set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
 +
@@ -148,15 +145,24 @@ helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA=tru
 +
 [source,bash]
 ----
-helm upgrade scf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true \ 
+helm upgrade susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true \ 
 --set config.HA=true
-helm upgrade scf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
+helm upgrade susecf-cf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
 --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
 
 IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered reserved. 
 
 IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was advised in {scf} 2.17.1 or {cap} 1.4.1. The `cflinuxfs2` buildpack is no longer shipped, but if you are upgrading from an earlier version, `cflinuxfs2` will not be removed. However, for migration purposes but we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
+
+IMPORTANT: As of {scf} 2.18.0, `cf push` with `eirini` does not work on {eks} and Google Kubernetes Engine (GKE) by default. To get `cf push` to work with {eks} and GKE, you need to apply a workaround of deleting a webhook by doing the following:
++
+[source,bash]
+----
+kubectl delete mutatingwebhookconfigurations -n eirini eirini-x-mutating-hook-eirini
+----
+
+Deleting the webhook means that the `eirini-persi` service would not be available. Note that this workaround is not needed on {aks}.
 
 * If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present.
 
