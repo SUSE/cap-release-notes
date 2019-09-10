@@ -166,6 +166,10 @@ Deleting the webhook means that the `eirini-persi` service would not be availabl
 
 * If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present.
 
+* Intermittently, the `credhub` pod may fail to start due to database migration failures. In these situations, manual intervention is required to track the last completed transaction in `credhub_user` database and update the `flyway schema history` table with the record of the last completed transaction. Please contact support for further instructions.
+
+* In some situations, the `autoscaler-metrics` pod may fail to reach a fully ready state due to a Liquibase error: `liquibase.exception.LockException: Could not acquire change log lock`. When this occurs, refer to Part V of the {product} Deployment Guide to troubleshoot and resolve this issue at {doc-url}.
+
 [id='sec.1_4_1']
 === Release 1.4.1, July 2019
 
