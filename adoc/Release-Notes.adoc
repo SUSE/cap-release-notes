@@ -160,7 +160,7 @@ helm upgrade susecf-scf --namespace scf suse/cf --reuse-values --set config.HA=f
 --set=sizing.mysql.count=1
 ----
 +
-Delete the PVC(s) for `mysql-1` from both `uaa` and `scf` namespaces.
+Delete the PVC(s) for `mysql-1` from both `uaa` and `scf` namespaces but leave the associated PV(s) as is.
 
 .. Run the upgrade to 1.5 but keep the `mysql` at 1 for now, leaving the rest of the install as HA.
 +
