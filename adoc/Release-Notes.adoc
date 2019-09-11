@@ -42,7 +42,7 @@ endif::[]
 * {scf} has been updated to version 2.18.0:
 ** PXC (Percona XtraDB Cluster) replaces `cf-mysql` for database management -- please read the Known Issues section for this version on deployment and upgrade changes
 ** Ability to set `config.HA_strict=false` in combination with `config.HA=true` to allow lowering the sizing count for a role below what is required for HA
-** UAA can now be embedded in the `cf` namespace -- please read the Known Issues section for this version on deployment limitations
+** UAA can now be deployed as embedded in the `cf` namespace, allowing for a single step deployment -- please read the Known Issues section for this version on deployment limitations
 * The Stratos UI has been updated to version 2.5.1:
 ** Tech preview for helm feature
 ** Add custom welcome message on endpoints page
@@ -104,12 +104,12 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_5.issue']
 ==== Known Issues
 
-IMPORTANT: In order to deploy this version in HA, or upgrade from {cap} 1.4.1 from HA, you will need to scale down the `mysql` role to 1 in order to migrate from cf-mysql to PXC. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
+IMPORTANT: In order to deploy {cap} 1.5 or upgrade from {cap} 1.4.1 in an HA configuration, you will first need to scale the `mysql` role down to 1 instance to be able to migrate from `cf-mysql` to `PXC`. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
 
 Steps for a fresh install of CAP 1.5 HA: 
 
 [arabic]
-.. Install HA UAA but scale the `mysql` role to 1 as a transition step. (In the commands below, `susecf-uaa` and `susecf-scf` are assumed to be the release names and `suse/uaa` and `suse/cf` are the chart names in the repository. Adjust those names accordingly to suit your configuration.)
+.. Install HA UAA but scale the `mysql` role to 1 as a transition step. (In the commands below, `susecf-uaa` and `susecf-scf` are assumed to be the release names and `suse/uaa` and `suse/cf` are the chart names in the repository. Adjust the release names accordingly to suit your configuration.)
 +
 [source,bash]
 ----
@@ -134,6 +134,7 @@ helm upgrade susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.H
 helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
 --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
+
 Steps to upgrade from CAP 1.4.1 in HA mode:
 
 Note: the following instructions assume the 1.4.1 charts were installed with the default HA setup; i.e. with `config.HA` set to `true`.
@@ -195,7 +196,7 @@ kubectl delete mutatingwebhookconfigurations -n eirini eirini-x-mutating-hook-ei
 
 Deleting the webhook means that the `eirini-persi` service would not be available. Note that this workaround is not needed on {aks}.
 
-* If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present. Therefore, the ingress controller will not work with embedded `uaa` but other load balancers will work.
+* If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present. Therefore, the ingress controller will not work with embedded `uaa` but but the chart can be deployed with {k8s} `LoadBalancer` services.
 
 * On occasion, the `credhub` pod may fail to start due to database migration failures; this has been spotted intermittently on {aks} and to a lesser extent, other public clouds. In these situations, manual intervention is required to track the last completed transaction in `credhub_user` database and update the flyway schema history table with the record of the last completed transaction. Please contact support for further instructions.
 
