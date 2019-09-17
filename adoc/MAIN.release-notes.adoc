@@ -53,9 +53,9 @@ include::Release-Notes.adoc[]
 For supported ways to deploy {product} on {caasp}, follow the deployment 
 guides for your chosen infrastructure platform:
 
-* https://www.suse.com/documentation/suse-caasp-3/book_caasp_deployment/data/book_caasp_deployment.html[Bare Metal or Non-OpenStack Virtualization Platforms]
+* https://documentation.suse.com/suse-caasp/3/html/caasp-deployment/book-caasp-deployment.html[Bare Metal or Non-OpenStack Virtualization Platforms]
 
-* https://www.suse.com/documentation/suse-openstack-cloud-8/book_installation/data/sec_heat_templates_install.html[SUSE OpenStack Cloud]
+* https://documentation.suse.com/soc/8/html/suse-openstack-cloud-clm-all/install-heat-templates.html#sec-heat-templates-install[SUSE OpenStack Cloud]
 
 Following the above guides will provide you with a fully supported {caasp} environment that you can subsequently use to install {product} using the {deployment-url}[{product} Deployment Guide].
 
