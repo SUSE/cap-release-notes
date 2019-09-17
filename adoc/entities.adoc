@@ -4,7 +4,7 @@
 :version: 1.5
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://documentation.suse.com/suse-cap/1
-:deployment-url: https://documentation.suse.com/suse-cap/1/html/cap-guides/part_cap_deployment.html
+:deployment-url: https://documentation.suse.com/suse-cap/1/html/cap-guides/part-cap-deployment.html
 :caasp: {suse} Containers as a Service Platform
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
