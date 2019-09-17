@@ -3,10 +3,10 @@ ifdef::env-github[]
 :suse: SUSE
 :current-year: 2019
 :product: {suse} Cloud Application Platform
-:version: 1.4.1
+:version: 1.5
 :rn-url: https://www.suse.com/releasenotes
-:doc-url: https://www.suse.com/documentation/cloud-application-platform-1
-:deployment-url: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/part_cap_deployment.html
+:doc-url: https://documentation.suse.com/suse-cap/1
+:deployment-url: https://documentation.suse.com/suse-cap/1/html/cap-guides/part-cap-deployment.html
 :caasp: {suse} Containers as a Service Platform
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
@@ -32,6 +32,175 @@ endif::[]
 
 [id='sec.major-change']
 == Major Changes
+
+[id='sec.1_5']
+=== Release 1.5, September 2019
+
+[id='sec.1_5.new']
+==== What Is New?
+
+* {scf} has been updated to version 2.18.0:
+** PXC (Percona XtraDB Cluster) replaces `cf-mysql` for database management -- please read the Known Issues section for this version on deployment and upgrade changes
+** Ability to set `config.HA_strict=false` in combination with `config.HA=true` to allow lowering the sizing count for a role below what is required for HA
+** UAA can now be deployed as embedded in the `cf` namespace, allowing for a single step deployment -- please read the Known Issues section for this version on deployment limitations
+* The Stratos UI has been updated to version 2.5.1:
+** Tech preview for helm feature
+** Add custom welcome message on endpoints page
+** Add support for connecting {caasp} V4 endpoints
+** Refinements to the Autoscaler UI
+** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.5.1.
+
+For information about deploying and administering {product}, see the product manuals at
+{doc-url}.
+
+[id='sec.1_5.feature']
+==== Features and Fixes
+* `cf-deployment` has been updated to version 9.5.0.
+* Eirini updated to 0.0.14
+* Removed the `cluster-admin` role binding for the eirini service account
+* Switched over to `PXC` from `cf-mysql` for database management
+* Includes these {cf} component versions:
+** app-autoscaler: 1.2.1
+** bits-service: 2.28.0
+** bpm: 1.1.0
+** capi: 1.83.0
+** cf-deployment: 9.5
+** cf-mysql: 36.15.0
+** cf-routing: 0.188.0
+** cf-sle12: 1.81.26
+** cf-sle15: 10.28
+** cf-smoke-tests: 40.0.112
+** cf-syslog-drain: 10.2
+** cf-usb: 1.0.1
+** cflinuxfs3: 0.118.0
+** credhub: 2.4.0
+** diego: 2.34.0
+** eirini: 0.0.14
+** garden-runc: 1.19.3
+** groot-btrfs: 1.0.5
+** log-cache: 2.2.2
+** loggregator: 105.5
+** loggregator-agent: 3.9
+** mapfs: 1.1.0
+** nats: 27
+** nfs-volume: 1.5.2
+** postgres-release: 26
+** pxc: 0.18.0
+** scf-helper: 1.0.3
+** statsd-injector: 1.10.0
+** uaa: 72.0
+* Buildpacks:
+** binary-buildpack: 1.0.33
+** dotnet-core-buildpack: 2.2.13
+** go-buildpack: 1.8.42
+** java-buildpack: 4.20.0 
+** nginx-buildpack: 1.0.15
+** nodejs-buildpack: 1.6.53
+** php-buildpack: 4.3.80
+** python-buildpack: 1.6.36
+** ruby-buildpack: 1.7.42
+** staticfile-buildpack: 1.4.43
+
+[id='sec.1_5.issue']
+==== Known Issues
+
+IMPORTANT: In order to deploy {cap} 1.5 or upgrade from {cap} 1.4.1 in an HA configuration, you will first need to scale the `mysql` role down to 1 instance to be able to migrate from `cf-mysql` to `PXC`. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
+
+Steps for a fresh install of CAP 1.5 HA: 
+
+[arabic]
+.. Install HA UAA but scale the `mysql` role to 1 as a transition step. (In the commands below, `susecf-uaa` and `susecf-scf` are assumed to be the release names and `suse/uaa` and `suse/cf` are the chart names in the repository. Adjust the release names accordingly to suit your configuration.)
++
+[source,bash]
+----
+helm install --name susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true \
+--set config.HA_strict=false --set sizing.mysql.count=1
+----
++
+.. Set the value of the `secrets.UAA_CA_CERT` to pass your `uaa` secret and certificate to `scf` as per Section 5.10 of the {CAP} Deployment Guide: https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-caasp.html#sec-cap-install-scf-prod
++
+[source,bash]
+----
+helm install --name susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
+--set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
+----
++
+.. Scale the `mysql` role up to the default HA configuration.
++
+[source,bash]
+----
+helm upgrade susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true \ 
+--set config.HA=true
+helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
+--set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
+----
+
+Steps to upgrade from CAP 1.4.1 in HA mode:
+
+Note: the following instructions assume the 1.4.1 charts were installed with the default HA setup; i.e. with `config.HA` set to `true`.
+
+However, you don't need to use `config.HA` if you are using custom sizing in your 1.4.1 deployment. You can continue to use the custom sizing parameters for all but the `mysql` roles; make sure you specify `--set=sizing.mysql.count=1` during the pre-upgrade step. After the upgrade completes successfully and all the roles are up and ready, you can use the sizing parameter for the `mysql` role to scale it up to the number of instances you would like to deploy, e.g. `--set=sizing.mysql.count=3`.
+
+[arabic]
+.. Before upgrading, while keeping HA, scale the `mysql` role to 1. (Note: the subsequent instructions assume that the charts were installed with `config.HA` set to `true`.)
++
+[source,bash]
+----
+helm upgrade susecf-uaa --namespace uaa suse/uaa --reuse-values --set config.HA=false \ 
+--set sizing.uaa.count=2 --set sizing.mysql.count=1
+helm upgrade susecf-scf --namespace scf suse/cf --reuse-values --set config.HA=false \ 
+--set=sizing.diego_cell.count=3 --set=sizing.adapter.count=2 --set=sizing.api_group.count=2 \ 
+--set=sizing.autoscaler_actors.count=2 --set=sizing.autoscaler_api.count=2 \ 
+--set=sizing.autoscaler_metrics.count=2 --set=sizing.cc_clock.count=2 --set=sizing.cc_uploader.count=2 \ 
+--set=sizing.cc_worker.count=2 --set=sizing.cf_usb_group.count=2 --set=sizing.diego_api.count=2 \ 
+--set=sizing.diego_brain.count=2 --set=sizing.diego_ssh.count=2 --set=sizing.doppler.count=2 \ 
+--set=sizing.locket.count=2 --set=sizing.log_api.count=2 --set=sizing.log_cache_scheduler.count=2 \ 
+--set=sizing.nats.count=2 --set=sizing.nfs_broker.count=2 --set=sizing.router.count=2 \ 
+--set=sizing.routing_api.count=2 --set=sizing.syslog_scheduler.count=2 --set=sizing.tcp_router.count=2 \ 
+--set=sizing.mysql.count=1
+----
++
+Delete the PVC(s) for `mysql-1` from both `uaa` and `scf` namespaces but leave the associated PV(s) as is.
+
+.. Run the upgrade to 1.5 but keep the `mysql` at 1 for now, leaving the rest of the install as HA.
++
+[source,bash]
+----
+helm upgrade susecf-uaa --namespace uaa suse/uaa  -f <values.yaml> --set config.HA=true \ 
+--set config.HA_strict=false --set sizing.mysql.count=1
+helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
+--set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
+----
++
+.. Upgrade the `mysql` role to the default HA configuration, bringing 1.5 to full HA.
++
+[source,bash]
+----
+helm upgrade susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true \ 
+--set config.HA=true
+helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
+--set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
+----
+
+IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered reserved. 
+
+IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was advised in {scf} 2.17.1 or {cap} 1.4.1. The `cflinuxfs2` buildpack is no longer shipped, but if you are upgrading from an earlier version, `cflinuxfs2` will not be removed. However, for migration purposes, we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
+
+IMPORTANT: As of {scf} 2.18.0, `cf push` with `eirini` does not work on {eks} and Google Kubernetes Engine (GKE) by default. To get `cf push` to work with {eks} and GKE, you need to apply a workaround of deleting a webhook by doing the following:
+
++
+[source,bash]
+----
+kubectl delete mutatingwebhookconfigurations -n eirini eirini-x-mutating-hook-eirini
+----
+
+Deleting the webhook means that the `eirini-persi` service would not be available. Note that this workaround is not needed on {aks}.
+
+* If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present. Therefore, the ingress controller will not work with embedded `uaa` but but the chart can be deployed with {k8s} `LoadBalancer` services.
+
+* On occasion, the `credhub` pod may fail to start due to database migration failures; this has been spotted intermittently on {aks} and to a lesser extent, other public clouds. In these situations, manual intervention is required to track the last completed transaction in `credhub_user` database and update the flyway schema history table with the record of the last completed transaction. Please contact support for further instructions.
+
+* In some situations, the `autoscaler-metrics` pod may fail to reach a fully ready state due to a Liquibase error: `liquibase.exception.LockException: Could not acquire change log lock`. When this occurs, refer to Part V of the {product} Deployment Guide to troubleshoot and resolve this issue at {doc-url}.
 
 [id='sec.1_4_1']
 === Release 1.4.1, July 2019
