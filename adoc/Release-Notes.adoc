@@ -188,7 +188,6 @@ IMPORTANT: If you are using a buildpack that uses the same name as a shipped bui
 IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was advised in {scf} 2.17.1 or {product} 1.4.1. The `cflinuxfs2` buildpack is no longer shipped, but if you are upgrading from an earlier version, `cflinuxfs2` will not be removed. However, for migration purposes, we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
 
 IMPORTANT: As of {scf} 2.18.0, `cf push` with `eirini` does not work on {eks} and Google Kubernetes Engine (GKE) by default. To get `cf push` to work with {eks} and GKE, you need to apply a workaround of deleting a webhook by doing the following:
-
 +
 [source,bash]
 ----
