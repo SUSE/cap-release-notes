@@ -117,7 +117,7 @@ helm install --name susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set c
 --set config.HA_strict=false --set sizing.mysql.count=1
 ----
 +
-.. Set the value of the `secrets.UAA_CA_CERT` to pass your `uaa` secret and certificate to `scf` as per Section 5.10 of the {CAP} Deployment Guide: https://www.suse.com/documentation/cloud-application-platform-1/singlehtml/book-cap-guides/book-cap-guides.html#sec-cap-install-scf-prod
+.. Set the value of the `secrets.UAA_CA_CERT` to pass your `uaa` secret and certificate to `scf` as per Section 5.10 of the {CAP} Deployment Guide: https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-caasp.html#sec-cap-install-scf-prod
 +
 [source,bash]
 ----
