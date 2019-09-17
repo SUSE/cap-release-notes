@@ -58,6 +58,7 @@ For information about deploying and administering {product}, see the product man
 * `cf-deployment` has been updated to version 9.5.0.
 * Eirini updated to 0.0.14
 * Removed the `cluster-admin` role binding for the eirini service account
+* Removed deprecated `cflinuxfs2` -- please read the Known Issues section for this version as to why
 * Switched over to `PXC` from `cf-mysql` for database management
 * Includes these {cf} component versions:
 ** app-autoscaler: 1.2.1
@@ -104,9 +105,9 @@ For information about deploying and administering {product}, see the product man
 [id='sec.1_5.issue']
 ==== Known Issues
 
-IMPORTANT: In order to deploy {cap} 1.5 or upgrade from {cap} 1.4.1 in an HA configuration, you will first need to scale the `mysql` role down to 1 instance to be able to migrate from `cf-mysql` to `PXC`. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
+IMPORTANT: In order to deploy {product} 1.5 or upgrade from {product} 1.4.1 in an HA configuration, you will first need to scale the `mysql` role down to 1 instance to be able to migrate from `cf-mysql` to `PXC`. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
 
-Steps for a fresh install of CAP 1.5 HA: 
+Steps for a fresh install of {product} 1.5 HA: 
 
 [arabic]
 .. Install HA UAA but scale the `mysql` role to 1 as a transition step. (In the commands below, `susecf-uaa` and `susecf-scf` are assumed to be the release names and `suse/uaa` and `suse/cf` are the chart names in the repository. Adjust the release names accordingly to suit your configuration.)
@@ -135,7 +136,7 @@ helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA
 --set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
 ----
 
-Steps to upgrade from CAP 1.4.1 in HA mode:
+Steps to upgrade from {product} 1.4.1 in HA mode:
 
 Note: the following instructions assume the 1.4.1 charts were installed with the default HA setup; i.e. with `config.HA` set to `true`.
 
@@ -184,10 +185,9 @@ helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA
 
 IMPORTANT: If you are using a buildpack that uses the same name as a shipped buildpack, you will need to rename it to a unique name. Based on our existing model of stackless buildpacks, any buildpack name already in use is considered reserved. 
 
-IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was advised in {scf} 2.17.1 or {cap} 1.4.1. The `cflinuxfs2` buildpack is no longer shipped, but if you are upgrading from an earlier version, `cflinuxfs2` will not be removed. However, for migration purposes, we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
+IMPORTANT: As of {scf} 2.18.0, since our `cf-deployment` version is 9.5, the `cflinuxfs2` stack is no longer supported, as was advised in {scf} 2.17.1 or {product} 1.4.1. The `cflinuxfs2` buildpack is no longer shipped, but if you are upgrading from an earlier version, `cflinuxfs2` will not be removed. However, for migration purposes, we encourage all admins to move to `cflinuxfs3` or `sle15` as newer buildpacks will not work with the deprecated `cflinuxfs2`. If you still want to use the older stack, you will need to build an older version of a buildpack to continue for the app to work, but you will be unsupported. (If you are running on `sle12`, we will be retiring that stack in a future version so start planning your migration to `sle15`.)
 
 IMPORTANT: As of {scf} 2.18.0, `cf push` with `eirini` does not work on {eks} and Google Kubernetes Engine (GKE) by default. To get `cf push` to work with {eks} and GKE, you need to apply a workaround of deleting a webhook by doing the following:
-
 +
 [source,bash]
 ----
