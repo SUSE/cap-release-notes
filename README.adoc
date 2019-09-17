@@ -34,7 +34,7 @@ For technical details on the differences between the preview builds, see
 
 === Additional Documentation Resources on SUSE CAP
 
-* For full documentation of SUSE Cloud Application platform, please refer to the link:https://www.suse.com/documentation/cloud-application-platform-1/index.html[official documentation].
+* For full documentation of SUSE Cloud Application platform, please refer to the link:https://documentation.suse.com/suse-cap/1/[official documentation].
 * More details about special use cases can currently be found in the instructions for the following SUSE-driven open-source projects:
 ** link:https://github.com/SUSE/scf/wiki/How-to-Install-SCF[SUSE Cloud Foundry]
 ** link:https://github.com/SUSE/stratos-ui/tree/master/deploy/kubernetes[Stratos UI]
@@ -43,9 +43,9 @@ For technical details on the differences between the preview builds, see
 
 ==== Documentation for Special Environments
 
-* link:https://www.suse.com/documentation/suse-caasp-3/book_caasp_deployment/data/book_caasp_deployment.html[SUSE CaaS (Container as a Service) Platform & Bare Metal or Non-OpenStack Virtualization Platforms]
-* link:https://www.suse.com/documentation/suse-openstack-cloud-8/book_installation/data/sec_heat_templates_install.html[SUSE CaaS (Container as a Service) Platform & SUSE OpenStack Cloud]
-* link:https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/cha_cap_depl-azure.html[Microsoft Azure Platform]
+* link:https://documentation.suse.com/suse-caasp/3/html/caasp-deployment/book-caasp-deployment.html[SUSE CaaS (Container as a Service) Platform & Bare Metal or Non-OpenStack Virtualization Platforms]
+* link:https://documentation.suse.com/soc/8/html/suse-openstack-cloud-clm-all/install-heat-templates.html#sec-heat-templates-install[SUSE CaaS (Container as a Service) Platform & SUSE OpenStack Cloud]
+* link:https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-aks.html[Microsoft Azure Platform]
 
 
 === Contributing

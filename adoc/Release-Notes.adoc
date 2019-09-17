@@ -713,11 +713,11 @@ version of the URL from step 2: however, as the subdomain name, use
 
 * Starting with {product} 1.2.1, during helm upgrade, {k8s} will not upgrade pods that are not ready by default. To upgrade all pods, use the complete command: `helm upgrade --force --recreate-pods`
 
-* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part of the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/sec_cap_prereqs-prod.html#sec_cap_caasp-3 
+* Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part of the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-caasp.html#sec-cap-psps
 
 * {azure} users who previously had a {k8s} policy without RBAC, but now have {aks} ({aksa}) with RBAC (which is the new default with {aksa}), will need to modify their `scf-config-values.yaml` files so that `auth: rbac` replaces `auth: none`. If you remain in an {aksa} policy without RBAC, then you can ignore this change.
 
-* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the {aksa} instance: `az aks create`. For the complete command, see the _{product} Deployment Guide_, section _AKS_, subsection _Create Resource Group and AKS Instance_ (https://www.suse.com/documentation/cloud-application-platform-1/book_cap_guides/data/sec_cap_create-aks-instance.html).
+* If you are using {azure}, ensure that the root partition has enough space for the installation and potential upgrades. To do so, add the parameter `--node-osdisk-size=60` to the command that creates the {aksa} instance: `az aks create`. For the complete command, see the _{product} Deployment Guide_, section _AKS_, subsection _Create Resource Group and AKS Instance_ (https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-aks.html#sec-cap-create-aks-instance).
 
 
 [id='sec.1_2']
