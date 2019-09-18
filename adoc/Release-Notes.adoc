@@ -202,6 +202,8 @@ kubectl delete mutatingwebhookconfigurations -n eirini eirini-x-mutating-hook-ei
 Deleting the webhook means that the `eirini-persi` service would not be available. Note that this workaround is not needed on {aks}.
 ====
 
+* When deploying {scf} with Eirini, the `cflinuxfs3` stack is the only one that works as part of this tech preview.
+
 * If you are using the `uaa` embedded in the `suse/cf` chart, note that automatic ingress creation via helm will not work at present. Therefore, the ingress controller will not work with embedded `uaa` but but the chart can be deployed with {k8s} `LoadBalancer` services.
 
 * On occasion, the `credhub` pod may fail to start due to database migration failures; this has been spotted intermittently on {aks} and to a lesser extent, other public clouds. In these situations, manual intervention is required to track the last completed transaction in `credhub_user` database and update the flyway schema history table with the record of the last completed transaction. Please contact support for further instructions.
