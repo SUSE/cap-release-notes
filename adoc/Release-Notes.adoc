@@ -196,7 +196,7 @@ As of {scf} 2.18.0, `cf push` with `eirini` does not work on {eks} and Google Ku
 
 [source,bash]
 ----
-kubectl delete mutatingwebhookconfigurations -n eirini eirini-x-mutating-hook-eirini
+kubectl delete mutatingwebhookconfigurations eirini-x-mutating-hook-eirini
 ----
 
 Deleting the webhook means that the `eirini-persi` service would not be available. Note that this workaround is not needed on {aks}.
