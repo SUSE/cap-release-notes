@@ -34,7 +34,7 @@ endif::[]
 == Major Changes
 
 [id='sec.1_5_1']
-=== Release 1.5, November 2019
+=== Release 1.5.1, November 2019
 
 [id='sec.1_5_1.new']
 ==== What Is New?
