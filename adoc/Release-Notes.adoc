@@ -38,9 +38,42 @@ endif::[]
 
 [id='sec.1_5_1.new']
 ==== What Is New?
+* {scf} has been updated to version 2.19.0:
+** Support for Eirini SSH feature
+** Support for external CF-related databases, including CCDB & UAA when embedded in SCF
+** Support for eirini to run on GKE, EKS and CRIO-based Kubernetes environments
+** Ingress controller now available for UAA embedded in SCF
+** AUDIT_WRITE capabilities added for CRI-O
 
 [id='sec.1_5_1.feature']
 ==== Features and Fixes
+
+* Enforced odd number of mysql replicas for HA scenarios to improve consistency with PXC
+* Improved mysql-proxy active/passive handling
+* eirini-cert-copier no longer appears when scheduler is diego
+* Fixed apiVersion in Chart yaml(s) to point to Helm API version (v1)
+* Turned binlog on for pxc config to enable transaction recovery
+* Eirini will use SLE15 as its default stack
+* Moved to stack-associated (or stackful) buildpacks, away from multi-stack
+* Enabled BPM for bits-service for reliability
+* garden.disable_swap_limit set to "true" to remove the need for swap accounting
+* Bumped SLE12 & SLE15 stacks
+* Includes these {cf} component versions:
+** cflinuxfs3: 0.141.0
+** cf-acceptance-tests: 9.5
+** eirini release: 0.0.23
+** scf-helper release: 1.0.7
+* Buildpacks:
+** binary-buildpack: 1.0.35
+** dotnetcore-buildpack: 2.3.0
+** go-buildpack: 1.9.2
+** java-buildpack: 4.24.0
+** nginx-buildpack: 1.1.0
+** nodejs-buildpack: 1.7.1
+** php-buildpack: 4.4.0
+** python-buildpack: 1.6.37
+** ruby-buildpack: 1.8.1
+** staticfile-buildpack: 1.5.0
 
 [id='sec.1_5_1.issue']
 ==== Known Issues
