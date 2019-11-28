@@ -117,7 +117,7 @@ Steps for a fresh install of {product} 1.5 HA:
 [source,bash]
 ----
 helm install --name susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA=true \
---set config.HA_strict=false --set sizing.mysql.count=1
+--set config.HA_strict=false --set sizing.mysql.count=1 --version 2.18.0
 ----
 +
 .. Set the value of the `secrets.UAA_CA_CERT` to pass your `uaa` secret and certificate to `scf` as per Section 5.10 of the {CAP} Deployment Guide: https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-caasp.html#sec-cap-install-scf-prod
@@ -125,7 +125,8 @@ helm install --name susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set c
 [source,bash]
 ----
 helm install --name susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
---set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
+--set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}" \
+--version 2.18.0
 ----
 +
 .. Scale the `mysql` role up to the default HA configuration.
@@ -133,9 +134,9 @@ helm install --name susecf-scf --namespace scf suse/cf -f <values.yaml> --set co
 [source,bash]
 ----
 helm upgrade susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true \ 
---set config.HA=true
+--set config.HA=true --version 2.18.0
 helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
---set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
+--set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}" --version 2.18.0
 ----
 
 Steps to upgrade from {product} 1.4.1 in HA mode:
@@ -150,7 +151,7 @@ However, you don't need to use `config.HA` if you are using custom sizing in you
 [source,bash]
 ----
 helm upgrade susecf-uaa --namespace uaa suse/uaa --reuse-values --set config.HA=false \ 
---set sizing.uaa.count=2 --set sizing.mysql.count=1
+--set sizing.uaa.count=2 --set sizing.mysql.count=1 --version 2.17.1
 helm upgrade susecf-scf --namespace scf suse/cf --reuse-values --set config.HA=false \ 
 --set=sizing.diego_cell.count=3 --set=sizing.adapter.count=2 --set=sizing.api_group.count=2 \ 
 --set=sizing.autoscaler_actors.count=2 --set=sizing.autoscaler_api.count=2 \ 
@@ -160,7 +161,7 @@ helm upgrade susecf-scf --namespace scf suse/cf --reuse-values --set config.HA=f
 --set=sizing.locket.count=2 --set=sizing.log_api.count=2 --set=sizing.log_cache_scheduler.count=2 \ 
 --set=sizing.nats.count=2 --set=sizing.nfs_broker.count=2 --set=sizing.router.count=2 \ 
 --set=sizing.routing_api.count=2 --set=sizing.syslog_scheduler.count=2 --set=sizing.tcp_router.count=2 \ 
---set=sizing.mysql.count=1
+--set=sizing.mysql.count=1 --version 2.17.1
 ----
 +
 Delete the PVC(s) for `mysql-1` from both `uaa` and `scf` namespaces but leave the associated PV(s) as is.
@@ -170,9 +171,10 @@ Delete the PVC(s) for `mysql-1` from both `uaa` and `scf` namespaces but leave t
 [source,bash]
 ----
 helm upgrade susecf-uaa --namespace uaa suse/uaa  -f <values.yaml> --set config.HA=true \ 
---set config.HA_strict=false --set sizing.mysql.count=1
+--set config.HA_strict=false --set sizing.mysql.count=1 --version 2.18.0
 helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA=true \ 
---set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}"
+--set config.HA_strict=false --set sizing.mysql.count=1 --set "secrets.UAA_CA_CERT=${CA_CERT}" \
+--version 2.18.0
 ----
 +
 .. Upgrade the `mysql` role to the default HA configuration, bringing 1.5 to full HA.
@@ -180,9 +182,9 @@ helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA
 [source,bash]
 ----
 helm upgrade susecf-uaa --namespace uaa suse/uaa -f <values.yaml> --set config.HA_strict=true \ 
---set config.HA=true
+--set config.HA=true --version 2.18.0
 helm upgrade susecf-scf --namespace scf suse/cf -f <values.yaml> --set config.HA_strict=true \ 
---set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}"
+--set config.HA=true --set "secrets.UAA_CA_CERT=${CA_CERT}" --version 2.18.0
 ----
 ====
 
@@ -502,7 +504,7 @@ bosh:
          cc:
            external_protocol: http 
 ----
-.. Rerun the upgrade of the CAP deployment via a Helm command with this syntax: `helm upgrade scf suse/cf --reuse-values --namespace scf -f cc-clock-patch-yml`
+.. Rerun the upgrade of the CAP deployment via a Helm command with this syntax: `helm upgrade scf suse/cf --reuse-values --namespace scf -f cc-clock-patch-yml --version 2.15.2`
 .. For high-availability (HA) deployments, manually restart the cc-clock-N pods by deleting them one at a time to avoid app downtime; newer updated pods will be created automatically:
 +
 [source,bash]
@@ -719,7 +721,7 @@ version of the URL from step 2: however, as the subdomain name, use
 [id='sec.1_2_1.issue']
 ==== Known Issues
 
-* Starting with {product} 1.2.1, during helm upgrade, {k8s} will not upgrade pods that are not ready by default. To upgrade all pods, use the complete command: `helm upgrade --force --recreate-pods`
+* Starting with {product} 1.2.1, during helm upgrade, {k8s} will not upgrade pods that are not ready by default. To upgrade all pods, use the complete command: `helm upgrade --force --recreate-pods --version 2.13.3`
 
 * Similar to {caaspa} 3, {azure} now mandates a stricter security policy via PodSecurityPolicy (PSP), which is included as part of the {product} Deployment Guide. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation tied to {caaspa} 3: https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-caasp.html#sec-cap-psps
 
@@ -793,7 +795,7 @@ version of the URL from step 2: however, as the subdomain name, use
 [id='sec.1_2.issue']
 ==== Known Issues
 
-* Upgrading to {product} 1.2 introduces a new active/passive model that will result in a longer-than-usual app instance downtime for upgrades to this new version. As part of this change, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods`. This will be noticeable when seeing {k8s} pods marked as _Unready_. _Unready_ pods will not be upgraded.
+* Upgrading to {product} 1.2 introduces a new active/passive model that will result in a longer-than-usual app instance downtime for upgrades to this new version. As part of this change, you will need to run the `helm upgrade` command with two additional parameters: `helm upgrade --force --recreate-pods --version 2.11.0`. This will be noticeable when seeing {k8s} pods marked as _Unready_. _Unready_ pods will not be upgraded.
 
 * {caaspa} 3 uses an updated version of {k8s} that mandates a stricter security policy via PodSecurityPolicy (PSP) which is included as part of the _{product} Deployment Guide_. This was optional in {caaspa} 2 but it works the same. Any namespace tied to {product} requires privileged ports to be accessible needs to have to have a PSP set appropriately for access. This would include the default conventions of `scf`, `uaa`, `stratos-ui`, `mysql-sidecar` and `postgres-sidecar` as per our documentation.
 
@@ -1035,11 +1037,11 @@ To upgrade from {product} 1.0.1 to 1.1, run the following commands:
 [source,bash]
 ----
 $ helm repo update
-$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml
+$ helm upgrade --recreate-pods <uaa-helm-release-name> suse/uaa --values scf-config-values.yaml --version 2.8.0
 $ SECRET=$(kubectl get pods --namespace uaa -o jsonpath='{.items[*].spec.containers[?(.name=="uaa")].env[?(.name=="INTERNAL_CA_CERT")].valueFrom.secretKeyRef.name}')
 $ CA_CERT="$(kubectl get secret $SECRET --namespace uaa -o jsonpath="{.data['internal-ca-cert']}" | base64 --decode -)"
-$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT}"
-$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml
+$ helm upgrade --recreate-pods <scf-helm-release-name> suse/cf --values scf-config-values.yaml --set "secrets.UAA_CA_CERT=${CA_CERT} --version 2.8.0"
+$ helm upgrade --recreate-pods <console-helm-release-name> suse/console --values scf-config-values.yaml --version 1.1.0
 ----
 
 
