@@ -107,7 +107,7 @@ For information about deploying and administering {product}, see the product man
 
 [IMPORTANT]
 ====
-In order to deploy {product} 1.5 or upgrade from {product} 1.4.1 in an HA configuration, you will first need to scale the `mysql` role down to 1 instance to be able to migrate from `cf-mysql` to `PXC`. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
+In order to deploy {product} 1.5 or upgrade from {product} 1.4.1 in an HA configuration, you will first need to start the `mysql` role with 1 instance to be able to migrate from `cf-mysql` to `PXC`. This is based on upstream instructions but based on what we've seen with other components that rely on the database, such as Credhub, scaling all database roles into single availability helps with a stable migration and deployment.
 
 Steps for a fresh install of {product} 1.5 in the default HA configuration: 
 
