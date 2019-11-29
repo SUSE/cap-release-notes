@@ -58,36 +58,36 @@ endif::[]
 * Enabled BPM for bits-service for reliability
 * garden.disable_swap_limit set to "true" to remove the need for swap accounting
 * Includes these {cf} component versions:
-** app-autoscaler: 1.2.1? 
-** bits-services: 2.28.0?
-** bpm: 1.1.0?
-** capi: 1.83.0?
+** app-autoscaler: 1.2.1
+** bits-services: 2.28.0
+** bpm: 1.1.0
+** capi: 1.83.0
 ** cf-acceptance-tests: 9.5
 ** cf-deployment: 9.5
-** cf-mysql: 36.15.0?
-** cf-routing: 0.188.0?
-** cf-sle12: 
-** cf-sle15: 
-** cf-smoke-tests: 40.0.112?
-** cf-syslog-drain: 10.2?
+** cf-mysql: 36.15.0
+** cf-routing: 0.188.0
+** cf-sle12: 1.81.61
+** cf-sle15: 10.70
+** cf-smoke-tests: 40.0.112
+** cf-syslog-drain: 10.2
 ** cf-usb: 1.0.1
 ** cflinuxfs3: 0.141.0
-** credhub: 2.4.0?
-** diego: 2.34.0?
+** credhub: 2.4.0
+** diego: 2.34.0
 ** eirini: 0.0.23
-** garden-runc: 1.19.3?
-** groot-btrfs: 1.0.5?
-** log-cache: 2.2.2?
-** loggregator: 105.5?
-** loggregator-agent: 3.9?
-** mapfs: 1.1.0?
-** nats: 27?
-** nfs-volume: 1.5.2?
-** postgres-release: 26?
-** pxc: 0.18.0?
+** garden-runc: 1.19.3
+** groot-btrfs: 1.0.5
+** log-cache: 2.2.2
+** loggregator: 105.5
+** loggregator-agent: 3.9
+** mapfs: 1.1.0
+** nats: 27
+** nfs-volume: 1.5.2
+** postgres-release: 26
+** pxc: 0.18.0
 ** scf-helper: 1.0.7
-** statsd-injector: 1.10.0?
-** uaa: 72.0?
+** statsd-injector: 1.10.0
+** uaa: 72.0
 * Buildpacks:
 ** binary-buildpack: 1.0.35
 ** dotnetcore-buildpack: 2.3.0
