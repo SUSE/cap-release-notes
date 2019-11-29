@@ -103,7 +103,7 @@ endif::[]
 [id='sec.1_5_1.issue']
 ==== Known Issues
 
-* On occasion, the `uaa` pod may fail to start due to database migration failures. In these situations, manual intervention is required to track the last completed transaction in `uaadb` database, update the `schema_version` table with the record of the last completed transaction, then restart the migration. Please contact support for further instructions.
+* On occasion, the `uaa` pod may fail to start due to database migration failures. In these situations, manual intervention is required to track the last completed transaction in the `uaadb` database, update the `schema_version` table with the record of the last completed transaction, then restart the migration. Please contact support for further instructions.
 
 [id='sec.1_5']
 === Release 1.5, September 2019
