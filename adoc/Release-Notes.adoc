@@ -103,6 +103,8 @@ endif::[]
 [id='sec.1_5_1.issue']
 ==== Known Issues
 
+* On occasion, the credhub pod may fail to start due to database migration failures; this has been spotted intermittently on {aks} and to a lesser extent, other public clouds. In these situations, manual intervention is required to track the last completed transaction in `credhub_user` database and update the `flyway schema history` table with the record of the last completed transaction. Please contact support for further instructions.
+
 [id='sec.1_5']
 === Release 1.5, September 2019
 
