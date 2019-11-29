@@ -41,7 +41,7 @@ endif::[]
 * {scf} has been updated to version 2.19.0:
 ** Support for Eirini SSH feature
 ** Support for external CF-related databases, including CCDB & UAA when embedded in SCF
-** Support for eirini to run on GKE, EKS and CRIO-based Kubernetes environments
+** Support for eirini to run on GKE, EKS and CRI-O based Kubernetes environments
 ** Ingress controller now available for UAA embedded in SCF
 ** AUDIT_WRITE capabilities added for CRI-O
 
