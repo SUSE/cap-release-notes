@@ -45,6 +45,7 @@ endif::[]
 ** AUDIT_WRITE capabilities added for CRI-O
 * The Stratos UI has been updated to version 2.6.0:
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.6.0
+* Stratos Metrics has been updated to version 1.1.1
 
 [id='sec.1_5_1.feature']
 ==== Features and Fixes
