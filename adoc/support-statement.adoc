@@ -39,24 +39,24 @@ https://www.suse.com/support/?id=SUSE_Cloud_Application_Platform.
 
 The following definitions apply:
 
-L1:: Problem determination, which means technical support designed to provide
-compatibility information, usage support, ongoing maintenance, information
-gathering and basic troubleshooting using available documentation.
+=== Version Support
+Technical Support and Troubleshooting (L1 - L2): Current and previous major versions (N-1). For example: {suse} will provide technical support and troubleshooting for versions 1.0, 1.1, 1.2, 1.3 (and all 2.x point releases) until the release of 3.0.
 
-L2:: Problem isolation, which means technical support designed to analyze
-data, reproduce customer problems, isolate problem area and provide a
-resolution for problems not resolved by Level 1 or prepare for Level 3.
+Patches and updates (L3): On the latest or last minor release of each major release. For example: {suse} will provide patches and updates for 1.3 (and 2.latest) until the release of 3.0.
 
-L3:: Problem resolution, which means technical support designed to resolve
-problems by engaging engineering to resolve product defects which have been
-identified by Level 2 Support.
+{product} closely follows upstream {cf} releases which may implement fixes and changes which are not backwards compatible with previous releases. {suse} will backport patches for critical bugs and security issues on a best efforts basis.
 
-For contracted customers and partners, {product} is delivered with L3 support
-for all packages, except for the following:
+=== Platform Support
+{product} is fully supported on {eksa}, {azure} {aksa} and Google GKE. Each release is tested by {product} QA on these platforms.
 
-* Technology Previews
-* Sound, graphics, fonts and artwork
-* Packages that require an additional customer contract
+{product} is fully supported on {caaspa}, wherever it happens to be installed. If {caaspa} is supported on a particular CSP, the customer can get support for {product} in that context. (Note: This has not been tested yet but it is in theory a supportable scenario.)
 
-{suse} will only support the usage of original packages. That is,
-packages that are unchanged and not recompiled.
+{suse} can provide support for {product} on 3rd party/generic {k8s} on a case-by-case basis provided:
+
+a. the Kubernetes cluster satisfies the Requirements listed here: https://documentation.suse.com/suse-cap/1.5.1/html/cap-guides/cha-cap-depl-kube-requirements.html#sec-cap-changes-kube-reqs
+b. The `kube-ready-state-check.sh` script has been run on the target {k8s} cluster and does not show any configuration problems
+c. a SUSE Services or Sales Engineer has verified that {product} works correctly on the target {k8s} cluster
+
+Any incident with {product} is also fully supported as long as the problem can be replicated on {caaspa}, {aksa}, {eksa} or GKE. Bugs identified on 3rd party / generic {k8s} which are unique to that platform and can not be replicated on the core supported platforms are fixed on a best efforts basis. {suse} will not replicate the deployed Kubernetes environment internally in order to reproduce errors.
+
+{suse} will only support the usage of original packages. That is, packages that are unchanged and not recompiled.
