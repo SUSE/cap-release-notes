@@ -107,6 +107,8 @@ endif::[]
 [id='sec.1_5_1.issue']
 ==== Known Issues
 
+* Based on problems spotted in HA deployments and upgrades, it is recommended that you start any internal database role with a count of 1 first and then scale up to the needed number. This does not impact usage when connected to external databases.
+
 * On occasion, the `uaa` pod may fail to start due to database migration failures. In these situations, manual intervention is required to track the last completed transaction in the `uaadb` database, update the `schema_version` table with the record of the last completed transaction, then restart the migration. Please contact support for further instructions.
 
 [id='sec.1_5']
