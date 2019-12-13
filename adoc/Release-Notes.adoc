@@ -107,9 +107,20 @@ endif::[]
 [id='sec.1_5_1.issue']
 ==== Known Issues
 
-* Based on problems spotted in HA deployments and upgrades, it is recommended that you start any internal database role with a count of 1 first and then scale up to the needed number. This does not impact usage when connected to external databases.
+[IMPORTANT] 
+====
+* For upgrades from {product} 1.5 to 1.5.1, if the `mysql` roles of `uaa` and `scf` are in high availability mode, it is recommended to first scale them to single availability. Performing an upgrade with these roles in HA mode runs the risk of encountering potential database migration failures, which will lead to pods not starting. This does not impact usage when connected to external databases.
 
-* On occasion, the `uaa` pod may fail to start due to database migration failures. In these situations, manual intervention is required to track the last completed transaction in the `uaadb` database, update the `schema_version` table with the record of the last completed transaction, then restart the migration. Please contact support for further instructions.
+** For general information about upgrading to {product} 1.5.1, see https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#sec-cap-update
+
+** For clusters currently using `config.HA`, see https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#sec-cap-upgrade-config-ha
+
+** For clusters currently using custom sizing, see https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#sec-cap-upgrade-custom-sizing
+
+** For clusters in single availability, see https://documentation.suse.com/suse-cap/1.5.1/single-html/cap-guides/#sec-cap-upgrade-no-ha
+====
+
+* In circumstances where the `uaa` pod may fail to start due to database migration failures, manual intervention is required to track the last completed transaction in the `uaadb` database, update the `schema_version` table with the record of the last completed transaction, then restart the migration. Please contact support for further instructions.
 
 [id='sec.1_5']
 === Release 1.5, September 2019
