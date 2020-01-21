@@ -33,6 +33,19 @@ endif::[]
 [id='sec.major-change']
 == Major Changes
 
+[id='sec.1_5_2']
+=== Release 1.5.2, January 2020
+
+[id='sec.1_5_2.new']
+==== What Is New?
+
+[id='sec.1_5_2.feature']
+==== Features and Fixes
+
+[id='sec.1_5_2.issue']
+==== Known Issues
+
+
 [id='sec.1_5_1']
 === Release 1.5.1, December 2019
 
