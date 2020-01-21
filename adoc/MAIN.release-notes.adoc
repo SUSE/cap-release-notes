@@ -1,4 +1,4 @@
-= Release Notes: SUSE Cloud Application Platform 1.5.1
+= Release Notes: SUSE Cloud Application Platform 1.5.2
 
 include::entities.adoc[]
 :azuredocurl: https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-aks.html
