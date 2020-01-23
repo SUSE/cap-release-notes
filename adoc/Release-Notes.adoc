@@ -38,9 +38,63 @@ endif::[]
 
 [id='sec.1_5_2.new']
 ==== What Is New?
+* {scf} has been updated to version 2.20.1:
+** cf-deployment has been updated to 12.17
+** Optimized startup time for various roles
+** Added/fixed podAntiAffinity rules for various roles
 
 [id='sec.1_5_2.feature']
 ==== Features and Fixes
+* Set `topologyKey` for `podAntiAffinity` rule to `kubernetes.io/hostname`
+* Advised operator of the need for CSR approval for Eirini internal registry in Helm notes
+* Pod restarts for many roles during UAA and SCF startup lessened for faster deployment
+* Expanded GoRouter ciphersuite to be compatible with a wider range of clients
+* Made helm chart compatible with {k8s} 1.16
+* Use system cert store if `UAA_CA_CERT` is not specified
+* Ensure the `HTTP_PORT` is exposed for `file_server` to ensure upgrades do not require longer app downtime
+* Includes these {cf} component versions:
+** app-autoscaler: 1.2.4
+** bits-services: 2.28.0
+** bpm: 1.1.6
+** capi: 1.89.0
+** cf-acceptance-tests: 12.17
+** cf-deployment: 12.17
+** cf-mysql: 36.15.0
+** cf-routing: 0.196.0
+** cf-sle12: 1.81.65
+** cf-smoke-tests: 40.0.123
+** cf-syslog-drain: 10.2.5
+** cf-usb: 1.0.1
+** cflinuxfs3: 0.153.0
+** credhub: 2.5.9
+** diego: 2.41.0
+** eirini: 0.0.26
+** garden-runc: 1.19.9
+** groot-btrfs: 1.0.5
+** loggregator: 106.3.0
+** loggregator-agent: 5.2.4
+** log-cache: 2.6.4
+** mapfs: 1.1.0
+** nats: 30
+** nfs-volume: 1.5.2
+** postgres-release: 26
+** pxc: 0.21.0
+** scf-helper: 1.0.13
+** sle15: 10.84
+** statsd-injector: 1.11.8
+** uaa: 74.12
+
+* Buildpacks:
+** binary-buildpack: 1.0.35
+** dotnetcore-buildpack: 2.3.0
+** go-buildpack: 1.9.4
+** java-buildpack: 4.27.0
+** nginx-buildpack: 1.1.2
+** nodejs-buildpack: 1.7.7
+** php-buildpack: 4.4.2
+** python-buildpack: 1.7.3
+** staticfile-buildpack: 1.5.2
+** ruby-buildpack: 1.8.3
 
 [id='sec.1_5_2.issue']
 ==== Known Issues
