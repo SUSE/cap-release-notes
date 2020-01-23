@@ -49,7 +49,7 @@ endif::[]
 * Advised operator of the need for CSR approval for Eirini internal registry in Helm notes
 * Pod restarts for many roles during UAA and SCF startup lessened for faster deployment
 * Expanded GoRouter ciphersuite to be compatible with a wider range of clients
-* Made helm chart compatible with {k8s} 1.16
+* Made Helm chart compatible with {k8s} 1.16
 * Use system cert store if `UAA_CA_CERT` is not specified
 * Ensure the `HTTP_PORT` is exposed for `file_server` to ensure upgrades do not require longer app downtime
 * Includes these {cf} component versions:
