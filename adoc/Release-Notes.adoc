@@ -99,6 +99,7 @@ endif::[]
 [id='sec.1_5_2.issue']
 ==== Known Issues
 
+* If you are upgrading {product} to 1.5.2 and already use Minibroker to connect to external databases and are using {k8s} 1.16 or higher, which is the case with {caasp} 4.1, you will need to update the database version to a compatible version and migrate your data over via the database's suggested mechanism. This may require a database export/import.
 
 [id='sec.1_5_1']
 === Release 1.5.1, December 2019
