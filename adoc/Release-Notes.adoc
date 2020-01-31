@@ -43,11 +43,9 @@ endif::[]
 ** Optimized startup time for various roles
 ** Added/fixed podAntiAffinity rules for various roles
 * The Stratos UI has been updated to version 2.7.0:
-** Tech preview for helm feature
-** Add custom welcome message on endpoints page
-** Add support for connecting {caasp} V4 endpoints
-** Refinements to the Autoscaler UI
-** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.7.0. -- LINK TO GO LIVE
+** Add support for {caasp} V4.1 and {k8s} 1.16+ environments
+** Show last operation and service broker info for service instances
+** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/v2-master/CHANGELOG.md#270.
 * The Stratos Metrics has been updated to version 1.1.2:
 ** Add support for {caasp} V4.1 and {k8s} 1.16+ environments
 ** For a full list of features and fixes see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#112.
