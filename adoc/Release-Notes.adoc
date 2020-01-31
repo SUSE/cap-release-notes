@@ -118,6 +118,8 @@ endif::[]
 
 * Prior to {product} 1.5.2, it's possible that rotating the CCDB secret keys may have been broken. This has been fixed with this version: please consult https://documentation.suse.com/suse-cap/1.5.2/html/cap-guides/cha-cap-ccdb-secret-rotation.html -- LINK TO BE LIVE
 
+* The `cf-usb` service broker will not work on {aks} deployments due to a hard-coded username. We recommend using the service brokers that are provided by {azure} for OSBAPI connections to their hosted database services. 
+
 [id='sec.1_5_1']
 === Release 1.5.1, December 2019
 
