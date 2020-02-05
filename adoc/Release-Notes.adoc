@@ -83,14 +83,13 @@ endif::[]
 ** log-cache: 2.6.4
 ** mapfs: 1.1.0
 ** nats: 30
-** nfs-volume: 1.5.2
+** nfs-volume: 1.5.7
 ** postgres-release: 26
 ** pxc: 0.21.0
 ** scf-helper: 1.0.13
 ** sle15: 10.84
 ** statsd-injector: 1.11.8
 ** uaa: 74.12
-
 * Buildpacks:
 ** binary-buildpack: 1.0.35
 ** dotnetcore-buildpack: 2.3.0
