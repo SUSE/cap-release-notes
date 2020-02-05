@@ -108,7 +108,24 @@ endif::[]
 
 [IMPORTANT] 
 ====
-* With {product} 1.5.2, TLS will be the default way to connect with external databases, particularly for the Seeder, UAA & Credhub services. If you need to connect via insecure means in a trusted network, you will need to use the parameter TBD.
+* With {product} 1.5.2, the database seeder, UAA and credhub will use TLS by default to connect with an external database. Other SCF components will still use the unencrypted TCP protocol. If you would like to configure the seeder, UAA & Credhub services to connect via insecure means in a trusted network, you will need to use the following parameters:
+
+`env.DB_EXTERNAL_SSL_MODE` - this is set to `true` by default and is used by the database seeder to communicate over TLS to the external database. Set it to `false` to have the seeder communicate over plain TCP.
+
+`env.UAADB_TLS` - this is set to `enabled` by default and is used by UAA to communicate over TLS to the external database. Set it to `disabled` to skip TLS for UAA connections to the external database. Please check the external database section in the documentation for other usages of this flag.
+
+`env.CREDHUB_DB_REQUIRE_TLS` - this is set to `true` by default and is used by credhub to communicate over TLS to the external database. Set it to `false` to disable TLS connections to the external database server from credhub. 
+
+Note that the external database server *must* support both TLS and non-encrypted connections; if the external database server only accepts TLS connections some SCF components will not be able to communicate with the database server.
+
+* {product} 1.5.2 has been tested successfully with external database instances hosted on Amazon RDS MariaDB and Azure MariaDB. Amazon Aurora, Amazon RDS MySQL or Azure MYSQL are not yet supported configurations.  
+
+* `cf-usb` will not become ready when {product} 1.5.2 is deployed with an external database. It is recommended to use `minibroker` as a service broker when {product} 1.5.2 is deployed with an external database server.
+
+* With {product} 1.5.2 if you are using external UAA with an external database you must set up two separate database instances; one for UAA and one for SCF. One external database instance for both an external UAA and an SCF setup is not supported and will cause data conflicts resulting in deployment failures.
+
+Please refer to the external database section of the documentation for more configuration options.
+
 
 ====
 
