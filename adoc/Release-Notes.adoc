@@ -43,8 +43,9 @@ endif::[]
 ** Optimized startup time for various roles
 ** Added/fixed podAntiAffinity rules for various roles
 * The Stratos UI has been updated to version 2.7.0:
-** Added support for {caasp} V4.1 and {k8s} 1.16+ environments
-** Display last operation and service broker info for service instances
+** Improved the Kubernetes Dashboard integration tied to configuration and reliability
+** Improved support for synchronous creation of service instances
+** Branding updated to "SUSE Stratos Console"
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/v2-master/CHANGELOG.md#270.
 * The Stratos Metrics has been updated to version 1.1.2:
 ** Added support for {caasp} V4.1 and {k8s} 1.16+ environments
