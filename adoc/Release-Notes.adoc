@@ -114,7 +114,7 @@ endif::[]
 
 `env.CREDHUB_DB_REQUIRE_TLS` - this is set to `true` by default and is used by credhub to communicate over TLS to the external database. Set it to `false` to disable TLS connections to the external database server from credhub. 
 
-Note that the external database server *must* support both TLS and non-encrypted connections; if the external database server only accepts TLS connections some SCF components will not be able to communicate with the database server.
+Note that when the external database server is configured to use TLS, it *must* support both TLS and non-encrypted connections. If the external database server only accepts TLS connections, some SCF components will not be able to communicate with the database server.
 
 * {product} 1.5.2 has been tested successfully with external database instances hosted on Amazon RDS MariaDB and Azure MariaDB.  
 
