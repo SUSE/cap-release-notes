@@ -1,9 +1,9 @@
 // Start attribute entry list (Do not edit here! Edit in entities.adoc)
 ifdef::env-github[]
 :suse: SUSE
-:current-year: 2019
+:current-year: 2020
 :product: {suse} Cloud Application Platform
-:version: 1.5.1
+:version: 1.5.2
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://documentation.suse.com/suse-cap/1
 :deployment-url: https://documentation.suse.com/suse-cap/1/html/cap-guides/part-cap-deployment.html
@@ -33,20 +33,123 @@ endif::[]
 [id='sec.major-change']
 == Major Changes
 
+[id='sec.1_5_2']
+=== Release 1.5.2, February 2020
+
+[id='sec.1_5_2.new']
+==== What Is New?
+* {scf} has been updated to version 2.20.3:
+** cf-deployment has been updated to 12.17
+** Optimized startup time for various roles
+** Added/fixed podAntiAffinity rules for various roles
+* Stratos Console has been updated to version 2.7.0:
+** Branding updated from "SUSE Stratos UI"
+** Improved the Kubernetes Dashboard integration tied to configuration and reliability
+** Improved support for synchronous creation of service instances
+** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/v2-master/CHANGELOG.md#270.
+* Stratos Metrics has been updated to version 1.1.2:
+** Added support for {caasp} V4.1 and {k8s} 1.16+ environments
+** For a full list of features and fixes see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#112.
+
+[id='sec.1_5_2.feature']
+==== Features and Fixes
+* Set `topologyKey` for `podAntiAffinity` rule to `kubernetes.io/hostname`
+* Inform operator of the need for CSR approval for Eirini internal registry in Helm notes
+* Pod restarts for many roles during UAA and SCF startup lessened for faster deployment
+* Expanded GoRouter ciphersuite to be compatible with a wider range of clients
+* Made Helm chart compatible with {k8s} 1.16
+* Use system cert store if `UAA_CA_CERT` is not specified
+* Includes these {cf} component versions:
+** app-autoscaler: 1.2.4
+** bits-services: 2.28.0
+** bpm: 1.1.6
+** capi: 1.89.0
+** cf-acceptance-tests: 12.17
+** cf-deployment: 12.17
+** cf-mysql: 36.15.0
+** cf-routing: 0.196.0
+** cf-sle12: 1.81.65
+** cf-smoke-tests: 40.0.123
+** cf-syslog-drain: 10.2.5
+** cf-usb: 1.0.1
+** cflinuxfs3: 0.153.0
+** credhub: 2.5.9
+** diego: 2.41.0
+** eirini: 0.0.26
+** garden-runc: 1.19.9
+** groot-btrfs: 1.0.5
+** loggregator: 105.6.3
+** loggregator-agent: 5.2.4
+** log-cache: 2.6.4
+** mapfs: 1.1.0
+** nats: 30
+** nfs-volume: 1.5.7
+** postgres-release: 26
+** pxc: 0.21.0
+** scf-helper: 1.0.13
+** sle15: 10.84
+** statsd-injector: 1.11.8
+** uaa: 74.12
+* Buildpacks:
+** binary-buildpack: 1.0.35
+** dotnetcore-buildpack: 2.3.0
+** go-buildpack: 1.9.4
+** java-buildpack: 4.27.0
+** nginx-buildpack: 1.1.2
+** nodejs-buildpack: 1.7.7
+** php-buildpack: 4.4.2
+** python-buildpack: 1.7.3
+** staticfile-buildpack: 1.5.2
+** ruby-buildpack: 1.8.3
+
+[id='sec.1_5_2.issue']
+==== Known Issues
+
+[IMPORTANT] 
+====
+* With {product} 1.5.2, the database seeder, UAA and credhub will use TLS by default to connect with an external database. Other SCF components will use the unencrypted TCP protocol. If you would like to configure the seeder, UAA & Credhub services to connect via insecure means in a trusted network, you will need to use the following parameters:
+
+`env.DB_EXTERNAL_SSL_MODE` - this is set to `true` by default and is used by the database seeder to communicate over TLS to the external database. Set it to `false` to have the seeder communicate over plain TCP.
+
+`env.UAADB_TLS` - this is set to `enabled` by default and is used by UAA to communicate over TLS to the external database. Set it to `disabled` to skip TLS for UAA connections to the external database. Please check the external database section in the documentation for other usages of this flag.
+
+`env.CREDHUB_DB_REQUIRE_TLS` - this is set to `true` by default and is used by credhub to communicate over TLS to the external database. Set it to `false` to disable TLS connections to the external database server from credhub. 
+
+Note that when the external database server is configured to use TLS, it *must* support both TLS and unencrypted connections. If the external database server only accepts TLS connections, some SCF components will not be able to communicate with the database server.
+
+* {product} 1.5.2 has been tested successfully with external database instances hosted on Amazon RDS MariaDB and Azure MariaDB.  
+
+* The `cf-usb` service broker is not compatible with an external database hosted on Azure. We recommend using the service brokers that are provided by {azure} for OSBAPI connections to their hosted database services. 
+
+* With {product} 1.5.2 if you are using external UAA with an external database, you must set up two separate database instances; one for UAA and one for SCF. One external database instance for both an external UAA and an SCF setup is not supported and will cause data conflicts resulting in deployment failures.
+
+* If you are upgrading {product} to 1.5.2 and use an external database in 1.5.1, please contact support for further instructions.
+
+Please refer to the external database section of the documentation for more configuration options.
+
+
+====
+
+* If you are upgrading {product} to 1.5.2 and already use Minibroker to connect to external databases and are using {k8s} 1.16 or higher, which is the case with {caasp} 4.1, you will need to update the database version to a compatible version and migrate your data over via the database's suggested mechanism. This may require a database export/import.
+
+* Starting with {product} 1.5.2, you no longer need to set `UAA_CA_CERT` when using an external UAA with a certificate signed by a well known Certificate Authority (CA). It is only needed when you use an external UAA with either a certificate generated by the `secret-generator` or a self-signed certificate.
+
+* Prior to {product} 1.5.2, the documentation that covered rotating the CCDB secret keys was incorrect. This has been fixed with this version: please consult https://documentation.suse.com/suse-cap/1.5.2/html/cap-guides/cha-cap-ccdb-secret-rotation.html 
+
 [id='sec.1_5_1']
 === Release 1.5.1, December 2019
 
 [id='sec.1_5_1.new']
 ==== What Is New?
 * {scf} has been updated to version 2.19.1:
-** Support for Eirini SSH feature
+** Support for SSH to application instances in Eirini
 ** Support for external Cloud Controller and UAA database configuration
 ** Ingress controller now available for UAA embedded in SCF
 ** AUDIT_WRITE capabilities added for CRI-O
 * The Stratos UI has been updated to version 2.6.0:
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.6.0
 * Stratos Metrics has been updated to version 1.1.1:
-** For the full list of updates see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#111
+** For a full list of updates see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#111
 
 [id='sec.1_5_1.feature']
 ==== Features and Fixes
@@ -134,8 +237,8 @@ endif::[]
 ** UAA can now be deployed as embedded in the `cf` namespace, allowing for a single step deployment -- please read the Known Issues section for this version on deployment limitations
 * The Stratos UI has been updated to version 2.5.1:
 ** Tech preview for helm feature
-** Add custom welcome message on endpoints page
-** Add support for connecting {caasp} V4 endpoints
+** Added custom welcome message on endpoints page
+** Added support for connecting {caasp} V4 endpoints
 ** Refinements to the Autoscaler UI
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/releases/tag/2.5.1.
 
