@@ -483,6 +483,8 @@ For information about deploying and administering {product}, see the product man
 
 * Fixed the test for an insecure Docker registry (uses tcpdomain for the route).
 
+* Changed Doppler to use port 443 to allow for SSL communication and passthrough to Ingress controller.
+
 * Includes these {cf} component versions:
 ** app-autoscaler: 1.0.0
 ** bits-service: 2.26.0
