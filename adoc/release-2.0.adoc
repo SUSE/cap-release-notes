@@ -55,46 +55,49 @@ endif::[]
 [id='sec.2_0.feature']
 ==== Features and Fixes
 * TODO
+* Removed sle12 stack?
 * Includes these {cf} component versions:
 ** app-autoscaler: 3.0.0
 ** bits-services: 2.28.0
-** bpm: 1.1.6
-** capi: 1.89.0
-** cf-acceptance-tests: 12.17
-** cf-deployment: 12.17
-** cf-mysql: 36.15.0
-** cf-routing: 0.196.0
-** cf-sle12: 1.81.65
-** cf-smoke-tests: 40.0.123
-** cf-syslog-drain: 10.2.5
-** cflinuxfs3: 0.153.0
-** credhub: 2.5.9
-** diego: 2.41.0
-** eirini: 0.0.27
-** garden-runc: 1.19.9
-** groot-btrfs: 1.0.5
-** loggregator: 105.6.3
-** loggregator-agent: 5.2.4
-** log-cache: 2.6.4
-** mapfs: 1.1.0
-** nats: 30
+** bosh-dns-aliases: 0.0.3
+** bpm: 1.1.7
+** brain-tests? 0.0.11
+** capi: 1.91.0
+** cf-acceptance-tests: 0.0.13
+** cf-deployment: 12.36
+** cf-smoke-tests: 40.0.128
+** cf-syslog-drain: 10.2.11
+** cflinuxfs3: 0.167.0
+** credhub: 2.5.11
+** diego: 2.44.0
+** eirini: 0.0.27 
+** garden-runc: 1.19.10
+** groot-btrfs: 1.0.5 ??
+** loggregator: 106.3.8
+** loggregator-agent: 5.3.7
+** log-cache: 2.6.8
+** mapfs: 1.1.0 ??
+** nats: 33
 ** nfs-volume: 1.5.7
 ** postgres-release: 39
-** pxc: 0.21.0
+** pxc: 0.21.0 ?? 0.9.4 ??
+** routing: 0.198.0
 ** scf-helper: 1.0.13
+** silk: 2.28.0
 ** sle15: 10.93
-** statsd-injector: 1.11.8
-** uaa: 74.12
+** statsd-injector: 1.11.15
+** sync-integration-tests? 0.0.3
+** uaa: 74.15.0
 * Buildpacks:
 ** binary-buildpack: 1.0.36.1
 ** dotnetcore-buildpack: 2.3.9.1
-** go-buildpack: 1.9.12.1
-** java-buildpack: 4.30.0.1
+** go-buildpack: 1.9.11.1
+** java-buildpack: 4.29.1.1
 ** nginx-buildpack: 1.1.7.1
-** nodejs-buildpack: 1.7.18.1
+** nodejs-buildpack: 1.7.17.1
 ** php-buildpack: 4.4.12.1
-** python-buildpack: 1.7.14.1
-** staticfile-buildpack: 1.5.6.1
+** python-buildpack: 1.7.12.1
+** staticfile-buildpack: 1.5.5.1
 ** ruby-buildpack: 1.8.15.1
 
 [id='sec.2_0.issue']
