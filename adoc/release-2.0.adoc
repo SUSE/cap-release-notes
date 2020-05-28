@@ -1,0 +1,115 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:current-year: 2020
+:product: {suse} Cloud Application Platform
+:version: 2.0
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://documentation.suse.com/suse-cap/2
+:deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:kubecf: KubeCF
+:k8s: Kubernetes
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
+:gke: Google Kubernetes Engine
+:gkea: GKE
+:mysql: MySQL
+:mariadb: MariaDB
+:postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
+:ng: NGINX
+endif::[]
+// End attribute entry list
+
+[id='sec.major-change']
+== Major Changes
+
+[id='sec.2_0']
+=== Release 2.0, June 2020
+
+[id='sec.2_0.new']
+==== What Is New?
+* {kubecf} 2.2.2 replaces {scf}:
+** cf-deployment has been updated to TODO-VERSION
+** TODO
+* {operator} TODO-VERSION has been added:
+** TODO
+* Stratos Console has been updated to version 3.2.0:
+** TODO
+** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#320.
+* Stratos Metrics has been updated to version 1.2.1:
+** TODO
+** For a full list of features and fixes see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#121.
+
+[id='sec.2_0.feature']
+==== Features and Fixes
+* TODO
+* Includes these {cf} component versions:
+** app-autoscaler: 3.0.0
+** bits-services: 2.28.0
+** bpm: 1.1.6
+** capi: 1.89.0
+** cf-acceptance-tests: 12.17
+** cf-deployment: 12.17
+** cf-mysql: 36.15.0
+** cf-routing: 0.196.0
+** cf-sle12: 1.81.65
+** cf-smoke-tests: 40.0.123
+** cf-syslog-drain: 10.2.5
+** cflinuxfs3: 0.153.0
+** credhub: 2.5.9
+** diego: 2.41.0
+** eirini: 0.0.27
+** garden-runc: 1.19.9
+** groot-btrfs: 1.0.5
+** loggregator: 105.6.3
+** loggregator-agent: 5.2.4
+** log-cache: 2.6.4
+** mapfs: 1.1.0
+** nats: 30
+** nfs-volume: 1.5.7
+** postgres-release: 39
+** pxc: 0.21.0
+** scf-helper: 1.0.13
+** sle15: 10.93
+** statsd-injector: 1.11.8
+** uaa: 74.12
+* Buildpacks:
+** binary-buildpack: 1.0.36.1
+** dotnetcore-buildpack: 2.3.9.1
+** go-buildpack: 1.9.12.1
+** java-buildpack: 4.30.0.1
+** nginx-buildpack: 1.1.7.1
+** nodejs-buildpack: 1.7.18.1
+** php-buildpack: 4.4.12.1
+** python-buildpack: 1.7.14.1
+** staticfile-buildpack: 1.5.6.1
+** ruby-buildpack: 1.8.15.1
+
+[id='sec.2_0.issue']
+==== Known Issues
+
+[IMPORTANT]
+====
+* Eirini will only work on a cluster that has `.cluster.local` as the cluster domain
+
+* Eirini will also be non-HA only based on problems with certain services like bits not working in HA at all.
+
+====
+
+[IMPORTANT]
+====
+* Autoscaler TODO
+
+====

@@ -1,8 +1,7 @@
-= Release Notes: SUSE Cloud Application Platform 1.5.2
-
 include::entities.adoc[]
 :azuredocurl: https://documentation.suse.com/suse-cap/1/html/cap-guides/cha-cap-depl-aks.html
 
+= {product} {version} Release Notes
 
 :docinfo:
 
@@ -44,9 +43,9 @@ technologies that leverage your existing investments.
 include::support-statement.adoc[]
 
 
-include::Release-Notes.adoc[]
+include::release-2.0.adoc[]
 
-
+////
 [id='sec.caasp']
 == Deploying {product} on {caasp}
 
@@ -64,16 +63,16 @@ Following the above guides will provide you with a fully supported {caasp} envir
 
 For instructions on installing {product} on {azure}, see the official
 documentation at {azuredocurl}.
-
+////
 
 include::source-code.adoc[]
 
 include::legal.adoc[]
 
-
+////
 [id='app.secret-sample']
 == Appendix: Configuration with `secrets:` Section
-
+////
 
 [source,yaml]
 ----
