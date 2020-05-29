@@ -72,15 +72,11 @@ endif::[]
 ** diego: 2.44.0
 ** eirini: 0.0.27 
 ** garden-runc: 1.19.10
-** groot-btrfs: 1.0.5 ??
 ** loggregator: 106.3.8
 ** loggregator-agent: 5.3.7
 ** log-cache: 2.6.8
-** mapfs: 1.1.0 ??
 ** nats: 33
-** nfs-volume: 1.5.7
 ** postgres-release: 39
-** pxc: 0.21.0 ?? 0.9.4 ??
 ** routing: 0.198.0
 ** scf-helper: 1.0.13
 ** silk: 2.28.0
