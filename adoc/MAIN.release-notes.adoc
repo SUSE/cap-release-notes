@@ -42,6 +42,8 @@ technologies that leverage your existing investments.
 
 include::support-statement.adoc[]
 
+[id='sec.major-change']
+== Major Changes
 
 include::release-2.0.adoc[]
 
@@ -69,10 +71,8 @@ include::source-code.adoc[]
 
 include::legal.adoc[]
 
-////
-[id='app.secret-sample']
-== Appendix: Configuration with `secrets:` Section
-////
+[id='app.sample-values']
+== Appendix: Sample `values.yaml` File
 
 [source,yaml]
 ----

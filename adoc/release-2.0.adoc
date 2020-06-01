@@ -32,9 +32,6 @@ ifdef::env-github[]
 endif::[]
 // End attribute entry list
 
-[id='sec.major-change']
-== Major Changes
-
 [id='sec.2_0']
 === Release 2.0, June 2020
 
@@ -49,13 +46,14 @@ endif::[]
 ** TODO
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#320.
 * Stratos Metrics has been updated to version 1.2.1:
-** TODO
 ** For a full list of features and fixes see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#121.
 
 [id='sec.2_0.feature']
 ==== Features and Fixes
-* TODO
-* Removed sle12 stack
+* The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to {version}, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) used for 1.5.2 **cannot** be reused for {version}. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {version}. 
+* Removed `sle12` stack
+* Removed `cf-usb` service broker. Users should use Minibroker or the OSBAPI-compliant brokers provided by the public cloud platforms instead.
+* `nfs-broker` is not included in the current release.
 * Includes these {cf} component versions:
 ** app-autoscaler: 3.0.0
 ** bits-services: 2.28.0
