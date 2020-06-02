@@ -83,16 +83,16 @@ endif::[]
 ** sync-integration-tests: 0.0.3
 ** uaa: 74.15.0
 * Buildpacks:
-** binary-buildpack: 1.0.36.1
-** dotnetcore-buildpack: 2.3.9.1
-** go-buildpack: 1.9.11.1
-** java-buildpack: 4.29.1.1
-** nginx-buildpack: 1.1.7.1
-** nodejs-buildpack: 1.7.17.1
-** php-buildpack: 4.4.12.1
-** python-buildpack: 1.7.12.1
-** staticfile-buildpack: 1.5.5.1
-** ruby-buildpack: 1.8.15.1
+** binary-buildpack: 1.0.36
+** dotnetcore-buildpack: 2.3.9
+** go-buildpack: 1.9.11
+** java-buildpack: 4.29.1
+** nginx-buildpack: 1.1.7
+** nodejs-buildpack: 1.7.17
+** php-buildpack: 4.4.12
+** python-buildpack: 1.7.12
+** staticfile-buildpack: 1.5.5
+** ruby-buildpack: 1.8.15
 
 [id='sec.2_0.issue']
 ==== Known Issues
