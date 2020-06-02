@@ -39,7 +39,7 @@ endif::[]
 ==== What Is New?
 * {kubecf} 2.3.0 replaces {scf}:
 ** cf-deployment has been updated to 12.36
-** TODO
+** Support for external Blobstore configuration
 * {operator} TODO-VERSION has been added:
 ** TODO
 * Stratos Console has been updated to version 3.2.0:
@@ -50,10 +50,11 @@ endif::[]
 
 [id='sec.2_0.feature']
 ==== Features and Fixes
-* The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to {version}, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) for 1.5.2 **cannot** be reused for {version}. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {version}. 
+* The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to {version}, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) for 1.5.2 **cannot** be reused for {version}. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {version}
+* Fixed `appVersion` field in Chart yaml(s) to reflect the application version
 * Removed `sle12` stack
-* Removed `cf-usb` service broker. Users should use Minibroker or the OSBAPI-compliant brokers provided by the public cloud platforms instead.
-* `nfs-broker` is not included in the current release.
+* Removed `cf-usb` service broker. Users should use Minibroker or the OSBAPI-compliant brokers provided by the public cloud platforms instead
+* `nfs-broker` is not included in the current release
 * Includes these {cf} component versions:
 ** app-autoscaler: 3.0.0
 ** bits-services: 2.28.0
