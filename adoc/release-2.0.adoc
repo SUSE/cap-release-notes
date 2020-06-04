@@ -52,7 +52,7 @@ endif::[]
 ==== Features and Fixes
 * The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to {version}, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) for 1.5.2 **cannot** be reused for {version}. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {version}
 * Fixed `appVersion` field in Chart yaml(s) to reflect the application version
-* Removed `sle12` stack
+* Removed `sle12` and `cflinuxfs2` stack
 * Removed `cf-usb` service broker. Users should use Minibroker or the OSBAPI-compliant brokers provided by the public cloud platforms instead
 * `nfs-broker` is not included in the current release
 * Includes these {cf} component versions:
@@ -110,3 +110,5 @@ endif::[]
 * Autoscaler TODO
 
 ====
+
+* SLE12 and cflinuxfs2 are no longer supported stacks. They have been deprecated from CAP 1.x.
