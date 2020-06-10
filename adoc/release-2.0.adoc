@@ -99,6 +99,12 @@ endif::[]
 
 [IMPORTANT]
 ====
+* The transition from &productname; 1.5.2 to &productname; 2.0 involves a migration of data rather than a direct upgrade. The procedure can be found at https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#sec-cap-update 
+
+====
+
+[IMPORTANT]
+====
 * Autoscaler can go into a `CrashLoopBackoff` state if DNS setup is not complete by the time autoscaler comes up. To avoid this situation it is recommended the DNS entries are set up as soon as services (e.g. `router-public`) have external IPs assigned to them. The `asactors` pod can also be deleted to recover from this state as kubernetes will re-create the pod
 
 ====
