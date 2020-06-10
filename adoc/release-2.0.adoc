@@ -99,7 +99,7 @@ endif::[]
 
 [IMPORTANT]
 ====
-* The transition from &productname; 1.5.2 to &productname; 2.0 involves a migration of data rather than a direct upgrade. The procedure can be found at https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#sec-cap-update 
+* The transition from {product} 1.5.2 to {product} 2.0 involves a migration of data rather than a direct upgrade. The procedure can be found at https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#sec-cap-update 
 
 ====
 
