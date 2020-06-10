@@ -40,10 +40,8 @@ endif::[]
 * {kubecf} 2.2.2 replaces {scf}:
 ** cf-deployment has been updated to 12.36
 ** Support for external Blobstore configuration
-* {operator} 4.5.6+0.gffc6f942 has been added:
-** TODO
+* {operator} 4.5.6 has been added
 * Stratos Console has been updated to version 3.2.1:
-** TODO
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#321.
 * Stratos Metrics has been updated to version 1.2.1:
 ** For a full list of features and fixes see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#121.
