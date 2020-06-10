@@ -37,14 +37,14 @@ endif::[]
 
 [id='sec.2_0.new']
 ==== What Is New?
-* {kubecf} 2.3.0 replaces {scf}:
+* {kubecf} 2.2.2 replaces {scf}:
 ** cf-deployment has been updated to 12.36
 ** Support for external Blobstore configuration
-* {operator} TODO-VERSION has been added:
+* {operator} 4.5.6+0.gffc6f942 has been added:
 ** TODO
-* Stratos Console has been updated to version 3.2.0:
+* Stratos Console has been updated to version 3.2.1:
 ** TODO
-** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#320.
+** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#321.
 * Stratos Metrics has been updated to version 1.2.1:
 ** For a full list of features and fixes see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#121.
 
@@ -100,16 +100,25 @@ endif::[]
 
 [IMPORTANT]
 ====
-* Eirini will only work on a cluster that has `.cluster.local` as the cluster domain
-
-* Eirini will also be non-HA only based on problems with certain services like bits not working in HA at all.
-
-====
-
-[IMPORTANT]
-====
 * Autoscaler TODO
 
 ====
 
+* Eirini will only work on a cluster that has `.cluster.local` as the cluster domain
+* When Eirini is enabled, both `features.suse_default_stack` and `features.suse_buildpacks` must be enabled as well. A cflinuxfs3 Eirini image is currently not available, and the SUSE stack must be used. By default, both features are enabled and default.
 * SLE12 and cflinuxfs2 are no longer supported stacks. They have been deprecated from CAP 1.x.
+* The Open Service Broker for Azure is only compatible with Kubernetes 1.15 or earlier
+* During the Open Service Broker for Azure set up process, the svc/catalog chart install will encounter a `OOMKilled` state and fail. The controllerManager's requests and limits for the CPU and memory must be increased to avoid this. As an example, increasing these values to double the default will allow for a successful installation.
++
+[source]
+----
+helm install catalog svc-cat/catalog \
+ --namespace catalog \
+ --set controllerManager.healthcheck.enabled=false \
+ --set apiserver.healthcheck.enabled=false \
+ --set controllerManager.resources.requests.cpu=200m \
+ --set controllerManager.resources.requests.memory=40Mi \
+ --set controllerManager.resources.limits.cpu=200m \
+ --set controllerManager.resources.limits.memory=40Mi
+----
+
