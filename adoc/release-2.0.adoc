@@ -100,7 +100,13 @@ endif::[]
 
 [IMPORTANT]
 ====
-* Autoscaler TODO
+* Autoscaler can go into a `CrashLoopBackoff` state if DNS setup is not complete by the time autoscaler comes up. To avoid this situation it is recommended the DNS entries are set up as soon as services (e.g. `router-public`) have external IPs assigned to them. The `asactors` pod can also be deleted to recover from this state as kubernetes will re-create the pod
+
+====
+
+[IMPORTANT]
+====
+* Autoscaler can go into a `CrashLoopBackoff` state when enabled using `helm upgrade` on systems where the DNS entries have already been set up. The `asactors` pod can be deleted to recover from this state as kubernetes will re-create the pod
 
 ====
 
