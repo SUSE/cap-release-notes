@@ -112,7 +112,8 @@ endif::[]
 * Eirini will only work on a cluster that has `.cluster.local` as the cluster domain
 * When Eirini is enabled, both `features.suse_default_stack` and `features.suse_buildpacks` must be enabled as well. A cflinuxfs3 Eirini image is currently not available, and the SUSE stack must be used. By default, both features are enabled and default.
 * SLE12 and cflinuxfs2 are no longer supported stacks. They have been deprecated from CAP 1.x.
-* The Open Service Broker for Azure is only compatible with Kubernetes 1.15 or earlier
+* The Open Service Broker for Azure is only compatible with Kubernetes 1.15 or earlier.
+* The `cf-usb` service brokers from CAP 1.x will not work with CAP 2.0, along with Kubernetes 1.16 or higher, so they are no longer supported. As noted in the Features & Fixes above, please migrate over to either Minibroker or an OSBAPI-compliant broker available via your public cloud platform.
 * During the Open Service Broker for Azure set up process, the svc/catalog chart install will encounter a `OOMKilled` state and fail. The controllerManager's requests and limits for the CPU and memory must be increased to avoid this. As an example, increasing these values to double the default will allow for a successful installation.
 +
 [source]
