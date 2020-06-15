@@ -37,10 +37,14 @@ endif::[]
 
 [id='sec.2_0.new']
 ==== What Is New?
+* {product} 2 is based on link:https://www.cloudfoundry.org/kubecf/[{kubecf}], which uses the link:https://www.cloudfoundry.org/project-quarks/[Quarks operator], also referred to as {operator}, to deploy releases from cf-deployment into {k8s} environments. With this release, {kubecf} replaces SCF as the Cloud Foundry Application Runtime (CFAR) component of {product}. Each {kubecf} release must be paired with a corresponding release of the Quarks operator, a {k8s} operator (https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) implementation. In the case of {product} {version}, {kubecf} 2.2.2 must be paired with {operator} 4.5.6.
 * {kubecf} 2.2.2 replaces {scf}:
 ** cf-deployment has been updated to 12.36
 ** Support for external Blobstore configuration
-* {operator} 4.5.6 has been added
+** {kubecf} 2.2.2 is paired with {operator} 4.5.6
+** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.2.2
+* {operator} 4.5.6 has been added:
+** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v4.5.6
 * Stratos Console has been updated to version 3.2.1:
 ** Improved SSO whitelist checks
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#321.
@@ -50,6 +54,7 @@ endif::[]
 [id='sec.2_0.feature']
 ==== Features and Fixes
 * The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to {version}, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) for 1.5.2 **cannot** be reused for {version}. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {version}
+* The UAA component is now embedded in {kubecf} by default and a separate installation is not necessary.
 * Fixed `appVersion` field in Chart yaml(s) to reflect the application version
 * Removed `sle12` and `cflinuxfs2` stack, which were preceded by warnings in CAP 1.5.x releases
 * Removed `cf-usb` service broker. Users should use Minibroker or the OSBAPI-compliant brokers provided by the public cloud platforms instead
@@ -111,13 +116,14 @@ endif::[]
 
 [IMPORTANT]
 ====
-* Autoscaler can go into a `CrashLoopBackoff` state when enabled using `helm upgrade` on systems where the DNS entries have already been set up. The `asactors` pod can be deleted to recover from this state as kubernetes will re-create the pod
+* Occasionally, the Autoscaler's database pod (`asdatabase`) can go into a `CrashLoopBackoff` when Autoscaler is enabled via a `helm upgrade`. It is recommended Autoscaler is deployed along with other CAP 2 components during the initial `helm install`.
 
 ====
 
-* Eirini will only work on a cluster that has `.cluster.local` as the cluster domain
-* When Eirini is enabled, both `features.suse_default_stack` and `features.suse_buildpacks` must be enabled as well. A cflinuxfs3 Eirini image is currently not available, and the SUSE stack must be used. By default, both features are enabled and default.
-* SLE12 and cflinuxfs2 are no longer supported stacks. They have been deprecated from CAP 1.x.
+* SLE12 and cflinuxfs2 have been removed and are no longer supported. For details regarding the deprecation of these stacks, refer to the previous annoucements at https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/#sec.1_4_1.issue and https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/#sec.1_5.issue. Procedures to migrate to new stacks can be found at https://documentation.suse.com/suse-cap/1.5.2/single-html/cap-guides/#id-1.3.4.3.4.
+* Eirini will only work on a cluster that has `.cluster.local` as the cluster domain.
+* When Eirini is enabled, both `features.suse_default_stack` and `features.suse_buildpacks` must be enabled. A cflinuxfs3 Eirini image is currently not available, and the SUSE stack must be used. By default, both `features.suse_default_stack` and `features.suse_buildpacks` are enabled.
+* Occasionally, Eirini deployments will result in the `bits` pod going into a `CrashLoopBackoff` state due to a `tls: private key does not match public key` error. To avoid this issue, proper cleanup of the CSR for `bits` via namespacing is recommended.
 * The Open Service Broker for Azure is only compatible with Kubernetes 1.15 or earlier.
 * The `cf-usb` service brokers from CAP 1.x will not work with CAP 2.0, along with Kubernetes 1.16 or higher, so they are no longer supported. As noted in the Features & Fixes above, please migrate over to either Minibroker or an OSBAPI-compliant broker available via your public cloud platform.
 * During the Open Service Broker for Azure set up process, the svc/catalog chart install will encounter a `OOMKilled` state and fail. The controllerManager's requests and limits for the CPU and memory must be increased to avoid this. As an example, increasing these values to double the default will allow for a successful installation.
