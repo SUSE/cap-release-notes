@@ -3,15 +3,16 @@ ifdef::env-github[]
 :suse: SUSE
 :current-year: 2020
 :product: {suse} Cloud Application Platform
-:version: 1.5.2
+:version: 2.0
 :rn-url: https://www.suse.com/releasenotes
-:doc-url: https://documentation.suse.com/suse-cap/1
-:deployment-url: https://documentation.suse.com/suse-cap/1/html/cap-guides/part-cap-deployment.html
+:doc-url: https://documentation.suse.com/suse-cap/2
+:deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
 :caasp: {suse} Containers as a Service Platform
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
 :cf: Cloud Foundry
-:scf: {suse} {cf}
+:kubecf: KubeCF
+:operator: cf-operator
 :k8s: Kubernetes
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
@@ -21,6 +22,8 @@ ifdef::env-github[]
 :awsa: AWS
 :eks: Amazon Elastic Container Service for Kubernetes
 :eksa: Amazon EKS
+:gke: Google Kubernetes Engine
+:gkea: GKE
 :mysql: MySQL
 :mariadb: MariaDB
 :postgre: PostgreSQL
@@ -53,7 +56,7 @@ Patches and updates (L3): On the latest or last minor release of each major rele
 
 {suse} can provide support for {product} on 3rd party/generic {k8s} on a case-by-case basis provided:
 
-a. the Kubernetes cluster satisfies the Requirements listed here: https://documentation.suse.com/suse-cap/1.5.1/html/cap-guides/cha-cap-depl-kube-requirements.html#sec-cap-changes-kube-reqs
+a. the Kubernetes cluster satisfies the Requirements listed here: https://documentation.suse.com/suse-cap/2.0/html/cap-guides/cha-cap-depl-kube-requirements.html#sec-cap-changes-kube-reqs
 b. The `kube-ready-state-check.sh` script has been run on the target {k8s} cluster and does not show any configuration problems
 c. a SUSE Services or Sales Engineer has verified that {product} works correctly on the target {k8s} cluster
 

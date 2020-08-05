@@ -1,0 +1,142 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:current-year: 2020
+:product: {suse} Cloud Application Platform
+:version: 2.0
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://documentation.suse.com/suse-cap/2
+:deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:kubecf: KubeCF
+:k8s: Kubernetes
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
+:gke: Google Kubernetes Engine
+:gkea: GKE
+:mysql: MySQL
+:mariadb: MariaDB
+:postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
+:ng: NGINX
+endif::[]
+// End attribute entry list
+
+[id='sec.2_0']
+=== Release 2.0, June 2020
+
+[id='sec.2_0.new']
+==== What Is New?
+* {product} 2 is based on link:https://www.cloudfoundry.org/kubecf/[{kubecf}], which uses the link:https://www.cloudfoundry.org/project-quarks/[Quarks operator], also referred to as {operator}, to deploy releases from cf-deployment into {k8s} environments. With this release, {kubecf} replaces SCF as the Cloud Foundry Application Runtime (CFAR) component of {product}. Each {kubecf} release must be paired with a corresponding release of the Quarks operator, a {k8s} operator (https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) implementation. In the case of {product} {version}, {kubecf} 2.2.2 must be paired with {operator} 4.5.6.
+* {kubecf} 2.2.2 replaces {scf}:
+** cf-deployment has been updated to 12.36
+** Support for external Blobstore configuration
+** {kubecf} 2.2.2 is paired with {operator} 4.5.6
+** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.2.2
+* {operator} 4.5.6 has been added:
+** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v4.5.6
+* Stratos Console has been updated to version 3.2.1:
+** Improved SSO whitelist checks
+** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#321.
+* Stratos Metrics has been updated to version 1.2.1:
+** For a full list of features and fixes see https://github.com/SUSE/stratos-metrics/blob/master/CHANGELOG.md#121.
+
+[id='sec.2_0.feature']
+==== Features and Fixes
+* The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to {version}, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) for 1.5.2 **cannot** be reused for {version}. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {version}
+* The UAA component is now embedded in {kubecf} by default and a separate installation is not necessary.
+* Fixed `appVersion` field in Chart yaml(s) to reflect the application version
+* Removed `sle12` and `cflinuxfs2` stack, which were preceded by warnings in CAP 1.5.x releases
+* Removed `cf-usb` service broker. Users should use Minibroker or the OSBAPI-compliant brokers provided by the public cloud platforms instead
+* `nfs-broker` is not included in the current release
+* `pxc` is no longer directly taken from upstream; we rely on a docker image (0.9.4) that uses version 5.7.28-31.41
+* Includes these {cf} component versions:
+** app-autoscaler: 3.0.0
+** bits-services: 2.28.0
+** bosh-dns-aliases: 0.0.3
+** bpm: 1.1.7
+** capi: 1.91.0
+** cf-acceptance-tests: 0.0.13
+** cf-deployment: 12.36
+** cf-smoke-tests: 40.0.128
+** cf-syslog-drain: 10.2.11
+** cflinuxfs3: 0.167.0
+** credhub: 2.5.11
+** diego: 2.44.0
+** eirini: 0.0.27 
+** garden-runc: 1.19.10
+** loggregator: 106.3.8
+** loggregator-agent: 5.3.7
+** log-cache: 2.6.8
+** nats: 33
+** postgres-release: 39
+** routing: 0.198.0
+** scf-helper: 1.0.13
+** silk: 2.28.0
+** sle15: 10.93
+** statsd-injector: 1.11.15
+** sync-integration-tests: 0.0.3
+** uaa: 74.15.0
+* Buildpacks:
+** binary-buildpack: 1.0.36
+** dotnetcore-buildpack: 2.3.9
+** go-buildpack: 1.9.11
+** java-buildpack: 4.29.1
+** nginx-buildpack: 1.1.7
+** nodejs-buildpack: 1.7.17
+** php-buildpack: 4.4.12
+** python-buildpack: 1.7.12
+** staticfile-buildpack: 1.5.5
+** ruby-buildpack: 1.8.15
+
+[id='sec.2_0.issue']
+==== Known Issues
+
+[IMPORTANT]
+====
+* The transition from {product} 1.5.2 to {product} 2.0 involves a migration of data rather than a direct upgrade. The procedure can be found at https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#sec-cap-update 
+
+====
+
+[IMPORTANT]
+====
+* Autoscaler can go into a `CrashLoopBackoff` state if DNS setup is not complete by the time autoscaler comes up. To avoid this situation it is recommended the DNS entries are set up as soon as services (e.g. `router-public`) have external IPs assigned to them. The `asactors` pod can also be deleted to recover from this state as kubernetes will re-create the pod
+
+====
+
+[IMPORTANT]
+====
+* Occasionally, the Autoscaler's database pod (`asdatabase`) can go into a `CrashLoopBackoff` when Autoscaler is enabled via a `helm upgrade`. It is recommended Autoscaler is deployed along with other CAP 2 components during the initial `helm install`.
+
+====
+
+* SLE12 and cflinuxfs2 have been removed and are no longer supported. For details regarding the deprecation of these stacks, refer to the previous annoucements at https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/#sec.1_4_1.issue and https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/#sec.1_5.issue. Procedures to migrate to new stacks can be found at https://documentation.suse.com/suse-cap/1.5.2/single-html/cap-guides/#id-1.3.4.3.4.
+* Eirini will only work on a cluster that has `.cluster.local` set as the local domain in the kubelet using ` --cluster-domain` as described at https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/#introduction
+* When Eirini is enabled, both `features.suse_default_stack` and `features.suse_buildpacks` must be enabled. A cflinuxfs3 Eirini image is currently not available, and the SUSE stack must be used.
+* On subsequent deployments with Eirini enabled, deployments may result in the `bits` pod going into a `CrashLoopBackoff` state with a `tls: private key does not match public key` error. This occurs after an initial deployment wiht Eirini enabled is not properly cleaned up. The csr for `bits` is not namespaced and will not be removed when `helm delete kubecf` is performed and must be deleted manually using `kubectl delete csr kubecf-bits-service-ssl` before another deployment is made.
+* The Open Service Broker for Azure is only compatible with Kubernetes 1.15 or earlier.
+* The `cf-usb` service brokers from CAP 1.x will not work with CAP 2.0, along with Kubernetes 1.16 or higher, so they are no longer supported. As noted in the Features & Fixes above, please migrate over to either Minibroker or an OSBAPI-compliant broker available via your public cloud platform.
+* During the Open Service Broker for Azure set up process, the svc/catalog chart install will encounter a `OOMKilled` state and fail. The controllerManager's requests and limits for the CPU and memory must be increased to avoid this. As an example, increasing these values to double the default will allow for a successful installation.
++
+[source]
+----
+helm install catalog svc-cat/catalog \
+ --namespace catalog \
+ --set controllerManager.healthcheck.enabled=false \
+ --set apiserver.healthcheck.enabled=false \
+ --set controllerManager.resources.requests.cpu=200m \
+ --set controllerManager.resources.requests.memory=40Mi \
+ --set controllerManager.resources.limits.cpu=200m \
+ --set controllerManager.resources.limits.memory=40Mi
+----
+
