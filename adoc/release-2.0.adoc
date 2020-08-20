@@ -121,8 +121,8 @@ endif::[]
 ====
 
 [IMPORTANT]
-==== CVE-2020-15586 Mitigation Advisory
-
+.CVE-2020-15586 Mitigation Advisory
+==== 
 The current release of {product} is affected by CVE-2020-15586 whereby the Gorouter is vulnerable to a Denial-of-Service (DoS) attack via requests with the "Expect: 100-continue" header. For details regarding this vulnerabiity, see https://www.cloudfoundry.org/blog/cve-2020-15586/.
 
 If available, operators are advised to upgrade to a {product} release that is not affected by this vulnerability. Always review the release notes (https://suse.com/releasenotes/) to verify whether a given {product} release is affected. If it is not possible to upgrade immediately, it is recommended operators follow the mitigations from Cloud Foundry's security update https://www.cloudfoundry.org/blog/cve-2020-15586/:
