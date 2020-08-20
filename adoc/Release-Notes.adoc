@@ -105,6 +105,23 @@ endif::[]
 [id='sec.1_5_2.issue']
 ==== Known Issues
 
+[IMPORTANT]
+==== CVE-2020-15586 Mitigation Advisory
+
+The current release of {product} is affected by CVE-2020-15586 whereby the Gorouter is vulnerable to a Denial-of-Service (DoS) attack via requests with the "Expect: 100-continue" header. For details regarding this vulnerabiity, see https://www.cloudfoundry.org/blog/cve-2020-15586/.
+
+If available, operators are advised to upgrade to a {product} release that is not affected by this vulnerability. Always review the release notes (https://suse.com/releasenotes/) to verify whether a given {product} release is affected. If it is not possible to upgrade immediately, it is recommended operators follow the mitigations from Cloud Foundry's security update https://www.cloudfoundry.org/blog/cve-2020-15586/:
+* Configure an HTTP load balancer in front of the Gorouters to drop the “Expect 100-continue” header completely.
+** Note: this may cause delays in HTTP clients that utilize the Expect: 100 continue behavior. However, this should not affect the correctness of HTTP applications.
+* Configure an HTTP load balancer in front of the Gorouters to drop the “Expect: 100-continue” header and immediately respond with “100 Continue”.
+** Note: this may cause HTTP clients to send the request body unnecessarily in some cases where the server would have responded with a final status code before requesting the body. However, this should not affect the correctness of HTTP applications.
+
+If you are using a TCP / L4 load balancer for your Gorouters instead of an HTTP load balancer, consider the following:
+* Add firewall rules to prevent traffic from any source making requests that are causing this panic.
+** Note: you may use the https://github.com/cloudfoundry/routing-release/blob/c0cc507397808e2ea53b63ca9703551fefc6da85/jobs/gorouter/spec#L175-L177[extra_headers_to_log] property to enable logging of the “Expect” request header to help identify sources of this malicious traffic.
+
+====
+
 [IMPORTANT] 
 ====
 * With {product} 1.5.2, the database seeder, UAA and credhub will use TLS by default to connect with an external database. Other SCF components will use the unencrypted TCP protocol. If you would like to configure the seeder, UAA & Credhub services to connect via insecure means in a trusted network, you will need to use the following parameters:
