@@ -1,0 +1,110 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:current-year: 2020
+:product: {suse} Cloud Application Platform
+:version: 2.0
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://documentation.suse.com/suse-cap/2
+:deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:kubecf: KubeCF
+:k8s: Kubernetes
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
+:gke: Google Kubernetes Engine
+:gkea: GKE
+:mysql: MySQL
+:mariadb: MariaDB
+:postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
+:ng: NGINX
+endif::[]
+// End attribute entry list
+
+[id='sec.2_0_1']
+=== Release 2.0.1, August 2020
+
+[id='sec.2_0_1.new']
+==== What Is New?
+** Support for external Blobstore configuration
+** {kubecf} has been updated to version 2.2.3:
+* 
+** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.2.3
+* {operator} has been updated to version 4.5.13:
+** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v4.5.6
+* Stratos Console has been updated to version 4.0.1:
+** Configurable {ng} protocols and ciphers using Helm values
+** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#401.
+
+[id='sec.2_0_1.feature']
+==== Features and Fixes
+* 
+* Includes these {cf} component versions:
+** app-autoscaler: 3.0.0
+** bits-services: 2.28.0
+** bosh-dns-aliases: 0.0.3
+** bpm: 1.1.7
+** capi: 1.91.0
+** cf-acceptance-tests: 0.0.13
+** cf-deployment: 12.36
+** cf-smoke-tests: 40.0.128
+** cf-syslog-drain: 10.2.11
+** cflinuxfs3: 0.167.0
+** credhub: 2.5.11
+** diego: 2.44.0
+** eirini: 0.0.27 
+** garden-runc: 1.19.10
+** loggregator: 106.3.8
+** loggregator-agent: 5.3.7
+** log-cache: 2.6.8
+** nats: 33
+** postgres-release: 39
+** routing: 0.198.0
+** scf-helper: 1.0.13
+** silk: 2.28.0
+** sle15: 10.93
+** statsd-injector: 1.11.15
+** sync-integration-tests: 0.0.3
+** uaa: 74.15.0
+* Buildpacks:
+** binary-buildpack: 1.0.36
+** dotnetcore-buildpack: 2.3.9
+** go-buildpack: 1.9.11
+** java-buildpack: 4.29.1
+** nginx-buildpack: 1.1.7
+** nodejs-buildpack: 1.7.17
+** php-buildpack: 4.4.12
+** python-buildpack: 1.7.12
+** staticfile-buildpack: 1.5.5
+** ruby-buildpack: 1.8.15
+
+[id='sec.2_0.issue']
+==== Known Issues
+
+[IMPORTANT]
+==== CVE-2020-15586 Mitigation Advisory
+
+The current release of {product} is affected by CVE-2020-15586 whereby the Gorouter is vulnerable to a Denial-of-Service (DoS) attack via requests with the "Expect: 100-continue" header. For details regarding this vulnerabiity, see https://www.cloudfoundry.org/blog/cve-2020-15586/.
+
+If available, operators are advised to upgrade to a {product} release that is not affected by this vulnerability. Always review the release notes (https://suse.com/releasenotes/) to verify whether a given {product} release is affected. If it is not possible to upgrade immediately, it is recommended operators follow the mitigations from Cloud Foundry's security update https://www.cloudfoundry.org/blog/cve-2020-15586/:
+* Configure an HTTP load balancer in front of the Gorouters to drop the “Expect 100-continue” header completely.
+** Note: this may cause delays in HTTP clients that utilize the Expect: 100 continue behavior. However, this should not affect the correctness of HTTP applications.
+* Configure an HTTP load balancer in front of the Gorouters to drop the “Expect: 100-continue” header and immediately respond with “100 Continue”.
+** Note: this may cause HTTP clients to send the request body unnecessarily in some cases where the server would have responded with a final status code before requesting the body. However, this should not affect the correctness of HTTP applications.
+
+If you are using a TCP / L4 load balancer for your Gorouters instead of an HTTP load balancer, consider the following:
+* Add firewall rules to prevent traffic from any source making requests that are causing this panic.
+** Note: you may use the https://github.com/cloudfoundry/routing-release/blob/c0cc507397808e2ea53b63ca9703551fefc6da85/jobs/gorouter/spec#L175-L177[extra_headers_to_log] property to enable logging of the “Expect” request header to help identify sources of this malicious traffic.
+
+====
