@@ -92,6 +92,8 @@ endif::[]
 [id='sec.2_0_1.issue']
 ==== Known Issues
 
+* During upgrades from {product} 2.0 to 2.0.1, there will be a few minutes of app downtime.
+
 [IMPORTANT]
 .Mitigating Gorouter DoS Attacks (CVE-2020-15586)
 ====
