@@ -94,6 +94,8 @@ endif::[]
 
 * During upgrades from {product} 2.0 to 2.0.1, there will be a few minutes of app downtime.
 
+* {product} 2.0.1 works with these external databases at present: MySQL 5.7 and 5.8, MariaDB 10.1.x and Postgres 10.
+
 * Only non-encrypted connections to external databases are supported. It is recommended that connections to external databases are allowed only within trusted networks. For instructions on how to connect to external databases, see https://documentation.suse.com/suse-cap/2.0.1/single-html/cap-guides/#sec-cap-caasp-external-database.
 
 [IMPORTANT]
