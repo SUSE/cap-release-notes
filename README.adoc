@@ -5,7 +5,7 @@ This repository contains the release notes for SUSE Cloud Application Platform.
 === Published Version of the Release Notes
 
 These release notes are published at
-https://www.suse.com/releasenotes/x86_64/SUSE-CAP/1/.
+https://www.suse.com/releasenotes/x86_64/SUSE-CAP/2.0/.
 This published version is automatically updated from the `master` branch every
 24 hours.
 
