@@ -45,6 +45,7 @@ include::support-statement.adoc[]
 [id='sec.major-change']
 == Major Changes
 
+include::release-2.1.0.adoc[]
 include::release-2.0.1.adoc[]
 include::release-2.0.adoc[]
 
