@@ -59,6 +59,9 @@ endif::[]
  *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.0
  *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.4.0
  * stratos console: 4.2.0
+ ** Updated from 4.0.1. The list of releases since then:
+ *** https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#420
+ *** https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#410
  * stratos metrics: 1.3.0
  * minibroker: 1.1.0
 
