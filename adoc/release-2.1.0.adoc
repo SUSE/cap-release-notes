@@ -38,7 +38,7 @@ endif::[]
 [id='sec.2_1_0.new']
 ==== What Is New?
 * {kubecf} has been updated to version 2.5.8:
-** For a full list of features and fixes see the links in the Components section.
+** For a full list of features and fixes see the links in <<sec.2_1_0.components>>.
 * {operator} has been updated to version 6.1.17:
 ** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v6.1.17
 * Stratos Console has been updated to version 4.2.0:
