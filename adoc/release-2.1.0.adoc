@@ -131,3 +131,5 @@ endif::[]
 * Existing HA setups of internal database on CAP 2.0.x (or KubeCF) need to scale
   down `sizing.database.instances` to 1 in order to upgrade to CAP 2.1
 * Upgrades to 2.1 will result in some downtime in apps
+* When there is a Kubernetes outage, Eirini will not properly automatically restart apps upon its return. You will need to manually start them up.
+* When running an upgrade from a prior CAP version to 2.1.0, you may need to pass a Helm parameter to extend the timeout in order for the upgrade to succeed. We have seen that adding ``--timeout`` of 15 minutes allow the appropriate time for Helm to do what it needs.
