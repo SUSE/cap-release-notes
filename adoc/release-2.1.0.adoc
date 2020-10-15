@@ -38,7 +38,7 @@ endif::[]
 [id='sec.2_1_0.new']
 ==== What Is New?
 * {kubecf} has been updated to version 2.5.8:
-** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.8
+** For a full list of features and fixes see the links in the Components section.
 * {operator} has been updated to version 6.1.17:
 ** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v6.1.17
 * Stratos Console has been updated to version 4.2.0:
@@ -49,6 +49,15 @@ endif::[]
 ==== Component Versions
  * cf-operator: 6.1.17+0.gec409fd7
  * kubecf: 2.5.8
+ ** Updated from 2.5.3. The list of releases since then:
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.8
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.7
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.6
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.5
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.4
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.3
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.0
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.4.0
  * stratos console: 4.2.0
  * stratos metrics: 1.3.0
  * minibroker: 1.1.0
