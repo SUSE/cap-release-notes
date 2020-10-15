@@ -41,7 +41,7 @@ endif::[]
 ** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.8
 * {operator} has been updated to version 6.1.17:
 ** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v6.1.17
-* Stratos Console has been updated to version 4.1.0:
+* Stratos Console has been updated to version 4.2.0:
 ** Configurable {ng} protocols and ciphers using Helm values
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#410.
 
