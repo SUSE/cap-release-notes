@@ -45,6 +45,14 @@ endif::[]
 ** Configurable {ng} protocols and ciphers using Helm values
 ** For a full list of features and fixes see https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#410.
 
+[id='sec.2_1_0.components']
+==== Component Versions
+ * cf-operator: 6.1.17+0.gec409fd7
+ * kubecf: 2.5.8
+ * stratos console: 4.2.0
+ * stratos metrics: 1.3.0
+ * minibroker: 1.1.0
+
 [id='sec.2_1_0.feature']
 ==== Features and Fixes
 * For {operator}, `--set "global.singleNamespace.name=kubecf"` replaces the
