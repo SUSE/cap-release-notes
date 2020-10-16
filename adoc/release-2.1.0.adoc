@@ -38,12 +38,26 @@ endif::[]
 [id='sec.2_1_0.new']
 ==== What Is New?
 * {kubecf} has been updated to version 2.5.8:
-** For a full list of features and fixes see the links in <<sec.2_1_0.components>>.
+** Eirini has graduated from technical preview
+** Introduced multi-stack support
+** Enabled c2c networking
+** Expanded information on the more commonly used entries in values.yaml
+** Bumped cf-deployment to 13.17
+** Allow tolerations to be set for the instance group pods
+** Ability to set memory limits and requests with defaults now set
+** Added labels to QuarksStatefulSets
+** For a full list of features and fixes, see the links in <<sec.2_1_0.components>>.
 * {operator} has been updated to version 6.1.17:
-** For a full list of features and fixes see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v6.1.17
+** For a full list of features and fixes, see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v6.1.17
 * {stratos} has been updated to version 4.2.0:
 ** Configurable {ng} protocols and ciphers using Helm values
-** For a full list of features and fixes see the links in <<sec.2_1_0.components>>.
+** For a full list of features and fixes, see the links in <<sec.2_1_0.components>>.
+* Minibroker has been updated to version 1.1.0:
+** Relies on Helm 3 internally
+** Added support for RabbitMQ
+** Added support for asynchronous operations
+** Admins can set override parameters that will prevent users from setting any parameters during provisioning
+** For a full list of features and fixes, see https://github.com/kubernetes-sigs/minibroker/releases/tag/v1.1.0
 
 [id='sec.2_1_0.components']
 ==== Component Versions
@@ -69,18 +83,24 @@ endif::[]
 ==== Features and Fixes
 * For {operator}, `--set "global.singleNamespace.name=kubecf"` replaces the
   previous `--set "global.operator.watchNamespace=kubecf"`
+* Improved startup dependency declarations  
+* Diego cells will always use a hostpath storage class 
+* Include Eirini, EiriniX and Bits templates in KubeCF
+* UAA will include the cf-cli job only if Credhub is enabled
+* Bumped PXC to 5.7.30-33
+* Bumped CATS to 6.0.0
 * Includes these {cf} component versions:
 ** app-autoscaler: 3.0.1
 ** bits-services: 2.28.0
 ** capi: 1.91.0
 ** cf-acceptance-tests: 0.0.22
-** cf-deployment: 12.36
+** cf-deployment: 13.17
 ** cf-smoke-tests: 40.0.128
 ** cf-syslog-drain: 10.2.11
-** cflinuxfs3: 0.167.0
+** cflinuxfs3: 0.203.0
 ** credhub: 2.5.11
 ** diego: 2.44.0
-** eirini: 0.0.27
+** eirini: 1.8.0
 ** garden-runc: 1.19.10
 ** loggregator: 106.3.8
 ** loggregator-agent: 5.3.7
@@ -108,28 +128,19 @@ endif::[]
 
 [id='sec.2_1_0.issue']
 ==== Known Issues
+* Upgrades to 2.1 will result in some downtime for apps.
+* If you are using an HA setup of the internal database in CAP 2.0.x (or KubeCF), you will need to scale down `sizing.database.instances` to 1 in order to upgrade to CAP 2.1.
+* If you planning to converting from Diego to Eirini, please upgrade your Diego environment first to CAP 2.1 and then migrate to Eirini as the earlier CAP versions relied on a technical preview version of Eirini.
+* If you are running CAP 2.0.x with Diego with apps relying on the `cflinusfs3` stack and plan on migrating to Eirini with CAP 2.1, you will need to convert your apps to use the `sle15` stack. You can re-push your apps with `cf push -s sle15` if the `cflinuxfs3` stack was used; otherwise your apps will crash on Eirini.
+* Eirini apps will require slightly more memory than their Diego equivalent; from what has been tested, add an additional 32MB into the Eirini manifest.
+* TCP routing is not available in Eirini deployments.
+* When converting from Diego to Eirini, you will see older Diego pods up for several minutes in the midst of the migration until the operator cleans up the older deployment. You will still expect to see a `diego-api` pod since that's where locket runs.
+* Eirini requires the `k8s-metrics-server` to be installed on the Kubernetes environment where CAP is installed in order for {metrics} to work.
+* {metrics} will not show disk stats on Eirini.
+* When there is a Kubernetes outage, Eirini will not properly automatically restart apps upon its return. You will need to manually start them up at present.
+* `log-cache` will need to have set `memory_limit_percent: 3` as a workaround to allocate enough memory for that to run within a safe limit without interfering with apps.
+* The v3 API used by cf-cli v7 should not be interchangeable with the v2 API (cf-cli v6) based on certain functionality that is not compatible. {stratos} also has problems relying on v3 API and in comparison to v2, performance degradation is expected
+* Support for public cloud service brokers was removed as most of those OSBAPI-based brokers have been deprecated in lieu of the various public clouds' own in-house solutions.
 
-* TCP routing is not available for Eirini
-* Converting from Diego to Eirini will leave older Diego pods up
-* Converting from Diego to Eirini might cause apps to enter a crashed state which
-  requires restaging the app, or re-pushing the app with `cf push -s sle15` if
-  the `cflinuxfs3` stack was used
-* Converting from Diego to Eirini requires first upgrading to CAP 2.1 because
-  CAP 2.0.1 or lower do not support Eirini
-* Eirini will require k8s-metrics-server for {metrics} to work
-* {metrics} will not show disk stats on Eirini
-* Eirini apps require slightly more memory (approximately 32MB)
-* Memory limits on pods (same as above? *fixme*)
-* log-cache settings needed (same as below? *fixme*)
-* log-cache needs to have set `memory_limit_percent: 3` as a workaround for
- a problem with allocating memory within log-cache
-* The v3 API used by cf-cli v7 should not be interchangeable with the v2 API
- (cf-cli v6) based on certain functionality that is not compatible. {stratos}
- also has problems relying on v3 API and in comparison to v2, performance
- degradation is expected
-* Support for public cloud service brokers was removed
-* Existing HA setups of internal database on CAP 2.0.x (or KubeCF) need to scale
-  down `sizing.database.instances` to 1 in order to upgrade to CAP 2.1
-* Upgrades to 2.1 will result in some downtime in apps
-* When there is a Kubernetes outage, Eirini will not properly automatically restart apps upon its return. You will need to manually start them up.
-* When running an upgrade from a prior CAP version to 2.1.0, you may need to pass a Helm parameter to extend the timeout in order for the upgrade to succeed. We have seen that adding ``--timeout`` of 15 minutes allow the appropriate time for Helm to do what it needs.
+
+
