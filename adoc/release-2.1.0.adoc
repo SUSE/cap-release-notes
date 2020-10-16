@@ -138,7 +138,7 @@ endif::[]
 ==== Known Issues
 * During the upgrades to 2.1, there will be some downtime for apps.
 * If you are using an HA setup of the internal database in CAP 2.0.x (or KubeCF), you will need to scale down `sizing.database.instances` to 1 in order to upgrade to CAP 2.1. Running a high available version of the internal database during the upgrade will result in confusion during the password rotation process and you will run into difficulties recovering from it. 
-* If you planning to converting from Diego to Eirini, please upgrade your Diego environment first to CAP 2.1 and then migrate to Eirini as the earlier CAP versions relied on a technical preview version of Eirini.
+* If you are planning to convert from Diego to Eirini, please upgrade your Diego environment first to CAP 2.1 and then migrate to Eirini as the earlier CAP versions relied on a technical preview version of Eirini.
 * If you are running CAP 2.0.x with Diego with apps relying on the `cflinuxfs3` stack and plan on migrating to Eirini with CAP 2.1, you will need to convert your apps to use the `sle15` stack. You can re-push your apps with `cf push -s sle15` if the `cflinuxfs3` stack was used; otherwise your apps will crash on Eirini.
 * Eirini apps will require slightly more memory than their Diego equivalent; from what has been tested, add an additional 32MB into the Eirini manifest.
 * TCP routing is not available in Eirini deployments at this time.
