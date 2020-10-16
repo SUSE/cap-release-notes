@@ -97,7 +97,6 @@ endif::[]
 * Include Eirini, EiriniX and Bits templates in KubeCF
 * UAA will include the cf-cli job only if Credhub is enabled
 * Bumped PXC to 5.7.30-33
-* Bumped CATS to 6.0.0
 * Includes these {cf} component versions:
 ** app-autoscaler: 3.0.1
 ** bits-services: 2.28.0
