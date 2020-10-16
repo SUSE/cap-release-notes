@@ -48,10 +48,19 @@ endif::[]
 ** Added labels to QuarksStatefulSets
 ** For a full list of features and fixes, see the links in <<sec.2_1_0.components>>.
 * {operator} has been updated to version 6.1.17:
+** Improved memory limit validation
+** Added support for CPU limits
+** Added log rotation support in the log container
 ** For a full list of features and fixes, see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v6.1.17
 * {stratos} has been updated to version 4.2.0:
 ** Configurable {ng} protocols and ciphers using Helm values
+** ArtifactHub replaces Helm Hub
+** Added support for API keys
 ** For a full list of features and fixes, see the links in <<sec.2_1_0.components>>.
+* {stratos} Metrics has been updated to version 1.3.0:
+** Bumped Prometheus version to 2.20.1 and Helm Chart Version 11.15.0
+** Bumped CF Firehose exporter to version 6.1.0
+** For a full list of features and fixes, see https://github.com/SUSE/stratos-metrics/releases/tag/1.3.0
 * Minibroker has been updated to version 1.1.0:
 ** Relies on Helm 3 internally
 ** Added support for RabbitMQ
