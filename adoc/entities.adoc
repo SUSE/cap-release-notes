@@ -1,7 +1,7 @@
 :suse: SUSE
 :current-year: 2020
 :product: {suse} Cloud Application Platform
-:version: 2.0.1
+:version: 2.1.0
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://documentation.suse.com/suse-cap/2
 :deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
