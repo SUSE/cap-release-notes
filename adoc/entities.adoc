@@ -28,3 +28,6 @@
 :redis: Redis
 :mongo: MongoDB
 :ng: NGINX
+:stratos: Stratos Console
+:metrics: Stratos Metrics
+:minibroker: Minibroker

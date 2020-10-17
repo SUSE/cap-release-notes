@@ -1,0 +1,154 @@
+// Start attribute entry list (Do not edit here! Edit in entities.adoc)
+ifdef::env-github[]
+:suse: SUSE
+:current-year: 2020
+:product: {suse} Cloud Application Platform
+:version: 2.0
+:rn-url: https://www.suse.com/releasenotes
+:doc-url: https://documentation.suse.com/suse-cap/2
+:deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
+:caasp: {suse} Containers as a Service Platform
+:caaspa: {suse} CaaS Platform
+:ostack: OpenStack
+:cf: Cloud Foundry
+:kubecf: KubeCF
+:k8s: Kubernetes
+:scc: {suse} Customer Center
+:azure: Microsoft Azure
+:aks: Azure {k8s} Service
+:aksa: AKS
+:aws: Amazon Web Services
+:awsa: AWS
+:eks: Amazon Elastic Container Service for Kubernetes
+:eksa: Amazon EKS
+:gke: Google Kubernetes Engine
+:gkea: GKE
+:mysql: MySQL
+:mariadb: MariaDB
+:postgre: PostgreSQL
+:redis: Redis
+:mongo: MongoDB
+:ng: NGINX
+endif::[]
+// End attribute entry list
+
+[id='sec.2_1_0']
+=== Release 2.1.0, October 2020
+
+[id='sec.2_1_0.new']
+==== What Is New?
+* {kubecf} has been updated to version 2.5.8:
+** Eirini has graduated from technical preview
+** Introduced multi-stack support
+** Enabled c2c networking
+** Expanded information on the more commonly used entries in values.yaml
+** Bumped cf-deployment to 13.17
+** Allow tolerations to be set for the instance group pods
+** Ability to set memory limits and requests with defaults now set
+** Added labels to QuarksStatefulSets
+** For a full list of features and fixes, see the links in <<sec.2_1_0.components>>.
+* {operator} has been updated to version 6.1.17:
+** Improved memory limit validation
+** Added support for CPU limits
+** Added log rotation support in the log container
+** For a full list of features and fixes, see https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v6.1.17
+* {stratos} has been updated to version 4.2.0:
+** Configurable {ng} protocols and ciphers using Helm values
+** ArtifactHub replaces Helm Hub
+** Added support for API keys
+** For a full list of features and fixes, see the links in <<sec.2_1_0.components>>.
+* {stratos} Metrics has been updated to version 1.3.0:
+** Bumped Prometheus version to 2.20.1 and Helm Chart Version 11.15.0
+** Bumped CF Firehose exporter to version 6.1.0
+** For a full list of features and fixes, see https://github.com/SUSE/stratos-metrics/releases/tag/1.3.0
+* Minibroker has been updated to version 1.1.0:
+** Relies on Helm 3 internally
+** Added support for RabbitMQ
+** Added support for asynchronous operations
+** Admins can set override parameters that will prevent users from setting any parameters during provisioning
+** For a full list of features and fixes, see https://github.com/kubernetes-sigs/minibroker/releases/tag/v1.1.0
+
+[id='sec.2_1_0.components']
+==== Component Versions
+ * cf-operator: 6.1.17+0.gec409fd7
+ * {kubecf}: 2.5.8
+ ** Updated from 2.5.3. The list of releases since then:
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.8
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.7
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.6
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.5
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.4
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.3
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.5.0
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.4.0
+ * {stratos}: 4.2.0
+ ** Updated from 4.0.1. The list of releases since then:
+ *** https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#420
+ *** https://github.com/SUSE/stratos/blob/master/CHANGELOG.md#410
+ * {metrics}: 1.3.0
+ * {minibroker}: 1.1.0
+
+[id='sec.2_1_0.feature']
+==== Features and Fixes
+* For {operator}, `--set "global.singleNamespace.name=kubecf"` replaces the
+  previous `--set "global.operator.watchNamespace=kubecf"`
+* Improved startup dependency declarations  
+* Diego cells will always use a hostpath storage class 
+* Include Eirini, EiriniX and Bits templates in KubeCF
+* UAA will include the cf-cli job only if Credhub is enabled
+* Bumped PXC to 5.7.30-33
+* Includes these {cf} component versions:
+** app-autoscaler: 3.0.1
+** bits-services: 2.28.0
+** capi: 1.98.0
+** cf-acceptance-tests: 0.0.22
+** cf-deployment: 13.17
+** cf-smoke-tests: 41.0.1
+** cf-syslog-drain: 10.2.11
+** cflinuxfs3: 0.203.0
+** credhub: 2.8.0
+** diego: 2.48.0
+** eirini: 1.8.0
+** garden-runc: 1.19.16
+** loggregator: 106.3.10
+** loggregator-agent: 6.1.1
+** log-cache: 2.8.0
+** nats: 34
+** postgres: 39
+** routing: 0.206.0
+** scf-helper: 1.0.13
+** silk: 2.33.0
+** sle15: 10.93
+** statsd-injector: 1.11.15
+** sync-integration-tests: 0.0.3
+** uaa: 74.24.0
+* Buildpacks:
+** binary-buildpack: 1.0.36
+** dotnetcore-buildpack: 2.3.16
+** go-buildpack: 1.9.19
+** java-buildpack: 4.32.1
+** nginx-buildpack: 1.1.15
+** nodejs-buildpack: 1.7.30
+** php-buildpack: 4.4.22
+** python-buildpack: 1.7.23
+** staticfile-buildpack: 1.5.12
+** ruby-buildpack: 1.8.25
+
+[id='sec.2_1_0.issue']
+==== Known Issues
+* During the upgrades to 2.1, there will be some downtime for apps.
+* If you are using an HA setup of the internal database in CAP 2.0.x (or KubeCF), you will need to scale down `sizing.database.instances` to 1 in order to upgrade to CAP 2.1. Running a high available version of the internal database during the upgrade will result in confusion during the password rotation process and you will run into difficulties recovering from it. 
+* If you are planning to convert from Diego to Eirini, please upgrade your Diego environment first to CAP 2.1 and then migrate to Eirini as the earlier CAP versions relied on a technical preview version of Eirini.
+* If you are running CAP 2.0.x with Diego with apps relying on the `cflinuxfs3` stack and plan on migrating to Eirini with CAP 2.1, you will need to convert your apps to use the `sle15` stack. You can re-push your apps with `cf push -s sle15` if the `cflinuxfs3` stack was used; otherwise your apps will crash on Eirini.
+* Eirini apps will require slightly more memory than their Diego equivalent; from what has been tested, add an additional 32MB into the Eirini manifest.
+* TCP routing is not available in Eirini deployments at this time.
+* When converting from Diego to Eirini, you will see older Diego pods up for several minutes in the midst of the migration until the operator cleans up the older deployment. You will still expect to see a `diego-api` pod since that's where locket runs.
+* Eirini requires the `k8s-metrics-server` to be installed on the Kubernetes environment where CAP is installed in order for {metrics} to work.
+* {metrics} will not show disk stats on Eirini.
+* When there is a Kubernetes outage, Eirini will not properly automatically restart apps upon its return. You will need to manually start them up at present.
+* `log-cache` will need to have set `memory_limit_percent: 3` as a workaround to allocate enough memory for that to run within a safe limit without interfering with apps. See https://documentation.suse.com/suse-cap/2.1.0/single-html/cap-guides/#sec-cap-tbl-log-cache-memory
+* The v3 API used by cf-cli v7 should not be interchangeable with the v2 API (cf-cli v6) based on certain functionality that is not compatible. {stratos} also has problems relying on v3 API and in comparison to v2, performance degradation is expected
+* Support for public cloud service brokers was removed as most of those OSBAPI-based brokers have been deprecated in lieu of the various public clouds' own in-house solutions.
+
+
+
