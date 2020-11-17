@@ -146,7 +146,7 @@ endif::[]
 * Eirini requires the `k8s-metrics-server` to be installed on the Kubernetes environment where CAP is installed in order for {metrics} to work.
 * {metrics} will not show disk stats on Eirini.
 * When there is a Kubernetes outage, Eirini will not properly automatically restart apps upon its return. You will need to manually start them up at present.
-* `log-cache` will need to have set `memory_limit_percent: 3` as a workaround to allocate enough memory for that to run within a safe limit without interfering with apps. See https://documentation.suse.com/suse-cap/2.1.0/single-html/cap-guides/#sec-cap-tbl-log-cache-memory
+* `log-cache` will need to have set `memory_limit_percent: 3` as a workaround to allocate enough memory for that to run within a safe limit without interfering with apps. See https://documentation.suse.com/suse-cap/2.1/single-html/cap-guides/#sec-cap-tbl-log-cache-memory
 * The v3 API used by cf-cli v7 should not be interchangeable with the v2 API (cf-cli v6) based on certain functionality that is not compatible. {stratos} also has problems relying on v3 API and in comparison to v2, performance degradation is expected
 * Support for public cloud service brokers was removed as most of those OSBAPI-based brokers have been deprecated in lieu of the various public clouds' own in-house solutions.
 
