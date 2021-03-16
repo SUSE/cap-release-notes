@@ -37,12 +37,15 @@ endif::[]
 
 [id='sec.2_1_1.new']
 ==== What Is New?
-* {kubecf} has been updated to version 2.7.12:
-** Added CA certs required by diego-cell for multi-cluster support
+* {kubecf} has been updated to version 2.7.13:
+** Several components and dependencies were updated to address bugs
 ** For a full list of features and fixes, see the links in <<sec.2_1_1.components>>.
-* {operator} has been updated to version 7.1.3:
+* {operator} has been updated to version 7.2.1:
+** The upstream project was renamed to quarks-operator. The name change does *not* affect {product}, where the component will still be referred to as the {operator}
+** Support for multi-AZ
+** Bumped for use with Golang 1.15.8
 ** For a full list of features and fixes, see
-https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v7.1.3
+https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v7.2.1
 * {stratos} has been updated to version 4.4.1:
 ** Added support to deploy to clusters with Pod Security Policies enabled
 ** For a full list of features and fixes, see the links in <<sec.2_1_1.components>>.
@@ -53,9 +56,14 @@ https://github.com/kubernetes-sigs/minibroker/releases/tag/v1.2.0
 
 [id='sec.2_1_1.components']
 ==== Component Versions
- * cf-operator: 7.1.3-0.g0ce050b
- * {kubecf}: 2.7.12
+ * cf-operator: 7.2.1+0.gaeb6ef3
+ ** Updated from 6.1.17+0.gec409fd7. The list of releases since then:
+ *** https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v7.1.3
+ *** https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v7.1.2
+ *** https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v7.0.6
+ * {kubecf}: 2.7.13
  ** Updated from 2.5.8. The list of releases since then:
+ *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.7.12
  *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.7.1
  *** https://github.com/cloudfoundry-incubator/kubecf/releases/tag/v2.6.1
  * {stratos}: 4.4.1
@@ -67,14 +75,11 @@ https://github.com/kubernetes-sigs/minibroker/releases/tag/v1.2.0
 
 [id='sec.2_1_1.feature']
 ==== Features and Fixes
-* Bumped {operator} to version 7.1.3 which contains several bug fixes
+* Bumped {operator} to version 7.2.1 which contains several bug fixes
 * Bumped stemcell version for SUSE buildpacks to 29.6
-* Bumped `suse-java-buildpack` release to 4.35.0
-* Bumped `sle15` stack release to 26.8
-* Bumped `nats` to version 39
-* Fixed issue where the multi-az scheduler could not be found when upgrading
-  from prior versions of {kubecf}
-* The correct secret name is now used when credentials are overridden
+* Bumped `suse-java-buildpack` release to 4.36.0
+* Bumped `sle15` stack release to 26.14
+* Fixed issue where restarting a pod with multiple instances would fail due to an incorrect label value
 * Includes these {cf} component versions:
 ** app-autoscaler: 3.0.1
 ** bits-services: 2.28.0
@@ -96,7 +101,7 @@ https://github.com/kubernetes-sigs/minibroker/releases/tag/v1.2.0
 ** routing: 0.206.0
 ** scf-helper: 1.0.13
 ** silk: 2.33.0
-** sle15: 26.8
+** sle15: 26.14
 ** statsd-injector: 1.11.15
 ** sync-integration-tests: 0.0.3
 ** uaa: 74.24.0
@@ -104,7 +109,7 @@ https://github.com/kubernetes-sigs/minibroker/releases/tag/v1.2.0
 ** binary-buildpack: 1.0.36
 ** dotnetcore-buildpack: 2.3.18
 ** go-buildpack: 1.9.23
-** java-buildpack: 4.35.0
+** java-buildpack: 4.36.0
 ** nginx-buildpack: 1.1.18
 ** nodejs-buildpack: 1.7.35
 ** php-buildpack: 4.4.26
@@ -117,7 +122,6 @@ https://github.com/kubernetes-sigs/minibroker/releases/tag/v1.2.0
 
 [id='sec.2_1_1.deprecation']
 ==== Deprecations
-* The `sle15` stack has been deprecated. Plans should be made to migrate
- existing applications to use the `cflinuxfs3` stack instead.
-* {product} 2.1.1 will be the final release containing updates to the bundled
-buildpacks.
+* This will be the final release with Eirini as a supported scheduler. As of the next minor release of {kubecf}, we will be deprecating Eirini with Diego planned as the only supported scheduler. If you currently run Eirini as a scheduler and plan to upgrade in the future, please plan for this change. Eirini will still be included as is, but if problems arise when bumping cf-deployment versions to address CVEs, it may be removed without further notice.
+* This will be the final release with `sle15` as a supported stack. Going forward, `cflinuxfs3` will be the only supported stack and we will no longer buld updated rootfs and buildpacks with `sle15`. If you plan to upgrade in the future, please start planning to migrate applications to rely on the `cflinuxfs3` stack instead.
+* This will be the final release containing updates to the bundled buildpacks.

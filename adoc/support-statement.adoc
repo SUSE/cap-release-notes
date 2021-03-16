@@ -51,7 +51,7 @@ Patches and updates (L3): SUSE will provide patches and updates for 2.1 (e.g. 2.
 {product} closely follows upstream {cf} releases which may implement fixes and changes which are not backwards compatible with previous releases. {suse} will backport patches for critical bugs and security issues on a best efforts basis.
 
 === Platform Support
-{product} is fully supported on {eksa}, {azure} {aksa}, Google GKE and SUSE RKE. Each release is tested by {product} QA on these platforms.
+{product} is fully supported on {eksa}, {azure} {aksa}, Google GKE, Rancher Kubernetes Engine (RKE), and RKE Government (RKE2). Each release is tested by {product} QA on these platforms.
 
 {product} is fully supported on {caaspa}, wherever it happens to be installed. If {caaspa} is supported on a particular CSP, the customer can get support for {product} in that context.
 
