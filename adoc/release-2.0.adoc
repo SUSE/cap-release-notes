@@ -1,9 +1,9 @@
 // Start attribute entry list (Do not edit here! Edit in entities.adoc)
 ifdef::env-github[]
 :suse: SUSE
-:current-year: 2020
+:current-year: 2021
 :product: {suse} Cloud Application Platform
-:version: 2.0
+:version: 2.1.1
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://documentation.suse.com/suse-cap/2
 :deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
@@ -12,6 +12,7 @@ ifdef::env-github[]
 :ostack: OpenStack
 :cf: Cloud Foundry
 :kubecf: KubeCF
+:operator: cf-operator
 :k8s: Kubernetes
 :scc: {suse} Customer Center
 :azure: Microsoft Azure
@@ -29,6 +30,9 @@ ifdef::env-github[]
 :redis: Redis
 :mongo: MongoDB
 :ng: NGINX
+:stratos: Stratos Console
+:metrics: Stratos Metrics
+:minibroker: Minibroker
 endif::[]
 // End attribute entry list
 
@@ -37,7 +41,7 @@ endif::[]
 
 [id='sec.2_0.new']
 ==== What Is New?
-* {product} 2 is based on link:https://www.cloudfoundry.org/kubecf/[{kubecf}], which uses the link:https://www.cloudfoundry.org/project-quarks/[Quarks operator], also referred to as {operator}, to deploy releases from cf-deployment into {k8s} environments. With this release, {kubecf} replaces SCF as the Cloud Foundry Application Runtime (CFAR) component of {product}. Each {kubecf} release must be paired with a corresponding release of the Quarks operator, a {k8s} operator (https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) implementation. In the case of {product} {version}, {kubecf} 2.2.2 must be paired with {operator} 4.5.6.
+* {product} 2 is based on link:https://www.cloudfoundry.org/kubecf/[{kubecf}], which uses the link:https://www.cloudfoundry.org/project-quarks/[Quarks operator], also referred to as {operator}, to deploy releases from cf-deployment into {k8s} environments. With this release, {kubecf} replaces SCF as the Cloud Foundry Application Runtime (CFAR) component of {product}. Each {kubecf} release must be paired with a corresponding release of the Quarks operator, a {k8s} operator (https://kubernetes.io/docs/concepts/extend-kubernetes/operator/) implementation. In the case of {product} 2.0, {kubecf} 2.2.2 must be paired with {operator} 4.5.6.
 * {kubecf} 2.2.2 replaces {scf}:
 ** cf-deployment has been updated to 12.36
 ** Support for external Blobstore configuration
@@ -53,7 +57,7 @@ endif::[]
 
 [id='sec.2_0.feature']
 ==== Features and Fixes
-* The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to {version}, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) for 1.5.2 **cannot** be reused for {version}. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {version}
+* The `values.yaml` configuration file has undergone significant updates, including changes to the format and name of keys. When migrating from {product} 1.5.2 to 2.0, the existing `values.yaml` configuration file (for example, `scf-config-values.yaml`) for 1.5.2 **cannot** be reused for 2.0. A new `values.yaml` file (for example, `kubecf-config-values.yaml`) **must** be created and used instead. Refer to <<app.sample-values>> as a guideline for format and names valid for {product} 2.0
 * The UAA component is now embedded in {kubecf} by default and a separate installation is not necessary.
 * Fixed `appVersion` field in Chart yaml(s) to reflect the application version
 * Removed `sle12` and `cflinuxfs2` stack, which were preceded by warnings in CAP 1.5.x releases
