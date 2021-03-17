@@ -1,9 +1,9 @@
 // Start attribute entry list (Do not edit here! Edit in entities.adoc)
 ifdef::env-github[]
 :suse: SUSE
-:current-year: 2020
+:current-year: 2021
 :product: {suse} Cloud Application Platform
-:version: 2.0
+:version: 2.1.1
 :rn-url: https://www.suse.com/releasenotes
 :doc-url: https://documentation.suse.com/suse-cap/2
 :deployment-url: https://documentation.suse.com/suse-cap/2.0/single-html/cap-guides/#part-cap-deployment
@@ -30,6 +30,9 @@ ifdef::env-github[]
 :redis: Redis
 :mongo: MongoDB
 :ng: NGINX
+:stratos: Stratos Console
+:metrics: Stratos Metrics
+:minibroker: Minibroker
 endif::[]
 // End attribute entry list
 
@@ -43,14 +46,15 @@ https://www.suse.com/support/?id=SUSE_Cloud_Application_Platform.
 The following definitions apply:
 
 === Version Support
-Technical Support and Troubleshooting (L1 - L2): Current and previous major versions (_n_-1). For example: {suse} will provide technical support and troubleshooting for versions 1.0, 1.1, 1.2, 1.3 (and all 2.x point releases) until the release of 3.0.
+Technical Support and Troubleshooting (L1 - L2): SUSE will provide technical
+support and troubleshooting for version 2.1 until May 31, 2022.
 
-Patches and updates (L3): On the latest or last minor release of each major release. For example: {suse} will provide patches and updates for 1.3 (and 2._latest_) until the release of 3.0.
+Patches and updates (L3): SUSE will provide patches and updates for 2.1 (e.g. 2.1.1, 2.1.2) to resolve critical bugs or address high severity security issues. The patches may include updates from upstream Cloud Foundry releases.
 
 {product} closely follows upstream {cf} releases which may implement fixes and changes which are not backwards compatible with previous releases. {suse} will backport patches for critical bugs and security issues on a best efforts basis.
 
 === Platform Support
-{product} is fully supported on {eksa}, {azure} {aksa} and Google GKE. Each release is tested by {product} QA on these platforms.
+{product} is fully supported on {eksa}, {azure} {aksa}, Google GKE, Rancher Kubernetes Engine (RKE), and RKE Government (RKE2). Each release is tested by {product} QA on these platforms.
 
 {product} is fully supported on {caaspa}, wherever it happens to be installed. If {caaspa} is supported on a particular CSP, the customer can get support for {product} in that context.
 
