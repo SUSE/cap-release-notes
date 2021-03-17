@@ -42,11 +42,11 @@ endif::[]
 [id='sec.2_1_1.new']
 ==== What Is New?
 * {kubecf} has been updated to version 2.7.13:
-** Several components and dependencies were updated to address bugs
+** Several components and dependencies were updated to address bugs and CVEs
 ** For a full list of features and fixes, see the links in <<sec.2_1_1.components>>.
 * {operator} has been updated to version 7.2.1:
 ** The upstream project was renamed to quarks-operator. The name change does *not* affect {product}, where the component will still be referred to as the {operator}
-** Support for multi-AZ
+** Fixes included for multi-AZ
 ** Bumped for use with Golang 1.15.8
 ** For a full list of features and fixes, see
 https://github.com/cloudfoundry-incubator/quarks-operator/releases/tag/v7.2.1
