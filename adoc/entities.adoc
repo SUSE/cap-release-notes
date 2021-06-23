@@ -9,6 +9,7 @@
 :caaspa: {suse} CaaS Platform
 :ostack: OpenStack
 :cf: Cloud Foundry
+:scf: {suse} {cf}
 :kubecf: KubeCF
 :operator: cf-operator
 :k8s: Kubernetes
